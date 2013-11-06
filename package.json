@@ -1,0 +1,29 @@
+{
+  "name": "svgicons2svgfont",
+  "version": "0.0.0",
+  "description": "Read a set of SVG icons and ouput a SVG font",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha tests/*.mocha.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nfroidure/svgicons2svgfont"
+  },
+  "keywords": [
+    "SVG",
+    "icons",
+    "font",
+    "creation",
+    "fonts"
+  ],
+  "author": "Nicolas Froidure",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nfroidure/svgicons2svgfont/issues"
+  },
+  "preferGlobal": "true",
+  "bin": {
+    "svgicons2svgfont" : "bin/svgicons2svgfont.js"
+  }
+}

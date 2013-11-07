@@ -67,8 +67,8 @@ function svgicons2svgfont(files, dest, options) {
           + 'z'
         );
       } else if('line' === tag.name) {
-        log('Found a line on the icon "' + glyph.name + '" the result could be'
-          +' different than expected.')
+        log('Found a line elment in the icon "' + glyph.name + '" the result'
+          +' could be different than expected.');
         glyph.d.push(
           // Move to the line start
           'M' + parseInt(tag.attributes.x1,10).toString(10)
@@ -78,6 +78,12 @@ function svgicons2svgfont(files, dest, options) {
           + 'v-5'
           + 'H' + parseInt(tag.attributes.x1, 10).toString(10)
           + 'Z'
+        );
+      } else if('polyline' === tag.name) {
+        log('Found a polyline element in the icon "' + glyph.name + '" the'
+          +' result could be different than expected.');
+        glyph.d.push(
+          'M' + tag.attributes.points
         );
       } else if('circle' === tag.name) {
         glyph.d.push(

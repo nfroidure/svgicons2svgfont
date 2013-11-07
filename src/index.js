@@ -85,6 +85,10 @@ function svgicons2svgfont(files, dest, options) {
         glyph.d.push(
           'M' + tag.attributes.points
         );
+      } else if('polygon' === tag.name) {
+        glyph.d.push(
+          'M' + tag.attributes.points + 'Z'
+        );
       } else if('circle' === tag.name) {
         glyph.d.push(
           // Move to the point leftest point of the circle

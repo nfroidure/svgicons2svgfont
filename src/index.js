@@ -106,6 +106,23 @@ function svgicons2svgfont(files, dest, options) {
           + ' ' + parseInt(tag.attributes.cy,10).toString(10)
           + 'Z'
         );
+      } else if('ellipse' === tag.name) {
+        glyph.d.push(
+          // Move to the point leftest point of the ellipse
+          'M' + (parseInt(tag.attributes.cx,10)-parseInt(tag.attributes.rx,10)).toString(10)
+          + ' ' + parseInt(tag.attributes.cy,10).toString(10)
+          // Draw an arc to left rightest point
+          + 'A ' + (parseInt(tag.attributes.rx,10)).toString(10) + ' '
+          + (parseInt(tag.attributes.ry,10)).toString(10)+' 0 0 0 '
+          + (parseInt(tag.attributes.cx,10)+parseInt(tag.attributes.rx,10)).toString(10)
+          + ' ' + parseInt(tag.attributes.cy,10).toString(10)
+          // Draw an inverted arc to the leftest point
+          + 'A ' + (parseInt(tag.attributes.rx,10)).toString(10) + ' '
+          + (parseInt(tag.attributes.ry,10)).toString(10)+' 180 0 0 '
+          + (parseInt(tag.attributes.cx,10)-parseInt(tag.attributes.rx,10)).toString(10)
+          + ' ' + parseInt(tag.attributes.cy,10).toString(10)
+          + 'Z'
+        );
       }
     });
     saxStream.on('attribute', function(attr) {

@@ -66,6 +66,19 @@ function svgicons2svgfont(files, dest, options) {
           + 'h' + (parseInt(tag.attributes.width, 10)*-1).toString(10)
           + 'z'
         );
+      } else if('line' === tag.name) {
+        log('Found a line on the icon "' + glyph.name + '" the result could be'
+          +' different than expected.')
+        glyph.d.push(
+          // Move to the line start
+          'M' + parseInt(tag.attributes.x1,10).toString(10)
+          + ' ' + parseInt(tag.attributes.y1,10).toString(10)
+          // Draw the line (rect with a weight of 1)
+          + 'H' + parseInt(tag.attributes.x2, 10).toString(10)
+          + 'v-5'
+          + 'H' + parseInt(tag.attributes.x1, 10).toString(10)
+          + 'Z'
+        );
       }
     });
     saxStream.on('attribute', function(attr) {

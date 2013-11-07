@@ -17,6 +17,13 @@
     "creation",
     "fonts"
   ],
+	"dependencies": {
+		"sax": "0.5.x",
+		"svg-pathdata": "0.x.x"
+	},
+	"devDependencies": {
+		"mocha": "1.x.x"
+	},
   "author": "Nicolas Froidure",
   "license": "MIT",
   "bugs": {

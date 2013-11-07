@@ -5,9 +5,11 @@ var assert = require('assert')
 // Helper
 function generateFont(options, done) {
   options.callback = options.callback || function() {
-    assert.deepEqual(
-      Fs.readFileSync(__dirname + '/expected/' + options.fontName + '.svg'),
-      Fs.readFileSync(__dirname + '/results/' + options.fontName + '.svg')
+    assert.equal(
+      Fs.readFileSync(__dirname + '/expected/' + options.fontName + '.svg',
+        {encoding: 'utf8'}),
+      Fs.readFileSync(__dirname + '/results/' + options.fontName + '.svg',
+        {encoding: 'utf8'})
     );
     done();
   };
@@ -41,6 +43,12 @@ describe('Generating fonts', function() {
 	it("should work with multipath SVG icons", function(done) {
     generateFont({
       fontName: 'multipathicons'
+    }, done);
+	});
+
+	it("should work with simple shapes SVG icons", function(done) {
+    generateFont({
+      fontName: 'shapeicons'
     }, done);
 	});
 

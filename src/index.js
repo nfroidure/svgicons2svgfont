@@ -11,7 +11,9 @@
 var UNICODE_PRIVATE_USE_AREA = {
   start: 0xE001,
   end: 0xF8FF
-};
+}
+// http://www.whizkidtech.redprince.net/bezier/circle/
+  , KAPPA = ((Math.sqrt(2)-1)/3)*4;
 
 // Required modules
 var Path = require("path")
@@ -89,38 +91,27 @@ function svgicons2svgfont(files, dest, options) {
         glyph.d.push(
           'M' + tag.attributes.points + 'Z'
         );
-      } else if('circle' === tag.name) {
+      } else if('circle' === tag.name || 'ellipse' === tag.name) {
+        var cx = parseInt(tag.attributes.cx,10)
+          , cy = parseInt(tag.attributes.cy,10)
+          , rx = 'undefined' !== typeof tag.attributes.rx ?
+              parseInt(tag.attributes.rx,10) : parseInt(tag.attributes.r,10)
+          , ry = 'undefined' !== typeof tag.attributes.ry ?
+              parseInt(tag.attributes.ry,10) : parseInt(tag.attributes.r,10);
         glyph.d.push(
-          // Move to the point leftest point of the circle
-          'M' + (parseInt(tag.attributes.cx,10)-parseInt(tag.attributes.r,10)).toString(10)
-          + ' ' + parseInt(tag.attributes.cy,10).toString(10)
-          // Draw an arc to left rightest point
-          + 'A ' + (parseInt(tag.attributes.r,10)).toString(10) + ' '
-          + (parseInt(tag.attributes.r,10)).toString(10)+' 0 0 0 '
-          + (parseInt(tag.attributes.cx,10)+parseInt(tag.attributes.r,10)).toString(10)
-          + ' ' + parseInt(tag.attributes.cy,10).toString(10)
-          // Draw an inverted arc to the leftest point
-          + 'A ' + (parseInt(tag.attributes.r,10)).toString(10) + ' '
-          + (parseInt(tag.attributes.r,10)).toString(10)+' 180 0 0 '
-          + (parseInt(tag.attributes.cx,10)-parseInt(tag.attributes.r,10)).toString(10)
-          + ' ' + parseInt(tag.attributes.cy,10).toString(10)
-          + 'Z'
-        );
-      } else if('ellipse' === tag.name) {
-        glyph.d.push(
-          // Move to the point leftest point of the ellipse
-          'M' + (parseInt(tag.attributes.cx,10)-parseInt(tag.attributes.rx,10)).toString(10)
-          + ' ' + parseInt(tag.attributes.cy,10).toString(10)
-          // Draw an arc to left rightest point
-          + 'A ' + (parseInt(tag.attributes.rx,10)).toString(10) + ' '
-          + (parseInt(tag.attributes.ry,10)).toString(10)+' 0 0 0 '
-          + (parseInt(tag.attributes.cx,10)+parseInt(tag.attributes.rx,10)).toString(10)
-          + ' ' + parseInt(tag.attributes.cy,10).toString(10)
-          // Draw an inverted arc to the leftest point
-          + 'A ' + (parseInt(tag.attributes.rx,10)).toString(10) + ' '
-          + (parseInt(tag.attributes.ry,10)).toString(10)+' 180 0 0 '
-          + (parseInt(tag.attributes.cx,10)-parseInt(tag.attributes.rx,10)).toString(10)
-          + ' ' + parseInt(tag.attributes.cy,10).toString(10)
+          'M' + (cx - rx) + ',' + cy
+          + 'C' + (cx - rx) + ',' + (cy + ry*KAPPA)
+          + ' ' + (cx - rx*KAPPA) + ',' + (cy + ry)
+          + ' ' + cx + ',' + (cy + ry)
+          + 'C' + (cx + rx*KAPPA) + ',' + (cy+ry)
+          + ' ' + (cx + rx) + ',' + (cy + ry*KAPPA)
+          + ' ' + (cx + rx) + ',' + cy
+          + 'C' + (cx + rx) + ',' + (cy - ry*KAPPA)
+          + ' ' + (cx + rx*KAPPA) + ',' + (cy - ry)
+          + ' ' + cx + ',' + (cy - ry)
+          + 'C' + (cx - rx*KAPPA) + ',' + (cy - ry)
+          + ' ' + (cx - rx) + ',' + (cy - ry*KAPPA)
+          + ' ' + (cx - rx) + ',' + cy
           + 'Z'
         );
       }

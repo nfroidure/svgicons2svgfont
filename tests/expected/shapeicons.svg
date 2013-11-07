@@ -5,11 +5,12 @@
   <font id="shapeicons" horiz-adv-x="150">
     <font-face units-per-em="150" ascent="150" descent="0" />
     <missing-glyph horiz-adv-x="0" />
-    <glyph glyph-name="circle" unicode="&#xE001;" horiz-adv-x="150" d=" M55 100 A20 20 0 0 0 95 100 A20 20 180 0 0 55 100 z M55 50 A20 20 0 0 0 95 50 A20 20 180 0 0 55 50 z" />
-    <glyph glyph-name="lines" unicode="&#xE002;" horiz-adv-x="150" d=" M10 120 H140 v5 H10 z" />
-    <glyph glyph-name="polygon" unicode="&#xE003;" horiz-adv-x="150" d=" M10 120 L10 60 L140 60 L140 120 z" />
-    <glyph glyph-name="polyline" unicode="&#xE004;" horiz-adv-x="150" d=" M10 120 L10 60 L140 60 L140 120 L10 120" />
-    <glyph glyph-name="rect" unicode="&#xE005;" horiz-adv-x="150" d=" M10 60 h130 v30 h-130 z" />
+    <glyph glyph-name="circle" unicode="&#xE001;" horiz-adv-x="150" d=" M55 100 C55 88.95430500338412 63.95430500338413 80 75 80 C86.04569499661588 80 95 88.95430500338412 95 100 C95 111.04569499661588 86.04569499661588 120 75 120 C63.95430500338413 120 55 111.04569499661588 55 100 z M55 50 C55 38.95430500338412 63.95430500338413 30 75 30 C86.04569499661588 30 95 38.95430500338412 95 50 C95 61.04569499661588 86.04569499661588 70 75 70 C63.95430500338413 70 55 61.04569499661588 55 50 z" />
+    <glyph glyph-name="ellipse" unicode="&#xE002;" horiz-adv-x="150" d=" M55 100 C55 83.4314575050762 63.95430500338413 70 75 70 C86.04569499661588 70 95 83.4314575050762 95 100 C95 116.5685424949238 86.04569499661588 130 75 130 C63.95430500338413 130 55 116.5685424949238 55 100 z M45 50 C45 38.95430500338412 58.431457505076196 30 75 30 C91.5685424949238 30 105 38.95430500338412 105 50 C105 61.04569499661588 91.5685424949238 70 75 70 C58.431457505076196 70 45 61.04569499661588 45 50 z" />
+    <glyph glyph-name="lines" unicode="&#xE003;" horiz-adv-x="150" d=" M10 120 H140 v5 H10 z" />
+    <glyph glyph-name="polygon" unicode="&#xE004;" horiz-adv-x="150" d=" M10 120 L10 60 L140 60 L140 120 z" />
+    <glyph glyph-name="polyline" unicode="&#xE005;" horiz-adv-x="150" d=" M10 120 L10 60 L140 60 L140 120 L10 120" />
+    <glyph glyph-name="rect" unicode="&#xE006;" horiz-adv-x="150" d=" M10 60 h130 v30 h-130 z" />
   </font>
 </defs>
 </svg>

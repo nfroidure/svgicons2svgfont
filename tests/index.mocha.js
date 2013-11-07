@@ -38,4 +38,10 @@ describe('Generating fonts', function() {
     }, done);
 	});
 
+	it("should work with multipath SVG icons", function(done) {
+    generateFont({
+      fontName: 'multipathicons'
+    }, done);
+	});
+
 });

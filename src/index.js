@@ -79,6 +79,39 @@ function svgicons2svgfont(files, dest, options) {
           + 'H' + parseInt(tag.attributes.x1, 10).toString(10)
           + 'Z'
         );
+      } else if('circle' === tag.name) {
+        glyph.d.push(
+          // Move to the point leftest point of the circle
+          'M' + (parseInt(tag.attributes.cx,10)-parseInt(tag.attributes.r,10)).toString(10)
+          + ' ' + parseInt(tag.attributes.cy,10).toString(10)
+          // Draw an arc to left rightest point
+          + 'A ' + (parseInt(tag.attributes.r,10)).toString(10) + ' '
+          + (parseInt(tag.attributes.r,10)).toString(10)+' 0 0 0 '
+          + (parseInt(tag.attributes.cx,10)+parseInt(tag.attributes.r,10)).toString(10)
+          + ' ' + parseInt(tag.attributes.cy,10).toString(10)
+          // Draw an inverted arc to the leftest point
+          + 'A ' + (parseInt(tag.attributes.r,10)).toString(10) + ' '
+          + (parseInt(tag.attributes.r,10)).toString(10)+' 180 0 0 '
+          + (parseInt(tag.attributes.cx,10)-parseInt(tag.attributes.r,10)).toString(10)
+          + ' ' + parseInt(tag.attributes.cy,10).toString(10)
+          + 'Z'
+        );
+      console.log((
+          // Move to the point leftest point of the circle
+          'M' + (parseInt(tag.attributes.cx,10)-parseInt(tag.attributes.r,10)).toString(10)
+          + ' ' + parseInt(tag.attributes.cy,10).toString(10)
+          // Draw an arc to left rightest point
+          + 'A ' + (parseInt(tag.attributes.r,10)).toString(10) + ' '
+          + (parseInt(tag.attributes.r,10)).toString(10)+' 0 0 0 '
+          + (parseInt(tag.attributes.cx,10)+parseInt(tag.attributes.r,10)).toString(10)
+          + ' ' + parseInt(tag.attributes.cy,10).toString(10)
+          // Draw an inverted arc to the leftest point
+          + 'A ' + (parseInt(tag.attributes.r,10)).toString(10) + ' '
+          + (parseInt(tag.attributes.r,10)).toString(10)+' 180 0 0 '
+          + (parseInt(tag.attributes.cx,10)-parseInt(tag.attributes.r,10)).toString(10)
+          + ' ' + parseInt(tag.attributes.cy,10).toString(10)
+          + 'Z'
+        ))
       }
     });
     saxStream.on('attribute', function(attr) {
@@ -139,13 +172,6 @@ function svgicons2svgfont(files, dest, options) {
                   command.y2 = -command.y2;
                 } else {
                   command.y2 = fontHeight - command.y2;
-                }
-              }
-              if('undefined' !== command.rY && command.rY !== 0) {
-                if(notFirst && command.relative) {
-                  command.rY = -command.rY;
-                } else {
-                  command.rY = fontHeight - command.rY;
                 }
               }
               notFirst = true;

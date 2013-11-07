@@ -5,8 +5,9 @@
   <font id="shapeicons" horiz-adv-x="150">
     <font-face units-per-em="150" ascent="150" descent="0" />
     <missing-glyph horiz-adv-x="0" />
-    <glyph glyph-name="lines" unicode="&#xE001;" horiz-adv-x="150" d=" M10 120 H140 v5 H10 z" />
-    <glyph glyph-name="rect" unicode="&#xE002;" horiz-adv-x="150" d=" M10 60 h130 v30 h-130 z" />
+    <glyph glyph-name="circle" unicode="&#xE001;" horiz-adv-x="150" d=" M55 100 A20 20 0 0 0 95 100 A20 20 180 0 0 55 100 z M55 50 A20 20 0 0 0 95 50 A20 20 180 0 0 55 50 z" />
+    <glyph glyph-name="lines" unicode="&#xE002;" horiz-adv-x="150" d=" M10 120 H140 v5 H10 z" />
+    <glyph glyph-name="rect" unicode="&#xE003;" horiz-adv-x="150" d=" M10 60 h130 v30 h-130 z" />
   </font>
 </defs>
 </svg>

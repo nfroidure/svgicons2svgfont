@@ -2,7 +2,7 @@ svgicons2svgfont [![Build Status](https://travis-ci.org/nfroidure/svgicons2svgfo
 ============
 svgicons2svgfont is a simple tool to merge multiple icons to a SVG font.
 
-<rect>, <line>, <circle>, <ellipsis>, <polyline> and <polygon> shapes will be
+'rect', 'line', 'circle', 'ellipsis', 'polyline' and 'polygon' shapes will be
  converted to pathes. Multiple pathes will be merged.
 
 Transform attributes either on <g> element or path/shape elements are

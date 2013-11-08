@@ -69,7 +69,7 @@ function svgicons2svgfont(files, dest, options) {
           + 'z'
         );
       } else if('line' === tag.name) {
-        log('Found a line elment in the icon "' + glyph.name + '" the result'
+        log('Found a line element in the icon "' + glyph.name + '" the result'
           +' could be different than expected.');
         glyph.d.push(
           // Move to the line start
@@ -135,6 +135,12 @@ function svgicons2svgfont(files, dest, options) {
         var fontHeight = (glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
           return Math.max(gA.height || gA, gB.height || gB);
         }) : glyphs[0].height);
+        if(fontHeight>(glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
+          return Math.min(gA.height || gA, gB.height || gB);
+        }) : glyphs[0].height)) {
+          log('The provided icons does not have the same length it could lead'
+            +' to unexpected results.');
+        }
         // Output the SVG file
         // (find a SAX parser that allows modifying SVG on the fly)
         outputFont.write('<?xml version="1.0" standalone="no"?> \n\
@@ -180,6 +186,8 @@ function svgicons2svgfont(files, dest, options) {
               encoder.write(command);
             });
           parser.read(d).end();
+          delete glyph.d;
+          delete glyph.running;
           });
           outputFont.write('\
     <glyph glyph-name="'+glyph.name+'" unicode="'+glyph.character+'" horiz-adv-x="'+glyph.width+'" d="'+d+'" />\n');
@@ -190,7 +198,7 @@ function svgicons2svgfont(files, dest, options) {
 </svg>\n');
         outputFont.on('finish', function() {
           log("Font saved to " + dest);
-          'function' === (typeof options.callback) && (options.callback)();
+          'function' === (typeof options.callback) && (options.callback)(glyphs);
         });
         outputFont.end();
       }

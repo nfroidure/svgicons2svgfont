@@ -5,7 +5,7 @@ svgicons2svgfont is a simple tool to merge multiple icons to an SVG font.
 'rect', 'line', 'circle', 'ellipsis', 'polyline' and 'polygon' shapes will be
  converted to pathes. Multiple pathes will be merged.
 
-Transform attributes either on <g> element or path/shape elements are
+Transform attributes either on 'g' element or path/shapes elements are
  currently unsupported.
 
 Usage
@@ -23,6 +23,11 @@ svgicons2svgfont([
 CLI (install the module globally) :
 ```sh
 svgicons2svgfont icons/directory font/destination/file.svg
+```
+
+[Grunt plugin](https://github.com/nfroidure/grunt-svgicons2svgfont) :
+̀``sh
+npm install grunt-svgicons2svgfont
 ```
 
 Contributing

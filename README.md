@@ -10,7 +10,7 @@ Transform attributes either on 'g' element or path/shapes elements are
 
 Usage
 -------------
-NodeJS module :
+NodeJS module:
 ```js
 var svgicons2svgfont = require('svgicons2svgfont');
 svgicons2svgfont([
@@ -20,13 +20,14 @@ svgicons2svgfont([
   'font/destination/file.svg',
   options);
 ```
-CLI (install the module globally) :
+
+CLI (install the module globally):
 ```sh
 svgicons2svgfont icons/directory font/destination/file.svg
 ```
 
-[Grunt plugin](https://github.com/nfroidure/grunt-svgicons2svgfont) :
-`̀``sh
+[Grunt plugin](https://github.com/nfroidure/grunt-svgicons2svgfont):
+```sh
 npm install grunt-svgicons2svgfont
 ```
 

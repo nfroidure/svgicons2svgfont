@@ -26,7 +26,7 @@ svgicons2svgfont icons/directory font/destination/file.svg
 ```
 
 [Grunt plugin](https://github.com/nfroidure/grunt-svgicons2svgfont) :
-̀``sh
+`̀``sh
 npm install grunt-svgicons2svgfont
 ```
 

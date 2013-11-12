@@ -5,10 +5,10 @@
   <font id="prefixedicons" horiz-adv-x="150">
     <font-face units-per-em="150" ascent="150" descent="0" />
     <missing-glyph horiz-adv-x="0" />
-    <glyph glyph-name="arrow-down" unicode="&#xE008;" horiz-adv-x="150" d=" M75 30 L120 80 L30 80 z" />
-    <glyph glyph-name="arrow-left" unicode="&#xE00F;" horiz-adv-x="150" d=" M50 75 L100 120 L100 30 z" />
-    <glyph glyph-name="arrow-right" unicode="&#xE013;" horiz-adv-x="150" d=" M100 75 L50 120 L50 30 z" />
-    <glyph glyph-name="arrow-up" unicode="&#xE014;" horiz-adv-x="150" d=" m75 80 l45 -50 l-90 0 z" />
+    <glyph glyph-name="arrow-down" unicode="&#xE008;" horiz-adv-x="150" d=" M75 30L120 80L30 80z" />
+    <glyph glyph-name="arrow-left" unicode="&#xE00F;" horiz-adv-x="150" d=" M50 75L100 120L100 30z" />
+    <glyph glyph-name="arrow-right" unicode="&#xE013;" horiz-adv-x="150" d=" M100 75L50 120L50 30z" />
+    <glyph glyph-name="arrow-up" unicode="&#xE014;" horiz-adv-x="150" d=" m75 80l45 -50l-90 0z" />
   </font>
 </defs>
 </svg>

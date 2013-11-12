@@ -151,45 +151,13 @@ function svgicons2svgfont(files, dest, options) {
     <font-face units-per-em="' + fontHeight + '" ascent="' + fontHeight + '" descent="0" />\n\
     <missing-glyph horiz-adv-x="0" />\n');
         glyphs.forEach(function(glyph) {
-          var d = '', encoder = new SVGPathData.Encoder(function(chunk){
-            d += ' ' + chunk;
+          var d = '';
+          glyph.d.forEach(function(cD) {
+            d+=' '+new SVGPathData(cD).ySymetry(fontHeight).encode();
           });
-          if(!glyph.d.length) {
-            throw Error('The icon named "' + file + '" has no content or content'
-              + ' couldn\'t be extracted.');
-          }
-          glyph.d.forEach(function(d) {
-            var notFirst = false
-              , parser = new SVGPathData.Parser(function(command) {
-              if('undefined' !== command.y && command.y !== 0) {
-                if(notFirst && command.relative) {
-                  command.y = -command.y;
-                } else {
-                  command.y = fontHeight - command.y;
-                }
-              }
-              if('undefined' !== command.y1 && command.y1 !== 0) {
-                if(notFirst && command.relative) {
-                  command.y1 = -command.y1;
-                } else {
-                  command.y1 = fontHeight - command.y1;
-                }
-              }
-              if('undefined' !== command.y2 && command.y2 !== 0) {
-                if(notFirst && command.relative) {
-                  command.y2 = -command.y2;
-                } else {
-                  command.y2 = fontHeight - command.y2;
-                }
-              }
-              notFirst = true;
-              encoder.write(command);
-            });
-          parser.read(d).end();
           delete glyph.d;
           delete glyph.running;
-          });
-          outputFont.write('\
+        outputFont.write('\
     <glyph glyph-name="'+glyph.name+'" unicode="'+glyph.character+'" horiz-adv-x="'+glyph.width+'" d="'+d+'" />\n');
         });
         outputFont.write('\

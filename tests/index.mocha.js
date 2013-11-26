@@ -83,7 +83,6 @@ describe('Generating fonts to files', function() {
 
 });
 
-// Tests
 describe('Generating fonts to memory', function() {
 
   it("should work for simple SVG", function(done) {
@@ -114,6 +113,27 @@ describe('Generating fonts to memory', function() {
     generateFontToMemory({
       fontName: 'shapeicons'
     }, done);
+  });
+
+});
+
+describe('Testing CLI', function() {
+
+  it("should work for simple SVG", function(done) {
+    (require('child_process').exec)(
+      'node '+__dirname+'../bin/svgicons2svgfont.js '
+      + __dirname + '/expected/originalicons.svg '
+      + __dirname + '/results/originalicons.svg',
+      function() {
+        assert.equal(
+          Fs.readFileSync(__dirname + '/expected/originalicons.svg',
+            {encoding: 'utf8'}),
+          Fs.readFileSync(__dirname + '/results/originalicons.svg',
+            {encoding: 'utf8'})
+        );
+        done();
+      }
+    );
   });
 
 });

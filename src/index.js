@@ -9,9 +9,9 @@
 
 // http://en.wikipedia.org/wiki/Private_Use_(Unicode)
 var UNICODE_PRIVATE_USE_AREA = {
-  start: 0xE001,
-  end: 0xF8FF
-}
+    start: 0xE001,
+    end: 0xF8FF
+  }
 // http://www.whizkidtech.redprince.net/bezier/circle/
   , KAPPA = ((Math.sqrt(2)-1)/3)*4;
 
@@ -19,8 +19,7 @@ var UNICODE_PRIVATE_USE_AREA = {
 var Path = require("path")
   , Fs = require("fs")
   , Sax = require("sax")
-  , 
-  SVGPathData = require("svg-pathdata");
+  , SVGPathData = require("svg-pathdata");
 
 function svgicons2svgfont(files, options) {
   options = options || {};

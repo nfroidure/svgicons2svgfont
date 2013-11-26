@@ -12,13 +12,18 @@ Usage
 -------------
 NodeJS module:
 ```js
-var svgicons2svgfont = require('svgicons2svgfont');
-svgicons2svgfont([
+var svgicons2svgfont = require('svgicons2svgfont')
+  , fs = require('fs');
+  , fontStream = svgicons2svgfont([
     'icons/directory/icon1.svg',
     'icons/directory/icon2.svg'
-  ],
-  'font/destination/file.svg',
-  options);
+  ], options);
+
+// Saving in a file
+fontStream.pipe(fs.createWriteStream('font/destination/file.svg'))
+  .on('finish',function() {
+    console.log('Font written !')
+  });
 ```
 
 CLI (install the module globally):

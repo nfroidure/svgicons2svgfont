@@ -7,22 +7,19 @@ var assert = require('assert')
 
 function generateFontToFile(options, done) {
   var dest = __dirname + '/results/' + options.fontName + '.svg';
-  options.callback = options.callback || function() {
-    setTimeout(function() {
-      assert.equal(
-        Fs.readFileSync(__dirname + '/expected/' + options.fontName + '.svg',
-          {encoding: 'utf8'}),
-        Fs.readFileSync(dest,
-          {encoding: 'utf8'})
-      );
-      done();
-    }, 100);
-  };
   var stream = svgicons2svgfont(Fs.readdirSync(__dirname + '/fixtures/' + options.fontName)
     .map(function(file) {
       return __dirname + '/fixtures/' + options.fontName + '/' + file;
     }), options);
-  stream.pipe(Fs.createWriteStream(dest));
+  stream.pipe(Fs.createWriteStream(dest)).on('finish', function() {
+    assert.equal(
+      Fs.readFileSync(__dirname + '/expected/' + options.fontName + '.svg',
+        {encoding: 'utf8'}),
+      Fs.readFileSync(dest,
+        {encoding: 'utf8'})
+    );
+    done();
+  });
 }
 
 function generateFontToMemory(options, done) {
@@ -35,7 +32,7 @@ function generateFontToMemory(options, done) {
   stream.on('data', function(chunk) {
     content += decoder.write(chunk);
   });
-  stream.on('end', function() {
+  stream.on('finish', function() {
     assert.equal(
       Fs.readFileSync(__dirname + '/expected/' + options.fontName + '.svg',
         {encoding: 'utf8'}),

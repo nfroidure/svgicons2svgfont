@@ -60,12 +60,12 @@ function svgicons2svgfont(files, options) {
       if('rect' === tag.name) {
         glyph.d.push(
           // Move to the left corner
-          'M' + parseInt(tag.attributes.x,10).toString(10)
-          + ' ' + parseInt(tag.attributes.y,10).toString(10)
+          'M' + parseFloat(tag.attributes.x,10).toString(10)
+          + ' ' + parseFloat(tag.attributes.y,10).toString(10)
           // Draw the rectangle
-          + 'h' + parseInt(tag.attributes.width, 10).toString(10)
-          + 'v' + (parseInt(tag.attributes.height, 10)*-1).toString(10)
-          + 'h' + (parseInt(tag.attributes.width, 10)*-1).toString(10)
+          + 'h' + parseFloat(tag.attributes.width, 10).toString(10)
+          + 'v' + (parseFloat(tag.attributes.height, 10)*-1).toString(10)
+          + 'h' + (parseFloat(tag.attributes.width, 10)*-1).toString(10)
           + 'z'
         );
       } else if('line' === tag.name) {
@@ -73,12 +73,12 @@ function svgicons2svgfont(files, options) {
           +' could be different than expected.');
         glyph.d.push(
           // Move to the line start
-          'M' + parseInt(tag.attributes.x1,10).toString(10)
-          + ' ' + parseInt(tag.attributes.y1,10).toString(10)
+          'M' + parseFloat(tag.attributes.x1,10).toString(10)
+          + ' ' + parseFloat(tag.attributes.y1,10).toString(10)
           // Draw the line (rect with a weight of 1)
-          + 'H' + parseInt(tag.attributes.x2, 10).toString(10)
+          + 'H' + parseFloat(tag.attributes.x2, 10).toString(10)
           + 'v-5'
-          + 'H' + parseInt(tag.attributes.x1, 10).toString(10)
+          + 'H' + parseFloat(tag.attributes.x1, 10).toString(10)
           + 'Z'
         );
       } else if('polyline' === tag.name) {
@@ -92,12 +92,12 @@ function svgicons2svgfont(files, options) {
           'M' + tag.attributes.points + 'Z'
         );
       } else if('circle' === tag.name || 'ellipse' === tag.name) {
-        var cx = parseInt(tag.attributes.cx,10)
-          , cy = parseInt(tag.attributes.cy,10)
+        var cx = parseFloat(tag.attributes.cx,10)
+          , cy = parseFloat(tag.attributes.cy,10)
           , rx = 'undefined' !== typeof tag.attributes.rx ?
-              parseInt(tag.attributes.rx,10) : parseInt(tag.attributes.r,10)
+              parseFloat(tag.attributes.rx,10) : parseFloat(tag.attributes.r,10)
           , ry = 'undefined' !== typeof tag.attributes.ry ?
-              parseInt(tag.attributes.ry,10) : parseInt(tag.attributes.r,10);
+              parseFloat(tag.attributes.ry,10) : parseFloat(tag.attributes.r,10);
         glyph.d.push(
           'M' + (cx - rx) + ',' + cy
           + 'C' + (cx - rx) + ',' + (cy + ry*KAPPA)
@@ -118,9 +118,9 @@ function svgicons2svgfont(files, options) {
     });
     saxStream.on('attribute', function(attr) {
       if('width' === attr.name && 'svg' === saxStream._parser.tag.name) {
-        glyph.width = parseInt(attr.value, 10);
+        glyph.width = parseFloat(attr.value, 10);
       } else if('height' === attr.name && 'svg' === saxStream._parser.tag.name) {
-        glyph.height = parseInt(attr.value, 10);
+        glyph.height = parseFloat(attr.value, 10);
       } else if('d' === attr.name && 'path' === saxStream._parser.tag.name) {
         if(attr.value) {
           glyph.d.push(attr.value);

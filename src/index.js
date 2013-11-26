@@ -22,10 +22,11 @@ var Path = require("path")
   , 
   SVGPathData = require("svg-pathdata");
 
-function svgicons2svgfont(files, dest, options) {
+function svgicons2svgfont(files, options) {
   options = options || {};
   options.fontName = options.fontName || 'iconfont';
-  var outputFont = Fs.createWriteStream(dest)
+  var Stream = require("stream").PassThrough
+    , outputStream = new Stream()
     , usedCodePoints = []
     , log = (options.log || console.log.bind(console))
     , error = options.error || console.error.bind(console)
@@ -143,7 +144,7 @@ function svgicons2svgfont(files, dest, options) {
         }
         // Output the SVG file
         // (find a SAX parser that allows modifying SVG on the fly)
-        outputFont.write('<?xml version="1.0" standalone="no"?> \n\
+        outputStream.write('<?xml version="1.0" standalone="no"?> \n\
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >\n\
 <svg xmlns="http://www.w3.org/2000/svg">\n\
 <defs>\n\
@@ -157,18 +158,18 @@ function svgicons2svgfont(files, dest, options) {
           });
           delete glyph.d;
           delete glyph.running;
-        outputFont.write('\
+        outputStream.write('\
     <glyph glyph-name="'+glyph.name+'" unicode="'+glyph.character+'" horiz-adv-x="'+glyph.width+'" d="'+d+'" />\n');
         });
-        outputFont.write('\
+        outputStream.write('\
   </font>\n\
 </defs>\n\
 </svg>\n');
-        outputFont.on('finish', function() {
-          log("Font saved to " + dest);
+        outputStream.on('finish', function() {
+          log("Font created");
           'function' === (typeof options.callback) && (options.callback)(glyphs);
         });
-        outputFont.end();
+        outputStream.end();
       }
     });
     Fs.createReadStream(glyph.file).pipe(saxStream);
@@ -198,6 +199,7 @@ function svgicons2svgfont(files, dest, options) {
       }
     }
   });
+  return outputStream;
 }
 
 module.exports = svgicons2svgfont;

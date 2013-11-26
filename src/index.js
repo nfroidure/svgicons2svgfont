@@ -75,10 +75,12 @@ function svgicons2svgfont(files, options) {
           // Move to the line start
           'M' + parseFloat(tag.attributes.x1,10).toString(10)
           + ' ' + parseFloat(tag.attributes.y1,10).toString(10)
-          // Draw the line (rect with a weight of 1)
-          + 'H' + parseFloat(tag.attributes.x2, 10).toString(10)
-          + 'v-5'
-          + 'H' + parseFloat(tag.attributes.x1, 10).toString(10)
+          + ' ' + (parseFloat(tag.attributes.x1,10)+1).toString(10)
+          + ' ' + (parseFloat(tag.attributes.y1,10)+1).toString(10)
+          + ' ' + (parseFloat(tag.attributes.x2,10)+1).toString(10)
+          + ' ' + (parseFloat(tag.attributes.y2,10)+1).toString(10)
+          + ' ' + parseFloat(tag.attributes.x2,10).toString(10)
+          + ' ' + parseFloat(tag.attributes.y2,10).toString(10)
           + 'Z'
         );
       } else if('polyline' === tag.name) {

@@ -75,6 +75,12 @@ describe('Generating fonts to files', function() {
     }, done);
 	});
 
+	it("should work with variable height icons", function(done) {
+    generateFontToFile({
+      fontName: 'variableheighticons'
+    }, done);
+	});
+
 });
 
 // Tests

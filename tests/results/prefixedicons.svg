@@ -8,7 +8,7 @@
     <glyph glyph-name="arrow-down" unicode="&#xE008;" horiz-adv-x="150" d=" M75 30L120 80L30 80z" />
     <glyph glyph-name="arrow-left" unicode="&#xE00F;" horiz-adv-x="150" d=" M50 75L100 120L100 30z" />
     <glyph glyph-name="arrow-right" unicode="&#xE013;" horiz-adv-x="150" d=" M100 75L50 120L50 30z" />
-    <glyph glyph-name="arrow-up" unicode="&#xE014;" horiz-adv-x="150" d=" m75 80l45 -50l-90 0z" />
+    <glyph glyph-name="arrow-up" unicode="&#xE014;" horiz-adv-x="150" d=" M75 80L120 30L30 30z" />
   </font>
 </defs>
 </svg>

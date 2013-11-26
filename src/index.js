@@ -64,7 +64,7 @@ function svgicons2svgfont(files, options) {
           + ' ' + parseFloat(tag.attributes.y,10).toString(10)
           // Draw the rectangle
           + 'h' + parseFloat(tag.attributes.width, 10).toString(10)
-          + 'v' + (parseFloat(tag.attributes.height, 10)*-1).toString(10)
+          + 'v' + (parseFloat(tag.attributes.height, 10)).toString(10)
           + 'h' + (parseFloat(tag.attributes.width, 10)*-1).toString(10)
           + 'z'
         );

@@ -20,7 +20,7 @@
   ],
 	"dependencies": {
 		"sax": "0.5.x",
-		"svg-pathdata": "0.x.x"
+		"svg-pathdata": "0.0.2"
 	},
 	"devDependencies": {
 		"mocha": "1.x.x"

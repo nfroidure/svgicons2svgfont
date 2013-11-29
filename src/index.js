@@ -136,11 +136,9 @@ function svgicons2svgfont(glyphs, options) {
           delete glyph.d;
           delete glyph.running;
         outputStream.write('\
-    <glyph glyph-name="' + glyph.name + '" unicode="&#x' + (glyph.codepoint.toString(16)).toUpperCase() + ';" horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');
-//        outputStream.write('\
-//    <glyph glyph-name="' + glyph.name + '"\n\
-//      unicode="&#x' + (glyph.codepoint.toString(16)).toUpperCase() + ';"\n\
-//      horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');
+    <glyph glyph-name="' + glyph.name + '"\n\
+      unicode="&#x' + (glyph.codepoint.toString(16)).toUpperCase() + ';"\n\
+      horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');
         });
         outputStream.write('\
   </font>\n\

@@ -7,13 +7,8 @@
  */
 "use strict";
 
-// http://en.wikipedia.org/wiki/Private_Use_(Unicode)
-var UNICODE_PRIVATE_USE_AREA = {
-    start: 0xE001,
-    end: 0xF8FF
-  }
 // http://www.whizkidtech.redprince.net/bezier/circle/
-  , KAPPA = ((Math.sqrt(2)-1)/3)*4;
+var KAPPA = ((Math.sqrt(2)-1)/3)*4;
 
 // Required modules
 var Path = require("path")

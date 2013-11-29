@@ -1,16 +1,22 @@
 var assert = require('assert')
   , svgicons2svgfont = require(__dirname + '/../src/index.js')
   , Fs = require('fs')
-  , StringDecoder = require('string_decoder').StringDecoder;
+  , StringDecoder = require('string_decoder').StringDecoder
+  , Path = require("path");
 
 // Helpers
-
 function generateFontToFile(options, done) {
-  var dest = __dirname + '/results/' + options.fontName + '.svg';
-  var stream = svgicons2svgfont(Fs.readdirSync(__dirname + '/fixtures/' + options.fontName)
-    .map(function(file) {
-      return __dirname + '/fixtures/' + options.fontName + '/' + file;
-    }), options);
+  var codepoint = 0xE001
+    , dest = __dirname + '/results/' + options.fontName + '.svg'
+    , stream = svgicons2svgfont(Fs.readdirSync(__dirname + '/fixtures/' + options.fontName)
+      .map(function(file) {
+        var matches = file.match(/^(?:u([0-9a-f]{4})\-)?(.*).svg$/i);
+        return {
+          codepoint: (matches[1] ? parseInt(matches[1], 16) : codepoint++),
+          name: matches[2],
+          stream: Fs.createReadStream(__dirname + '/fixtures/' + options.fontName + '/' + file)
+        };
+      }), options);
   stream.pipe(Fs.createWriteStream(dest)).on('finish', function() {
     assert.equal(
       Fs.readFileSync(__dirname + '/expected/' + options.fontName + '.svg',
@@ -24,11 +30,17 @@ function generateFontToFile(options, done) {
 
 function generateFontToMemory(options, done) {
   var content = ''
-    , decoder = new StringDecoder('utf8');
-  var stream = svgicons2svgfont(Fs.readdirSync(__dirname + '/fixtures/' + options.fontName)
-    .map(function(file) {
-      return __dirname + '/fixtures/' + options.fontName + '/' + file;
-    }), options);
+    , decoder = new StringDecoder('utf8')
+    , codepoint = 0xE001
+    , stream = svgicons2svgfont(Fs.readdirSync(__dirname + '/fixtures/' + options.fontName)
+      .map(function(file) {
+        var matches = file.match(/^(?:u([0-9a-f]{4})\-)?(.*).svg$/i);
+        return {
+          codepoint: (matches[1] ? parseInt(matches[1], 16) : codepoint++),
+          name: matches[2],
+          stream: Fs.createReadStream(__dirname + '/fixtures/' + options.fontName + '/' + file)
+        };
+      }), options);
   stream.on('data', function(chunk) {
     content += decoder.write(chunk);
   });

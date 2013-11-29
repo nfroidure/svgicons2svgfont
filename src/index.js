@@ -17,42 +17,18 @@ var UNICODE_PRIVATE_USE_AREA = {
 
 // Required modules
 var Path = require("path")
+  , Stream = require("stream").PassThrough
   , Fs = require("fs")
   , Sax = require("sax")
   , SVGPathData = require("svg-pathdata");
 
-function svgicons2svgfont(files, options) {
+function svgicons2svgfont(glyphs, options) {
   options = options || {};
   options.fontName = options.fontName || 'iconfont';
-  var Stream = require("stream").PassThrough
-    , outputStream = new Stream()
-    , usedCodePoints = []
+  var outputStream = new Stream()
     , log = (options.log || console.log.bind(console))
-    , error = options.error || console.error.bind(console)
-    , glyphs = files.map(function(file) {
-    // Creating an object for each icon
-    var matches = Path.basename(file).match(/^(?:u([0-9a-f]{4})\-)?(.*).svg$/i);
-    if(matches&&matches[1]) {
-      usedCodePoints.push(parseInt(matches[1], 16));
-      return {
-        name: matches[2],
-        codepoint: matches[1],
-        character: '&#x' + matches[1].toUpperCase() + ';',
-        file: file,
-        d: [],
-        running: true
-      };
-    } else if(matches) {
-      return {
-        name: matches[2],
-        codepoint: 0,
-        character: '',
-        file: file,
-        d: [],
-        running: true
-      };
-    }
-  }).forEach(function (glyph, index, glyphs) {
+    , error = options.error || console.error.bind(console);
+  glyphs = glyphs.forEach(function (glyph, index, glyphs) {
     // Parsing each icons asynchronously
     var saxStream = Sax.createStream(true);
     saxStream.on('opentag', function(tag) {
@@ -160,7 +136,11 @@ function svgicons2svgfont(files, options) {
           delete glyph.d;
           delete glyph.running;
         outputStream.write('\
-    <glyph glyph-name="'+glyph.name+'" unicode="'+glyph.character+'" horiz-adv-x="'+glyph.width+'" d="'+d+'" />\n');
+    <glyph glyph-name="' + glyph.name + '" unicode="&#x' + (glyph.codepoint.toString(16)).toUpperCase() + ';" horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');
+//        outputStream.write('\
+//    <glyph glyph-name="' + glyph.name + '"\n\
+//      unicode="&#x' + (glyph.codepoint.toString(16)).toUpperCase() + ';"\n\
+//      horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');
         });
         outputStream.write('\
   </font>\n\
@@ -173,32 +153,26 @@ function svgicons2svgfont(files, options) {
         outputStream.end();
       }
     });
-    Fs.createReadStream(glyph.file).pipe(saxStream);
-    // Find a free codepoint and rename the file
-    if(0 === glyph.codepoint) {
-      for(var i = UNICODE_PRIVATE_USE_AREA.start,
-        j=UNICODE_PRIVATE_USE_AREA.end; i<j; i++) {
-        if(-1 === usedCodePoints.indexOf(i)) {
-          glyph.codepoint = i.toString(16);
-          glyph.character = '&#x' + i.toString(16).toUpperCase() + ';';
-          usedCodePoints.push(i);
-          if(options.appendCodepoints) {
-            Fs.rename(glyph.file, Path.dirname(glyph.file) + '/'
-              + 'u' + i.toString(16).toUpperCase() + '-' + glyph.name + '.svg',
-            function(err) {
-              if(err) {
-                error("Could not save codepoint: " + 'u'
-                  + i.toString(16).toUpperCase() +' for ' + glyph.name + '.svg');
-              } else {
-                log("Saved codepoint: " + 'u' + i.toString(16).toUpperCase()
-                  +' for ' + glyph.name + '.svg');
-              }
-            });
-          }
-          break;
-        }
-      }
+    if('string' !== typeof glyph.name) {
+      throw Error('Please provide a name for the glyph at index ' + index);
     }
+    if(glyphs.some(function(g) {
+      return (g !== glyph && g.name === glyph.name);
+    })) {
+      throw Error('The glyph name "' + glyph.name + '" must be unique.');
+    }
+    if('number' !== typeof glyph.codepoint) {
+      throw Error('Please provide a codepoint for the glyph "' + glyph.name + '"');
+    }
+    if(glyphs.some(function(g) {
+      return (g !== glyph && g.codepoint === glyph.codepoint);
+    })) {
+      throw Error('The glyph "' + glyph.name
+        + '" codepoint seems to be used already elsewhere.');
+    }
+    glyph.running = true;
+    glyph.d = [];
+    glyph.stream.pipe(saxStream);
   });
   return outputStream;
 }

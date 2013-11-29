@@ -152,10 +152,34 @@ describe('Testing CLI', function() {
 
 describe('Providing bad glyphs', function() {
 
-	it("should fail when not providing codepoints", function(done) {
-	  assert.throws(function() {
-	    svgicons2svgfont({
-	      stream: Fs.createReadStream('/dev/null')
-	    }, '/dev/null');
-	  }, Error, 'test');
+	it("should fail when not providing glyph name", function() {
+	  var hadError = false;
+    try {
+      svgicons2svgfont([{
+	      stream: Fs.createReadStream('/dev/null'),
+	      codepoint: 0xE001
+      }]);
+    } catch(err) {
+	    assert.equal(err instanceof Error, true);
+	    assert.equal(err.message, 'Please provide a name for the glyph at index 0');
+	    hadError = true;
+    }
+    assert.equal(hadError, true);
 	});
+
+	it("should fail when not providing codepoints", function() {
+	  var hadError = false;
+    try {
+      svgicons2svgfont([{
+	      stream: Fs.createReadStream('/dev/null'),
+	      name: 'test'
+      }]);
+    } catch(err) {
+	    assert.equal(err instanceof Error, true);
+	    assert.equal(err.message, 'Please provide a codepoint for the glyph "test"');
+	    hadError = true;
+    }
+    assert.equal(hadError, true);
+	});
+
+});

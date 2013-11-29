@@ -135,7 +135,7 @@ function svgicons2svgfont(glyphs, options) {
           });
           delete glyph.d;
           delete glyph.running;
-        outputStream.write('\
+          outputStream.write('\
     <glyph glyph-name="' + glyph.name + '"\n\
       unicode="&#x' + (glyph.codepoint.toString(16)).toUpperCase() + ';"\n\
       horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');

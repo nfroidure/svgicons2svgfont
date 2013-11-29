@@ -149,3 +149,13 @@ describe('Testing CLI', function() {
   });
 
 });
+
+describe('Providing bad glyphs', function() {
+
+	it("should fail when not providing codepoints", function(done) {
+	  assert.throws(function() {
+	    svgicons2svgfont({
+	      stream: Fs.createReadStream('/dev/null')
+	    }, '/dev/null');
+	  }, Error, 'test');
+	});

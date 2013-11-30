@@ -13,7 +13,6 @@ var KAPPA = ((Math.sqrt(2)-1)/3)*4;
 // Required modules
 var Path = require("path")
   , Stream = require("stream").PassThrough
-  , Fs = require("fs")
   , Sax = require("sax")
   , SVGPathData = require("svg-pathdata");
 
@@ -160,6 +159,7 @@ function svgicons2svgfont(glyphs, options) {
     if(glyphs.some(function(g) {
       return (g !== glyph && g.codepoint === glyph.codepoint);
     })) {
+      console.log(glyphs);
       throw Error('The glyph "' + glyph.name
         + '" codepoint seems to be used already elsewhere.');
     }

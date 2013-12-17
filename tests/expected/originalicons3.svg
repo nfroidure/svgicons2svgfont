@@ -4,7 +4,7 @@
 <defs>
   <font id="originalicons" horiz-adv-x="511.9057">
     <font-face font-family="originalicons"
-      units-per-em="1024" ascent="1024"
+      units-per-em="800" ascent="800"
       descent="0" />
     <missing-glyph horiz-adv-x="0" />
     <glyph glyph-name="mute"

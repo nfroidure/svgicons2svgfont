@@ -3,7 +3,9 @@
 <svg xmlns="http://www.w3.org/2000/svg">
 <defs>
   <font id="multipathicons" horiz-adv-x="150">
-    <font-face units-per-em="150" ascent="150" descent="0" />
+    <font-face font-family="multipathicons"
+      units-per-em="150" ascent="150"
+      descent="0" />
     <missing-glyph horiz-adv-x="0" />
     <glyph glyph-name="basket"
       unicode="&#xE001;"

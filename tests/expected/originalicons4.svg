@@ -4,8 +4,8 @@
 <defs>
   <font id="originalicons" horiz-adv-x="511.9057">
     <font-face font-family="originalicons"
-      units-per-em="1024" ascent="1024"
-      descent="0" />
+      units-per-em="1024" ascent="824"
+      descent="200" />
     <missing-glyph horiz-adv-x="0" />
     <glyph glyph-name="mute"
       unicode="&#xE001;"

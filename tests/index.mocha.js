@@ -5,9 +5,10 @@ var assert = require('assert')
   , Path = require("path");
 
 // Helpers
-function generateFontToFile(options, done) {
+function generateFontToFile(options, done, fileSuffix) {
   var codepoint = 0xE001
-    , dest = __dirname + '/results/' + options.fontName + '.svg'
+    , dest = __dirname + '/results/' + options.fontName
+      + (fileSuffix || '') + '.svg'
     , stream = svgicons2svgfont(Fs.readdirSync(__dirname + '/fixtures/' + options.fontName)
       .map(function(file) {
         var matches = file.match(/^(?:u([0-9a-f]{4})\-)?(.*).svg$/i);
@@ -19,7 +20,8 @@ function generateFontToFile(options, done) {
       }), options);
   stream.pipe(Fs.createWriteStream(dest)).on('finish', function() {
     assert.equal(
-      Fs.readFileSync(__dirname + '/expected/' + options.fontName + '.svg',
+      Fs.readFileSync(__dirname + '/expected/' + options.fontName
+        + (fileSuffix || '') + '.svg',
         {encoding: 'utf8'}),
       Fs.readFileSync(dest,
         {encoding: 'utf8'})
@@ -125,6 +127,31 @@ describe('Generating fonts to memory', function() {
     generateFontToMemory({
       fontName: 'shapeicons'
     }, done);
+  });
+
+});
+
+describe('Using options', function() {
+
+  it("should work with fixedWidth option set to true", function(done) {
+    generateFontToFile({
+      fontName: 'originalicons',
+      fixedWidth: true
+    }, done, '2');
+  });
+
+  it("should work with custom fontHeight option", function(done) {
+    generateFontToFile({
+      fontName: 'originalicons',
+      fontHeight: 800
+    }, done, '3');
+  });
+
+  it("should work with custom descent option", function(done) {
+    generateFontToFile({
+      fontName: 'originalicons',
+      descent: 200
+    }, done, '4');
   });
 
 });

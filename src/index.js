@@ -19,6 +19,8 @@ var Path = require("path")
 function svgicons2svgfont(glyphs, options) {
   options = options || {};
   options.fontName = options.fontName || 'iconfont';
+  options.fixedWidth = options.fixedWidth || false;
+  options.descent = options.descent || 0;
   var outputStream = new Stream()
     , log = (options.log || console.log.bind(console))
     , error = options.error || console.error.bind(console);
@@ -104,9 +106,13 @@ function svgicons2svgfont(glyphs, options) {
       if(glyphs.every(function(glyph) {
         return !glyph.running;
       })) {
-        var fontHeight = (glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
-          return Math.max(gA.height || gA, gB.height || gB);
-        }) : glyphs[0].height);
+        var fontWidth = (glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
+              return Math.max(gA.width || gA, gB.width || gB);
+            }) : glyphs[0].width)
+          , fontHeight = options.fontHeight ||
+            (glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
+              return Math.max(gA.height || gA, gB.height || gB);
+            }) : glyphs[0].height);
         if(fontHeight>(glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
           return Math.min(gA.height || gA, gB.height || gB);
         }) : glyphs[0].height)) {
@@ -119,8 +125,10 @@ function svgicons2svgfont(glyphs, options) {
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >\n\
 <svg xmlns="http://www.w3.org/2000/svg">\n\
 <defs>\n\
-  <font id="' + options.fontName + '" horiz-adv-x="' + fontHeight + '">\n\
-    <font-face units-per-em="' + fontHeight + '" ascent="' + fontHeight + '" descent="0" />\n\
+  <font id="' + options.fontName + '" horiz-adv-x="' + fontWidth + '">\n\
+    <font-face font-family="' + options.fontName + '"\n\
+      units-per-em="' + fontHeight + '" ascent="' + (fontHeight - options.descent) + '"\n\
+      descent="' + options.descent + '" />\n\
     <missing-glyph horiz-adv-x="0" />\n');
         glyphs.forEach(function(glyph) {
           var d = '';
@@ -132,7 +140,7 @@ function svgicons2svgfont(glyphs, options) {
           outputStream.write('\
     <glyph glyph-name="' + glyph.name + '"\n\
       unicode="&#x' + (glyph.codepoint.toString(16)).toUpperCase() + ';"\n\
-      horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');
+      horiz-adv-x="' + (options.fixedWidth ? fontWidth : glyph.width) + '" d="' + d +'" />\n');
         });
         outputStream.write('\
   </font>\n\
@@ -159,7 +167,6 @@ function svgicons2svgfont(glyphs, options) {
     if(glyphs.some(function(g) {
       return (g !== glyph && g.codepoint === glyph.codepoint);
     })) {
-      console.log(glyphs);
       throw Error('The glyph "' + glyph.name
         + '" codepoint seems to be used already elsewhere.');
     }

@@ -32,8 +32,16 @@ function svgicons2svgfont(glyphs, options) {
         && 'none' == tag.attributes.display.toLowerCase()) {
         return;
       }
+      // Save the view size
+      if('svg' === tag.name) {
+      if('width' in tag.attributes) {
+        glyph.width = parseFloat(tag.attributes.width, 10);
+      }
+      if('height' in tag.attributes) {
+        glyph.height = parseFloat(tag.attributes.height, 10);
+      }
       // Change rect elements to the corresponding path
-      if('rect' === tag.name) {
+      } else if('rect' === tag.name) {
         glyph.d.push(
           // Move to the left corner
           'M' + parseFloat(tag.attributes.x,10).toString(10)
@@ -94,13 +102,6 @@ function svgicons2svgfont(glyphs, options) {
         );
       } else if('path' === tag.name && tag.attributes.d) {
         glyph.d.push(tag.attributes.d);
-      }
-    });
-    saxStream.on('attribute', function(attr) {
-      if('width' === attr.name && 'svg' === saxStream._parser.tag.name) {
-        glyph.width = parseFloat(attr.value, 10);
-      } else if('height' === attr.name && 'svg' === saxStream._parser.tag.name) {
-        glyph.height = parseFloat(attr.value, 10);
       }
     });
     saxStream.on('end', function() {

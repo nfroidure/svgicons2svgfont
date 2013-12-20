@@ -95,6 +95,12 @@ describe('Generating fonts to files', function() {
     }, done);
 	});
 
+	it("should not display hidden pathes", function(done) {
+    generateFontToFile({
+      fontName: 'hiddenpathesicons'
+    }, done);
+	});
+
 });
 
 describe('Generating fonts to memory', function() {

@@ -28,6 +28,10 @@ function svgicons2svgfont(glyphs, options) {
     // Parsing each icons asynchronously
     var saxStream = Sax.createStream(true);
     saxStream.on('opentag', function(tag) {
+      if(tag.attributes.display
+        && 'none' == tag.attributes.display.toLowerCase()) {
+        return;
+      }
       // Change rect elements to the corresponding path
       if('rect' === tag.name) {
         glyph.d.push(
@@ -88,6 +92,8 @@ function svgicons2svgfont(glyphs, options) {
           + ' ' + (cx - rx) + ',' + cy
           + 'Z'
         );
+      } else if('path' === tag.name && tag.attributes.d) {
+        glyph.d.push(tag.attributes.d);
       }
     });
     saxStream.on('attribute', function(attr) {
@@ -95,10 +101,6 @@ function svgicons2svgfont(glyphs, options) {
         glyph.width = parseFloat(attr.value, 10);
       } else if('height' === attr.name && 'svg' === saxStream._parser.tag.name) {
         glyph.height = parseFloat(attr.value, 10);
-      } else if('d' === attr.name && 'path' === saxStream._parser.tag.name) {
-        if(attr.value) {
-          glyph.d.push(attr.value);
-        }
       }
     });
     saxStream.on('end', function() {

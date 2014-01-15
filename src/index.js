@@ -12,16 +12,17 @@ var KAPPA = ((Math.sqrt(2)-1)/3)*4;
 
 // Required modules
 var Path = require("path")
-  , Stream = require("stream").PassThrough
+  , Stream = require("stream")
   , Sax = require("sax")
-  , SVGPathData = require("svg-pathdata");
+  , SVGPathData = require("svg-pathdata")
+;
 
 function svgicons2svgfont(glyphs, options) {
   options = options || {};
   options.fontName = options.fontName || 'iconfont';
   options.fixedWidth = options.fixedWidth || false;
   options.descent = options.descent || 0;
-  var outputStream = new Stream()
+  var outputStream = new Stream.PassThrough()
     , log = (options.log || console.log.bind(console))
     , error = options.error || console.error.bind(console);
   glyphs = glyphs.forEach(function (glyph, index, glyphs) {
@@ -130,7 +131,7 @@ function svgicons2svgfont(glyphs, options) {
 <defs>\n\
   <font id="' + options.fontName + '" horiz-adv-x="' + fontWidth + '">\n\
     <font-face font-family="' + options.fontName + '"\n\
-      units-per-em="' + fontHeight + '" ascent="' + (fontHeight - options.descent) + '"\n\
+      units-per-em="' + fontHeight + '" ascent="' + (fontHeight + options.descent) + '"\n\
       descent="' + options.descent + '" />\n\
     <missing-glyph horiz-adv-x="0" />\n');
         glyphs.forEach(function(glyph) {

@@ -101,6 +101,12 @@ describe('Generating fonts to files', function() {
     }, done);
 	});
 
+	it.only("should work with real world icons", function(done) {
+    generateFontToFile({
+      fontName: 'realicons'
+    }, done);
+	});
+
 });
 
 describe('Generating fonts to memory', function() {

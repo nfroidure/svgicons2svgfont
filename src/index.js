@@ -35,18 +35,22 @@ function svgicons2svgfont(glyphs, options) {
       }
       // Save the view size
       if('svg' === tag.name) {
-      if('width' in tag.attributes) {
-        glyph.width = parseFloat(tag.attributes.width, 10);
-      }
-      if('height' in tag.attributes) {
-        glyph.height = parseFloat(tag.attributes.height, 10);
-      }
+        if('width' in tag.attributes) {
+          glyph.width = parseFloat(tag.attributes.width, 10);
+        }
+        if('height' in tag.attributes) {
+          glyph.height = parseFloat(tag.attributes.height, 10);
+        }
+      // Clipping path unsupported
+      } else if('clipPath' === tag.name) {
+        log('Found a clipPath element in the icon "' + glyph.name + '" the result'
+          +' may be different than expected.');
       // Change rect elements to the corresponding path
       } else if('rect' === tag.name) {
         glyph.d.push(
           // Move to the left corner
-          'M' + parseFloat(tag.attributes.x,10).toString(10)
-          + ' ' + parseFloat(tag.attributes.y,10).toString(10)
+          'M' + parseFloat(tag.attributes.x || 0,10).toString(10)
+          + ' ' + parseFloat(tag.attributes.y || 0,10).toString(10)
           // Draw the rectangle
           + 'h' + parseFloat(tag.attributes.width, 10).toString(10)
           + 'v' + (parseFloat(tag.attributes.height, 10)).toString(10)
@@ -136,6 +140,7 @@ function svgicons2svgfont(glyphs, options) {
     <missing-glyph horiz-adv-x="0" />\n');
         glyphs.forEach(function(glyph) {
           var d = '';
+          
           glyph.d.forEach(function(cD) {
             d+=' '+new SVGPathData(cD).ySymetry(glyph.height).encode();
           });

@@ -1,6 +1,7 @@
-# svgicons2svgfont [![Build Status](https://travis-ci.org/nfroidure/svgicons2svgfont.png?branch=master)](https://travis-ci.org/nfroidure/svgicons2svgfont)
+# svgicons2svgfont
+> svgicons2svgfont is a simple tool to merge multiple icons to an SVG font.
 
-svgicons2svgfont is a simple tool to merge multiple icons to an SVG font.
+[![NPM version](https://badge.fury.io/js/svgicons2svgfont.png)](https://npmjs.org/package/svgicons2svgfont) [![Build status](https://secure.travis-ci.org/nfroidure/svgicons2svgfont.png)](https://travis-ci.org/nfroidure/svgicons2svgfont) [![Dependency Status](https://david-dm.org/nfroidure/svgicons2svgfont.png)](https://david-dm.org/nfroidure/svgicons2svgfont) [![devDependency Status](https://david-dm.org/nfroidure/svgicons2svgfont/dev-status.png)](https://david-dm.org/nfroidure/svgicons2svgfont#info=devDependencies) [![Coverage Status](https://coveralls.io/repos/nfroidure/svgicons2svgfont/badge.png?branch=master)](https://coveralls.io/r/nfroidure/svgicons2svgfont?branch=master)
 
 'rect', 'line', 'circle', 'ellipsis', 'polyline' and 'polygon' shapes will be
  converted to pathes. Multiple pathes will be merged.

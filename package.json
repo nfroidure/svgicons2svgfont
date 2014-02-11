@@ -1,11 +1,13 @@
 {
   "name": "svgicons2svgfont",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Read a set of SVG icons and ouput a SVG font",
   "homepage": "https://github.com/nfroidure/svgicons2svgfont",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha tests/*.mocha.js"
+    "test": "./node_modules/mocha/bin/mocha tests/*.mocha.js",
+    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- tests/*.mocha.js -R spec -t 5000 && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha --report html -- tests/*.mocha.js -R spec -t 5000"
   },
   "repository": {
     "type": "git",
@@ -20,7 +22,7 @@
   ],
 	"dependencies": {
 		"sax": "0.5.x",
-		"svg-pathdata": "0.0.2"
+		"svg-pathdata": "0.0.3"
 	},
 	"devDependencies": {
 		"mocha": "1.x.x"

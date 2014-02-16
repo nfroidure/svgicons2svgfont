@@ -21,7 +21,7 @@
     "fonts"
   ],
   "dependencies": {
-    "sax": "0.5.x",
+    "sax": "0.6.x",
     "svg-pathdata": "0.0.3"
   },
   "devDependencies": {

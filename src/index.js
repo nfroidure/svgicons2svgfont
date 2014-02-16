@@ -27,10 +27,18 @@ function svgicons2svgfont(glyphs, options) {
     , error = options.error || console.error.bind(console);
   glyphs = glyphs.forEach(function (glyph, index, glyphs) {
     // Parsing each icons asynchronously
-    var saxStream = Sax.createStream(true);
+    var saxStream = Sax.createStream(true)
+      , parents = []
+    ;
+    saxStream.on('closetag', function(tag) {
+      parents.pop();
+    });
     saxStream.on('opentag', function(tag) {
-      if(tag.attributes.display
-        && 'none' == tag.attributes.display.toLowerCase()) {
+      parents.push(tag);
+      if(parents.some(function(tag) {
+        return tag.attributes.display
+          && 'none' == tag.attributes.display.toLowerCase();
+      })) {
         return;
       }
       // Save the view size

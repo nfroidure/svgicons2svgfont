@@ -5,9 +5,9 @@
   "homepage": "https://github.com/nfroidure/svgicons2svgfont",
   "main": "src/index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha tests/*.mocha.js",
-    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- tests/*.mocha.js -R spec -t 5000 && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha --report html -- tests/*.mocha.js -R spec -t 5000"
+    "test": "node_modules/mocha/bin/mocha tests/*.mocha.js",
+    "coveralls": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha --report lcovonly -- tests/*.mocha.js -R spec -t 5000 && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "cover": "./node_modules/istanbul/lib/cli.js cover --report html ./node_modules/mocha/bin/_mocha -- tests/*.mocha.js -R spec -t 5000"
   },
   "repository": {
     "type": "git",
@@ -20,13 +20,17 @@
     "creation",
     "fonts"
   ],
-	"dependencies": {
-		"sax": "0.5.x",
-		"svg-pathdata": "0.0.3"
-	},
-	"devDependencies": {
-		"mocha": "1.x.x"
-	},
+  "dependencies": {
+    "sax": "0.5.x",
+    "svg-pathdata": "0.0.3"
+  },
+  "devDependencies": {
+    "mocha": "~1.17.1",
+    "mocha-lcov-reporter": "0.0.1",
+    "coveralls": "~2.7.1",
+    "istanbul": "~0.2.4",
+    "sax": "~0.5.8"
+  },
   "author": {
     "name": "Nicolas Froidure",
     "url": "http://www.insertafter.com/blog.html"
@@ -42,6 +46,6 @@
   },
   "preferGlobal": "true",
   "bin": {
-    "svgicons2svgfont" : "bin/svgicons2svgfont.js"
+    "svgicons2svgfont": "bin/svgicons2svgfont.js"
   }
 }

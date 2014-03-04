@@ -129,12 +129,13 @@ function svgicons2svgfont(glyphs, options) {
             (glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
               return Math.max(gA.height || gA, gB.height || gB);
             }) : glyphs[0].height);
-        if(!options.normalize
+        if((!options.normalize)
           && fontHeight>(glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
           return Math.min(gA.height || gA, gB.height || gB);
         }) : glyphs[0].height)) {
           log('The provided icons does not have the same height it could lead'
-            +' to unexpected results.');
+            +' to unexpected results. Using the normalize option could'
+            +' solve the problem.');
         }
         // Output the SVG file
         // (find a SAX parser that allows modifying SVG on the fly)

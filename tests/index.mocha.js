@@ -228,4 +228,44 @@ describe('Providing bad glyphs', function() {
     assert.equal(hadError, true);
 	});
 
+	it("should fail when providing the same codepoint twice", function() {
+	  var hadError = false;
+    try {
+      svgicons2svgfont([{
+	      stream: Fs.createReadStream('/dev/null'),
+	      name: 'test',
+	      codepoint: 0xE001
+      },{
+	      stream: Fs.createReadStream('/dev/null'),
+	      name: 'test2',
+	      codepoint: 0xE001
+      }]);
+    } catch(err) {
+	    assert.equal(err instanceof Error, true);
+	    assert.equal(err.message, 'The glyph "test" codepoint seems to be used already elsewhere.');
+	    hadError = true;
+    }
+    assert.equal(hadError, true);
+	});
+
+	it("should fail when providing the same name twice", function() {
+	  var hadError = false;
+    try {
+      svgicons2svgfont([{
+	      stream: Fs.createReadStream('/dev/null'),
+	      name: 'test',
+	      codepoint: 0xE001
+      },{
+	      stream: Fs.createReadStream('/dev/null'),
+	      name: 'test',
+	      codepoint: 0xE002
+      }]);
+    } catch(err) {
+	    assert.equal(err instanceof Error, true);
+	    assert.equal(err.message, 'The glyph name "test" must be unique.');
+	    hadError = true;
+    }
+    assert.equal(hadError, true);
+	});
+
 });

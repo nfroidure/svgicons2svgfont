@@ -129,7 +129,8 @@ function svgicons2svgfont(glyphs, options) {
             (glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
               return Math.max(gA.height || gA, gB.height || gB);
             }) : glyphs[0].height);
-        if(fontHeight>(glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
+        if(!options.normalize
+          && fontHeight>(glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
           return Math.min(gA.height || gA, gB.height || gB);
         }) : glyphs[0].height)) {
           log('The provided icons does not have the same height it could lead'
@@ -147,10 +148,17 @@ function svgicons2svgfont(glyphs, options) {
       descent="' + options.descent + '" />\n\
     <missing-glyph horiz-adv-x="0" />\n');
         glyphs.forEach(function(glyph) {
-          var d = '';
-          
+          var ratio = fontHeight / glyph.height
+            , d = '';
+          if(options.normalize) {
+            glyph.height = fontHeight;
+            glyph.width *= ratio;
+          }
           glyph.d.forEach(function(cD) {
-            d+=' '+new SVGPathData(cD).ySymetry(glyph.height).encode();
+            d+=' '+new SVGPathData(cD).scale(
+                options.normalize ? ratio : 1,
+                options.normalize ? ratio : 1)
+              .ySymetry(glyph.height).encode();
           });
           delete glyph.d;
           delete glyph.running;

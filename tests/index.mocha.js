@@ -97,9 +97,9 @@ describe('Generating fonts to files', function() {
 
 	it("should work with variable height icons and the normalize option", function(done) {
     generateFontToFile({
-      fontName: 'variableheighticonsn'
+      fontName: 'variableheighticons',
       normalize: true
-    }, done);
+    }, done, 'n');
 	});
 
 	it("should not display hidden pathes", function(done) {

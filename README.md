@@ -61,12 +61,12 @@ The font descent. It is usefull to fix the font baseline yourself.
 The ascent formula is: ascent = fontHeight - descent.
 
 
-# Grunt plugins
+## Grunt plugins
 
 [grunt-svgicons2svgfont](https://github.com/nfroidure/grunt-svgicons2svgfont)
  and [grunt-webfont](https://github.com/nfroidure/grunt-webfont).
 
-# Gulp plugins
+## Gulp plugins
 
 Try [gulp-iconfont](https://github.com/nfroidure/gulp-iconfont) and 
   [gulp-svgicons2svgfont](https://github.com/nfroidure/gulp-svgicons2svgfont).

@@ -35,24 +35,52 @@ function svgicons2svgfont(glyphs, options) {
     });
     saxStream.on('opentag', function(tag) {
       parents.push(tag);
+      // Checking if any parent rendering is disabled and exit if so
       if(parents.some(function(tag) {
-        return tag.attributes.display
-          && 'none' == tag.attributes.display.toLowerCase();
+        if('undefined' != typeof tag.attributes.display
+            && 'none' == tag.attributes.display.toLowerCase()) {
+          return true;
+        }
+        if('undefined' != typeof tag.attributes.width
+            && 0 === parseFloat(tag.attributes.width, 0)) {
+          return true;
+        }
+        if('undefined' != typeof tag.attributes.height
+            && 0 === parseFloat(tag.attributes.height, 0)) {
+          return true;
+        }
+        if('undefined' != typeof tag.attributes.viewport) {
+          var values = tag.attributes.viewport.split(/\s*,*\s|\s,*\s*|,/);
+          if(0 === parseFloat(values[2]) || 0 === parseFloat(values[3])) {
+            return true;
+          }
+        }
       })) {
         return;
       }
       // Save the view size
       if('svg' === tag.name) {
+        if('viewBox' in tag.attributes) {
+          var values = tag.attributes.viewBox.split(/\s*,*\s|\s,*\s*|,/);
+          glyph.width = parseFloat(values[2], 10);
+          glyph.height = parseFloat(values[3], 10);
+          console.log('glyph:',glyph.name,glyph.width,glyph.height, values);
+        }
         if('width' in tag.attributes) {
           glyph.width = parseFloat(tag.attributes.width, 10);
         }
         if('height' in tag.attributes) {
           glyph.height = parseFloat(tag.attributes.height, 10);
         }
+        if(!glyph.width || !glyph.height) {
+          log('Glyph "' + glyph.name + '" has no size attribute on which to'
+            + ' get the gylph dimensions (heigh and width or viewBox'
+            + ' attributes).');
+        }
       // Clipping path unsupported
       } else if('clipPath' === tag.name) {
-        log('Found a clipPath element in the icon "' + glyph.name + '" the result'
-          +' may be different than expected.');
+        log('Found a clipPath element in the icon "' + glyph.name + '" the'
+          + 'result may be different than expected.');
       // Change rect elements to the corresponding path
       } else if('rect' === tag.name) {
         glyph.d.push(

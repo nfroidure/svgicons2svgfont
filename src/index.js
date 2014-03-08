@@ -64,7 +64,6 @@ function svgicons2svgfont(glyphs, options) {
           var values = tag.attributes.viewBox.split(/\s*,*\s|\s,*\s*|,/);
           glyph.width = parseFloat(values[2], 10);
           glyph.height = parseFloat(values[3], 10);
-          console.log('glyph:',glyph.name,glyph.width,glyph.height, values);
         }
         if('width' in tag.attributes) {
           glyph.width = parseFloat(tag.attributes.width, 10);
@@ -75,7 +74,7 @@ function svgicons2svgfont(glyphs, options) {
         if(!glyph.width || !glyph.height) {
           log('Glyph "' + glyph.name + '" has no size attribute on which to'
             + ' get the gylph dimensions (heigh and width or viewBox'
-            + ' attributes).');
+            + ' attributes)');
         }
       // Clipping path unsupported
       } else if('clipPath' === tag.name) {

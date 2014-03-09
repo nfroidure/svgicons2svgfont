@@ -49,8 +49,8 @@ function svgicons2svgfont(glyphs, options) {
             && 0 === parseFloat(tag.attributes.height, 0)) {
           return true;
         }
-        if('undefined' != typeof tag.attributes.viewport) {
-          var values = tag.attributes.viewport.split(/\s*,*\s|\s,*\s*|,/);
+        if('undefined' != typeof tag.attributes.viewBox) {
+          var values = tag.attributes.viewBox.split(/\s*,*\s|\s,*\s*|,/);
           if(0 === parseFloat(values[2]) || 0 === parseFloat(values[3])) {
             return true;
           }
@@ -75,6 +75,8 @@ function svgicons2svgfont(glyphs, options) {
           log('Glyph "' + glyph.name + '" has no size attribute on which to'
             + ' get the gylph dimensions (heigh and width or viewBox'
             + ' attributes)');
+          glyph.width = 150;
+          glyph.height = 150;
         }
       // Clipping path unsupported
       } else if('clipPath' === tag.name) {

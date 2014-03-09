@@ -73,7 +73,8 @@ describe('Generating fonts to files', function() {
 
 	it("should work for codepoint mapped SVG icons", function(done) {
     generateFontToFile({
-      fontName: 'prefixedicons'
+      fontName: 'prefixedicons',
+      callback: function(){}
     }, done);
 	});
 
@@ -113,6 +114,18 @@ describe('Generating fonts to files', function() {
       fontName: 'realicons'
     }, done);
 	});
+
+  it("should work with rendering test SVG icons", function(done) {
+    generateFontToFile({
+      fontName: 'rendricons'
+    }, done);
+  });
+
+  it("should work with a single SVG icon", function(done) {
+    generateFontToFile({
+      fontName: 'singleicon'
+    }, done);
+  });
 
 });
 

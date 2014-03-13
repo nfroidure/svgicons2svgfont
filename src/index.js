@@ -60,8 +60,12 @@ function svgicons2svgfont(glyphs, options) {
       }
       // Save the view size
       if('svg' === tag.name) {
+        glyph.dX = 0;
+        glyph.dY = 0;
         if('viewBox' in tag.attributes) {
           var values = tag.attributes.viewBox.split(/\s*,*\s|\s,*\s*|,/);
+          glyph.dX = parseFloat(values[0], 10);
+          glyph.dY = parseFloat(values[1], 10);
           glyph.width = parseFloat(values[2], 10);
           glyph.height = parseFloat(values[3], 10);
         }
@@ -185,10 +189,14 @@ function svgicons2svgfont(glyphs, options) {
             glyph.width *= ratio;
           }
           glyph.d.forEach(function(cD) {
-            d+=' '+new SVGPathData(cD).scale(
-                options.normalize ? ratio : 1,
-                options.normalize ? ratio : 1)
-              .ySymetry(glyph.height).encode();
+            d+=' '+new SVGPathData(cD)
+                .toAbs()
+                .translate(-glyph.dX, -glyph.dY)
+                .scale(
+                  options.normalize ? ratio : 1,
+                  options.normalize ? ratio : 1)
+                .ySymetry(glyph.height)
+                .encode();
           });
           delete glyph.d;
           delete glyph.running;

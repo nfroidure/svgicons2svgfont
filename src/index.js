@@ -12,7 +12,7 @@ var KAPPA = ((Math.sqrt(2)-1)/3)*4;
 
 // Required modules
 var Path = require("path")
-  , Stream = require("stream")
+  , Stream = require("readable-stream")
   , Sax = require("sax")
   , SVGPathData = require("svg-pathdata")
 ;

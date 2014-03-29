@@ -22,7 +22,8 @@
   ],
   "dependencies": {
     "sax": "0.6.x",
-    "svg-pathdata": "0.0.3"
+    "svg-pathdata": "0.0.3",
+    "readable-stream": "^1.0.26-2"
   },
   "devDependencies": {
     "mocha": "~1.17.1",

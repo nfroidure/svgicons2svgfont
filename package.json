@@ -22,14 +22,14 @@
   ],
   "dependencies": {
     "sax": "0.6.x",
-    "svg-pathdata": "0.0.3",
+    "svg-pathdata": "0.0.4",
     "readable-stream": "^1.0.26-2"
   },
   "devDependencies": {
-    "mocha": "~1.17.1",
+    "mocha": "~1.18.2",
     "mocha-lcov-reporter": "0.0.1",
-    "coveralls": "~2.8.0",
-    "istanbul": "~0.2.4",
+    "coveralls": "~2.10.0",
+    "istanbul": "~0.2.6",
     "sax": "~0.6.0"
   },
   "author": {

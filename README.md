@@ -71,6 +71,11 @@ The ascent formula is: ascent = fontHeight - descent.
 Try [gulp-iconfont](https://github.com/nfroidure/gulp-iconfont) and 
   [gulp-svgicons2svgfont](https://github.com/nfroidure/gulp-svgicons2svgfont).
 
+## Stats
+
+[![NPM](https://nodei.co/npm/svgicons2svgfont.png?downloads=true&stars=true)](https://nodei.co/npm/svgicon2svgfont/)
+[![NPM](https://nodei.co/npm-dl/svgicons2svgfont.png)](https://nodei.co/npm/svgicon2svgfont/)
+
 ## Contributing
 Feel free to pull your code if you agree with publishing under the MIT license.
 

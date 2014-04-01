@@ -51,7 +51,7 @@ Normalize icons by scaling them to the height of the highest icon.
 ### fontHeight
 Type: `Number`
 Default value: `MAX(icons.height)`
-The ouputted font height  (defaults to the height of the highest input icon).
+The outputted font height  (defaults to the height of the highest input icon).
 
 ### descent
 Type: `Number`

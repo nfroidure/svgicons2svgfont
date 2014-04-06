@@ -127,6 +127,12 @@ describe('Generating fonts to files', function() {
     }, done);
   });
 
+  it("should work with transformed SVG icons", function(done) {
+    generateFontToFile({
+      fontName: 'transformedicons'
+    }, done);
+  });
+
 });
 
 describe('Generating fonts to memory', function() {

@@ -10,6 +10,32 @@
 // http://www.whizkidtech.redprince.net/bezier/circle/
 var KAPPA = ((Math.sqrt(2)-1)/3)*4;
 
+// Transform helpers (will move elsewhere later)
+function parseTransforms(value) {
+ return value.match(
+  /(rotate|translate|scale|skewX|skewY|matrix)\s*\(([^\)]*)\)\s*/g
+ ).map(function(transform) {
+  return transform.match(/[\w\.\-]+/g);
+ });
+}
+function transformPath(path, transforms) {
+  transforms.forEach(function(transform) {
+    path[transform[0]].apply(path, transform.slice(1).map(function(n) {
+      return parseInt(n, 10);
+    }));
+  });
+  return path;
+}
+function applyTransforms(d, parents) {
+  var transforms = [];
+  parents.forEach(function(parent) {
+    if('undefined' !== typeof parent.attributes.transform) {
+      transforms = transforms.concat(parseTransforms(parent.attributes.transform));
+    }
+  });
+  return transformPath(new SVGPathData(d), transforms).encode();
+}
+
 // Required modules
 var Path = require("path")
   , Stream = require("readable-stream")
@@ -88,7 +114,7 @@ function svgicons2svgfont(glyphs, options) {
           + 'result may be different than expected.');
       // Change rect elements to the corresponding path
       } else if('rect' === tag.name) {
-        glyph.d.push(
+        glyph.d.push(applyTransforms(
           // Move to the left corner
           'M' + parseFloat(tag.attributes.x || 0,10).toString(10)
           + ' ' + parseFloat(tag.attributes.y || 0,10).toString(10)
@@ -96,12 +122,12 @@ function svgicons2svgfont(glyphs, options) {
           + 'h' + parseFloat(tag.attributes.width, 10).toString(10)
           + 'v' + (parseFloat(tag.attributes.height, 10)).toString(10)
           + 'h' + (parseFloat(tag.attributes.width, 10)*-1).toString(10)
-          + 'z'
-        );
+          + 'z', parents
+        ));
       } else if('line' === tag.name) {
         log('Found a line element in the icon "' + glyph.name + '" the result'
           +' could be different than expected.');
-        glyph.d.push(
+        glyph.d.push(applyTransforms(
           // Move to the line start
           'M' + parseFloat(tag.attributes.x1,10).toString(10)
           + ' ' + parseFloat(tag.attributes.y1,10).toString(10)
@@ -111,18 +137,18 @@ function svgicons2svgfont(glyphs, options) {
           + ' ' + (parseFloat(tag.attributes.y2,10)+1).toString(10)
           + ' ' + parseFloat(tag.attributes.x2,10).toString(10)
           + ' ' + parseFloat(tag.attributes.y2,10).toString(10)
-          + 'Z'
-        );
+          + 'Z', parents
+        ));
       } else if('polyline' === tag.name) {
         log('Found a polyline element in the icon "' + glyph.name + '" the'
           +' result could be different than expected.');
-        glyph.d.push(
-          'M' + tag.attributes.points
-        );
+        glyph.d.push(applyTransforms(
+          'M' + tag.attributes.points, parents
+        ));
       } else if('polygon' === tag.name) {
-        glyph.d.push(
-          'M' + tag.attributes.points + 'Z'
-        );
+        glyph.d.push(applyTransforms(
+          'M' + tag.attributes.points + 'Z', parents
+        ));
       } else if('circle' === tag.name || 'ellipse' === tag.name) {
         var cx = parseFloat(tag.attributes.cx,10)
           , cy = parseFloat(tag.attributes.cy,10)
@@ -130,7 +156,7 @@ function svgicons2svgfont(glyphs, options) {
               parseFloat(tag.attributes.rx,10) : parseFloat(tag.attributes.r,10)
           , ry = 'undefined' !== typeof tag.attributes.ry ?
               parseFloat(tag.attributes.ry,10) : parseFloat(tag.attributes.r,10);
-        glyph.d.push(
+        glyph.d.push(applyTransforms(
           'M' + (cx - rx) + ',' + cy
           + 'C' + (cx - rx) + ',' + (cy + ry*KAPPA)
           + ' ' + (cx - rx*KAPPA) + ',' + (cy + ry)
@@ -144,10 +170,10 @@ function svgicons2svgfont(glyphs, options) {
           + 'C' + (cx - rx*KAPPA) + ',' + (cy - ry)
           + ' ' + (cx - rx) + ',' + (cy - ry*KAPPA)
           + ' ' + (cx - rx) + ',' + cy
-          + 'Z'
-        );
+          + 'Z', parents
+        ));
       } else if('path' === tag.name && tag.attributes.d) {
-        glyph.d.push(tag.attributes.d);
+        glyph.d.push(applyTransforms(tag.attributes.d, parents));
       }
     });
     saxStream.on('end', function() {

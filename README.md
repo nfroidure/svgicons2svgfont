@@ -6,8 +6,7 @@
 'rect', 'line', 'circle', 'ellipsis', 'polyline' and 'polygon' shapes will be
  converted to pathes. Multiple pathes will be merged.
 
-Transform attributes either on 'g' element or path/shapes elements are
- currently unsupported.
+Transform attributes support is currenly experimental, report issues if any.
 
 ## Usage
 NodeJS module:

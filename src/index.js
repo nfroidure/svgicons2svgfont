@@ -181,17 +181,17 @@ function svgicons2svgfont(glyphs, options) {
       if(glyphs.every(function(glyph) {
         return !glyph.running;
       })) {
-        var fontWidth = (glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
-              return Math.max(gA.width || gA, gB.width || gB);
-            }) : glyphs[0].width)
+        var fontWidth = (glyphs.length > 1 ? glyphs.reduce(function (curMax, glyph) {
+              return Math.max(curMax, glyph.width);
+            }, 0) : glyphs[0].width)
           , fontHeight = options.fontHeight ||
-            (glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
-              return Math.max(gA.height || gA, gB.height || gB);
-            }) : glyphs[0].height);
+            (glyphs.length > 1 ? glyphs.reduce(function (curMax, glyph) {
+              return Math.max(curMax, glyph.height);
+            }, 0) : glyphs[0].height);
         if((!options.normalize)
-          && fontHeight>(glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
-          return Math.min(gA.height || gA, gB.height || gB);
-        }) : glyphs[0].height)) {
+          && fontHeight>(glyphs.length > 1 ? glyphs.reduce(function (curMin, glyph) {
+          return Math.min(curMin, glyph.height);
+        }, Infinity) : glyphs[0].height)) {
           log('The provided icons does not have the same height it could lead'
             +' to unexpected results. Using the normalize option could'
             +' solve the problem.');

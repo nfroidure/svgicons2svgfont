@@ -217,7 +217,7 @@ function svgicons2svgfont(glyphs, options) {
           glyph.d.forEach(function(cD) {
             d+=' '+new SVGPathData(cD)
                 .toAbs()
-                .translate(-glyph.dX, -glyph.dY)
+                .translate(-glyph.dX + (options.fixedWidth ? (fontWidth - glyph.width) / (options.normalize ? ratio : 1) : 0) / 2, -glyph.dY)
                 .scale(
                   options.normalize ? ratio : 1,
                   options.normalize ? ratio : 1)

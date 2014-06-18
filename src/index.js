@@ -221,7 +221,7 @@ function svgicons2svgfont(glyphs, options) {
                 .scale(
                   options.normalize ? ratio : 1,
                   options.normalize ? ratio : 1)
-                .ySymetry(glyph.height)
+                .ySymetry(glyph.height - options.descent)
                 .encode();
           });
           delete glyph.d;
@@ -236,7 +236,7 @@ function svgicons2svgfont(glyphs, options) {
 </defs>\n\
 </svg>\n');
         outputStream.on('finish', function() {
-          log("Font created");
+          log("Font created!");
           'function' === (typeof options.callback) && (options.callback)(glyphs);
         });
         outputStream.end();

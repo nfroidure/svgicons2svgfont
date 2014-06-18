@@ -56,6 +56,7 @@ The outputted font height  (defaults to the height of the highest input icon).
 Type: `Number`
 Default value: `0`
 The font descent. It is usefull to fix the font baseline yourself.
+**Warning:**  The descent is a positive value!
 
 The ascent formula is: ascent = fontHeight - descent.
 

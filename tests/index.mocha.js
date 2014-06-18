@@ -188,7 +188,7 @@ describe('Using options', function() {
   it("should work with custom descent option", function(done) {
     generateFontToFile({
       fontName: 'originalicons',
-      descent: -200
+      descent: 200
     }, done, '4');
   });
 

@@ -184,10 +184,15 @@ function svgicons2svgfont(glyphs, options) {
         var fontWidth = (glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
               return Math.max(gA.width || gA, gB.width || gB);
             }) : glyphs[0].width)
-          , fontHeight = options.fontHeight ||
-            (glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
+          , fontHeight = (glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
               return Math.max(gA.height || gA, gB.height || gB);
             }) : glyphs[0].height);
+        if (options.fontHeight) {
+            if (options.fixedWidth) {
+                fontWidth = fontWidth / fontHeight * options.fontHeight;
+            }
+            fontHeight = options.fontHeight;
+        }
         if((!options.normalize)
           && fontHeight>(glyphs.length > 1 ? glyphs.reduce(function (gA, gB) {
           return Math.min(gA.height || gA, gB.height || gB);

@@ -6,7 +6,10 @@
 'rect', 'line', 'circle', 'ellipsis', 'polyline' and 'polygon' shapes will be
  converted to pathes. Multiple pathes will be merged.
 
-Transform attributes support is currenly experimental, report issues if any.
+Transform attributes support is currenly experimental,
+ [report issues if any](https://github.com/nfroidure/svgicons2svgfont/issues/6).
+
+You may want to convert fonts to icons, use [svgfont2svgicons](https://github.com/nfroidure/svgifont2svgicons).
 
 ## Usage
 NodeJS module:
@@ -70,6 +73,10 @@ The ascent formula is: ascent = fontHeight - descent.
 
 Try [gulp-iconfont](https://github.com/nfroidure/gulp-iconfont) and 
   [gulp-svgicons2svgfont](https://github.com/nfroidure/gulp-svgicons2svgfont).
+
+## Mimosa plugin
+
+[https://www.npmjs.org/package/mimosa-svgs-to-iconfonts](mimosa-svgs-to-iconfonts)
 
 ## Stats
 

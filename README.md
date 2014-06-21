@@ -41,16 +41,19 @@ svgicons2svgfont icons/directory font/destination/file.svg
 #### options.fontName
 Type: `String`
 Default value: `'iconfont'`
+
 The font family name you want.
 
 #### options.fixedWidth
 Type: `Boolean`
 Default value: `false`
+
 Creates a monospace font of the width of the largest input icon.
 
 #### options.centerHorizontally
 Type: `Boolean`
 Default value: `false`
+
 Calculate the bounds of a glyph and center it horizontally.
 
 **Warning:** The bounds calculation is currently a naive implementation that
@@ -62,6 +65,7 @@ Calculate the bounds of a glyph and center it horizontally.
 #### options.normalize
 Type: `Boolean`
 Default value: `false`
+
 Normalize icons by scaling them to the height of the highest icon.
 
 #### options.fontHeight
@@ -72,6 +76,7 @@ The outputted font height  (defaults to the height of the highest input icon).
 #### options.descent
 Type: `Number`
 Default value: `0`
+
 The font descent. It is usefull to fix the font baseline yourself.
 
 **Warning:**  The descent is a positive value!

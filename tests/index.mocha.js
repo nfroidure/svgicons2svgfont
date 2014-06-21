@@ -111,6 +111,20 @@ describe('Generating fonts to files', function() {
     }, done, 'n');
 	});
 
+	it("should work with variable width icons", function(done) {
+    generateFontToFile({
+      fontName: 'variablewidthicons'
+    }, done);
+	});
+
+	it("should work with centered variable width icons and the fixed width option", function(done) {
+    generateFontToFile({
+      fontName: 'variablewidthicons',
+      fixedWidth: true,
+      centerHorizontally: true
+    }, done, 'n');
+	});
+
 	it("should not display hidden pathes", function(done) {
     generateFontToFile({
       fontName: 'hiddenpathesicons'

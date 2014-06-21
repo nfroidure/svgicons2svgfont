@@ -65,6 +65,14 @@ describe('Generating fonts to files', function() {
     }, done);
 	});
 
+	it("should work for simple fixedWidth and normalize option", function(done) {
+    generateFontToFile({
+      fontName: 'originalicons',
+      fixedWidth: true,
+      normalize: true
+    }, done, 'n');
+	});
+
 	it("should work for simple SVG", function(done) {
     generateFontToFile({
       fontName: 'cleanicons'

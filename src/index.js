@@ -210,6 +210,9 @@ function svgicons2svgfont(glyphs, options) {
         glyphs.forEach(function(glyph) {
           var ratio = fontHeight / glyph.height
             , d = '';
+          if(options.fixedWidth) {
+            glyph.width = fontWidth;
+          }
           if(options.normalize) {
             glyph.height = fontHeight;
             glyph.width *= ratio;
@@ -224,9 +227,6 @@ function svgicons2svgfont(glyphs, options) {
                 .ySymetry(glyph.height - options.descent)
                 .encode();
           });
-          if(options.fixedWidth) {
-            glyph.width = fontWidth;
-          }
           if(options.centerHorizontally) {
             // Naive bounds calculation (should draw, then calculate bounds...)
             var pathData = new SVGPathData(d);

@@ -83,7 +83,7 @@ The font descent. It is usefull to fix the font baseline yourself.
 
 The ascent formula is: ascent = fontHeight - descent.
 
-#### options.options.log
+#### options.log
 Type: `Function`
 Default value: `false`
 

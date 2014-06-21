@@ -45,6 +45,16 @@ Type: `Boolean`
 Default value: `false`
 Creates a monospace font of the width of the largest input icon.
 
+### centerHorizontally
+Type: `Boolean`
+Default value: `false`
+Calculate the bounds of a glyph and center it horizontally.
+
+**Warning:** The bounds calculation is currently a naive implementation that
+ may not work for some icons. We need to create a svg-pathdata-draw module on
+ top of svg-pathdata to get the real bounds of the icon. It's in on the bottom
+ of my to do, but feel free to work on it.
+
 ### normalize
 Type: `Boolean`
 Default value: `false`
@@ -59,6 +69,7 @@ The outputted font height  (defaults to the height of the highest input icon).
 Type: `Number`
 Default value: `0`
 The font descent. It is usefull to fix the font baseline yourself.
+
 **Warning:**  The descent is a positive value!
 
 The ascent formula is: ascent = fontHeight - descent.

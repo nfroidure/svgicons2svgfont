@@ -217,19 +217,41 @@ function svgicons2svgfont(glyphs, options) {
           glyph.d.forEach(function(cD) {
             d+=' '+new SVGPathData(cD)
                 .toAbs()
-                .translate(-glyph.dX + (options.fixedWidth ? (fontWidth - glyph.width) / (options.normalize ? ratio : 1) : 0) / 2, -glyph.dY)
+                .translate(-glyph.dX, -glyph.dY)
                 .scale(
                   options.normalize ? ratio : 1,
                   options.normalize ? ratio : 1)
                 .ySymetry(glyph.height - options.descent)
                 .encode();
           });
+          if(options.fixedWidth) {
+            glyph.width = fontWidth;
+          }
+          if(options.centerHorizontally) {
+            // Naive bounds calculation (should draw, then calculate bounds...)
+            var pathData = new SVGPathData(d);
+            var bounds = {
+              x1:Infinity,
+              y1:Infinity,
+              x2:0,
+              y2:0
+            };
+            pathData.toAbs().commands.forEach(function(command) {
+              bounds.x1 = 'undefined' != typeof command.x && command.x < bounds.x1 ? command.x : bounds.x1;
+              bounds.y1 = 'undefined' != typeof command.y && command.y < bounds.y1 ? command.y : bounds.y1;
+              bounds.x2 = 'undefined' != typeof command.x && command.x > bounds.x2 ? command.x : bounds.x2;
+              bounds.y2 = 'undefined' != typeof command.y && command.y > bounds.y2 ? command.y : bounds.y2;
+            });
+            d = pathData
+              .translate(((glyph.width - (bounds.x2 - bounds.x1)) / 2) - bounds.x1)
+              .encode();
+          }
           delete glyph.d;
           delete glyph.running;
           outputStream.write('\
     <glyph glyph-name="' + glyph.name + '"\n\
       unicode="&#x' + (glyph.codepoint.toString(16)).toUpperCase() + ';"\n\
-      horiz-adv-x="' + (options.fixedWidth ? fontWidth : glyph.width) + '" d="' + d +'" />\n');
+      horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');
         });
         outputStream.write('\
   </font>\n\

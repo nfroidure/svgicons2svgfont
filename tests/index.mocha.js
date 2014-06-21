@@ -133,6 +133,13 @@ describe('Generating fonts to files', function() {
     }, done);
   });
 
+  it("should work when horizontally centering SVG icons", function(done) {
+    generateFontToFile({
+      fontName: 'tocentericons',
+      centerHorizontally: true
+    }, done);
+  });
+
 });
 
 describe('Generating fonts to memory', function() {

@@ -9,7 +9,8 @@
 Transform attributes support is currenly experimental,
  [report issues if any](https://github.com/nfroidure/svgicons2svgfont/issues/6).
 
-You may want to convert fonts to icons, use [svgfont2svgicons](https://github.com/nfroidure/svgifont2svgicons).
+You may want to convert fonts to icons, if so use
+ [svgfont2svgicons](https://github.com/nfroidure/svgifont2svgicons).
 
 ## Usage
 NodeJS module:
@@ -33,19 +34,21 @@ CLI (install the module globally):
 svgicons2svgfont icons/directory font/destination/file.svg
 ```
 
-## Options (not plugged to CLI yet)
+## API
 
-### fontName
+### svgicons2svgfont(options)
+
+#### options.fontName
 Type: `String`
 Default value: `'iconfont'`
 The font family name you want.
 
-### fixedWidth
+#### options.fixedWidth
 Type: `Boolean`
 Default value: `false`
 Creates a monospace font of the width of the largest input icon.
 
-### centerHorizontally
+#### options.centerHorizontally
 Type: `Boolean`
 Default value: `false`
 Calculate the bounds of a glyph and center it horizontally.
@@ -56,17 +59,17 @@ Calculate the bounds of a glyph and center it horizontally.
  of my to do, but feel free to work on it. Discuss it in the
  [related issue](https://github.com/nfroidure/svgicons2svgfont/issues/18).
 
-### normalize
+#### options.normalize
 Type: `Boolean`
 Default value: `false`
 Normalize icons by scaling them to the height of the highest icon.
 
-### fontHeight
+#### options.fontHeight
 Type: `Number`
 Default value: `MAX(icons.height)`
 The outputted font height  (defaults to the height of the highest input icon).
 
-### descent
+#### options.descent
 Type: `Number`
 Default value: `0`
 The font descent. It is usefull to fix the font baseline yourself.
@@ -75,18 +78,26 @@ The font descent. It is usefull to fix the font baseline yourself.
 
 The ascent formula is: ascent = fontHeight - descent.
 
+#### options.options.log
+Type: `Function`
+Default value: `false`
 
-## Grunt plugins
+Allows you to provide your own logging function. Set to `function(){}` to
+ impeach logging.
+
+## Build systems
+
+### Grunt plugins
 
 [grunt-svgicons2svgfont](https://github.com/nfroidure/grunt-svgicons2svgfont)
  and [grunt-webfont](https://github.com/nfroidure/grunt-webfont).
 
-## Gulp plugins
+### Gulp plugins
 
 Try [gulp-iconfont](https://github.com/nfroidure/gulp-iconfont) and 
   [gulp-svgicons2svgfont](https://github.com/nfroidure/gulp-svgicons2svgfont).
 
-## Mimosa plugin
+### Mimosa plugin
 
 [https://www.npmjs.org/package/mimosa-svgs-to-iconfonts](mimosa-svgs-to-iconfonts)
 
@@ -96,5 +107,5 @@ Try [gulp-iconfont](https://github.com/nfroidure/gulp-iconfont) and
 [![NPM](https://nodei.co/npm-dl/svgicons2svgfont.png)](https://nodei.co/npm/svgicon2svgfont/)
 
 ## Contributing
-Feel free to pull your code if you agree with publishing under the MIT license.
+Feel free to push your code if you agree with publishing under the MIT license.
 

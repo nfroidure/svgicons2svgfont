@@ -53,7 +53,8 @@ Calculate the bounds of a glyph and center it horizontally.
 **Warning:** The bounds calculation is currently a naive implementation that
  may not work for some icons. We need to create a svg-pathdata-draw module on
  top of svg-pathdata to get the real bounds of the icon. It's in on the bottom
- of my to do, but feel free to work on it.
+ of my to do, but feel free to work on it. Discuss it in the
+ [related issue](https://github.com/nfroidure/svgicons2svgfont/issues/18).
 
 ### normalize
 Type: `Boolean`

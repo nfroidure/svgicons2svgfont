@@ -9,6 +9,9 @@
 Transform attributes support is currenly experimental,
  [report issues if any](https://github.com/nfroidure/svgicons2svgfont/issues/6).
 
+You can test this library with the
+ [frontend generator](http://nfroidure.github.io/svgiconfont/).
+
 You may want to convert fonts to icons, if so use
  [svgfont2svgicons](https://github.com/nfroidure/svgifont2svgicons).
 
@@ -95,7 +98,7 @@ Allows you to provide your own logging function. Set to `function(){}` to
 ### Grunt plugins
 
 [grunt-svgicons2svgfont](https://github.com/nfroidure/grunt-svgicons2svgfont)
- and [grunt-webfont](https://github.com/nfroidure/grunt-webfont).
+ and [grunt-webfont](https://github.com/sapegin/grunt-webfont).
 
 ### Gulp plugins
 

@@ -238,6 +238,15 @@ describe('Using options', function() {
     }, done, '6');
   });
 
+  it("should work with fixedWidth, normalize and centerHorizontally set to true and with custom fontHeight option", function(done) {
+    generateFontToFile({
+      fontName: 'originalicons',
+      fontHeight: 800,
+      normalize: true,
+      fixedWidth: true,
+      centerHorizontally: true
+    }, done, '7');
+  });
 
 });
 

@@ -215,7 +215,9 @@ function svgicons2svgfont(glyphs, options) {
           }
           if(options.normalize) {
             glyph.height = fontHeight;
-            glyph.width *= ratio;
+            if(!options.fixedWidth) {
+              glyph.width *= ratio;
+            }
           }
           glyph.d.forEach(function(cD) {
             d+=' '+new SVGPathData(cD)

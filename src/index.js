@@ -291,4 +291,3 @@ function svgicons2svgfont(glyphs, options) {
 }
 
 module.exports = svgicons2svgfont;
-

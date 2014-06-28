@@ -221,6 +221,33 @@ describe('Using options', function() {
     }, done, '4');
   });
 
+  it("should work with fixedWidth set to true and with custom fontHeight option", function(done) {
+    generateFontToFile({
+      fontName: 'originalicons',
+      fontHeight: 800,
+      fixedWidth: true
+    }, done, '5');
+  });
+
+  it("should work with fixedWidth and centerHorizontally set to true and with custom fontHeight option", function(done) {
+    generateFontToFile({
+      fontName: 'originalicons',
+      fontHeight: 800,
+      fixedWidth: true,
+      centerHorizontally: true
+    }, done, '6');
+  });
+
+  it("should work with fixedWidth, normalize and centerHorizontally set to true and with custom fontHeight option", function(done) {
+    generateFontToFile({
+      fontName: 'originalicons',
+      fontHeight: 800,
+      normalize: true,
+      fixedWidth: true,
+      centerHorizontally: true
+    }, done, '7');
+  });
+
 });
 
 describe('Testing CLI', function() {

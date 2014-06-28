@@ -26,10 +26,10 @@
     "readable-stream": "^1.0.27-1"
   },
   "devDependencies": {
-    "mocha": "~1.20.0",
+    "mocha": "~1.20.1",
     "mocha-lcov-reporter": "0.0.1",
-    "coveralls": "~2.10.0",
-    "istanbul": "~0.2.10",
+    "coveralls": "~2.10.1",
+    "istanbul": "~0.2.13",
     "sax": "~0.6.0"
   },
   "author": {

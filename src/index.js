@@ -260,7 +260,7 @@ function svgicons2svgfont(glyphs, options) {
 </defs>\n\
 </svg>\n');
         outputStream.on('finish', function() {
-          log("Font created!");
+          log("Font created");
           'function' === (typeof options.callback) && (options.callback)(glyphs);
         });
         outputStream.end();

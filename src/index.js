@@ -129,14 +129,14 @@ function svgicons2svgfont(glyphs, options) {
           +' could be different than expected.');
         glyph.d.push(applyTransforms(
           // Move to the line start
-          'M' + parseFloat(tag.attributes.x1,10).toString(10)
-          + ' ' + parseFloat(tag.attributes.y1,10).toString(10)
-          + ' ' + (parseFloat(tag.attributes.x1,10)+1).toString(10)
-          + ' ' + (parseFloat(tag.attributes.y1,10)+1).toString(10)
-          + ' ' + (parseFloat(tag.attributes.x2,10)+1).toString(10)
-          + ' ' + (parseFloat(tag.attributes.y2,10)+1).toString(10)
-          + ' ' + parseFloat(tag.attributes.x2,10).toString(10)
-          + ' ' + parseFloat(tag.attributes.y2,10).toString(10)
+          'M' + (parseFloat(tag.attributes.x1,10)||0).toString(10)
+          + ' ' + (parseFloat(tag.attributes.y1,10)||0).toString(10)
+          + ' ' + ((parseFloat(tag.attributes.x1,10)||0)+1).toString(10)
+          + ' ' + ((parseFloat(tag.attributes.y1,10)||0)+1).toString(10)
+          + ' ' + ((parseFloat(tag.attributes.x2,10)||0)+1).toString(10)
+          + ' ' + ((parseFloat(tag.attributes.y2,10)||0)+1).toString(10)
+          + ' ' + (parseFloat(tag.attributes.x2,10)||0).toString(10)
+          + ' ' + (parseFloat(tag.attributes.y2,10)||0).toString(10)
           + 'Z', parents
         ));
       } else if('polyline' === tag.name) {

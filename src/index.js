@@ -48,6 +48,7 @@ function svgicons2svgfont(glyphs, options) {
   options.fontName = options.fontName || 'iconfont';
   options.fixedWidth = options.fixedWidth || false;
   options.descent = options.descent || 0;
+  options.round = options.round || 10e12;
   var outputStream = new Stream.PassThrough()
     , log = (options.log || console.log.bind(console))
     , error = options.error || console.error.bind(console);
@@ -227,6 +228,7 @@ function svgicons2svgfont(glyphs, options) {
                   options.normalize ? ratio : 1,
                   options.normalize ? ratio : 1)
                 .ySymetry(glyph.height - options.descent)
+                .round(options.round)
                 .encode();
           });
           if(options.centerHorizontally) {
@@ -246,6 +248,7 @@ function svgicons2svgfont(glyphs, options) {
             });
             d = pathData
               .translate(((glyph.width - (bounds.x2 - bounds.x1)) / 2) - bounds.x1)
+              .round(options.round)
               .encode();
           }
           delete glyph.d;

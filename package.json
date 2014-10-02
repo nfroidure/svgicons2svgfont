@@ -1,6 +1,6 @@
 {
   "name": "svgicons2svgfont",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Read a set of SVG icons and ouput a SVG font",
   "homepage": "https://github.com/nfroidure/svgicons2svgfont",
   "main": "src/index.js",
@@ -23,13 +23,13 @@
   "dependencies": {
     "sax": "0.6.x",
     "svg-pathdata": "0.0.6",
-    "readable-stream": "^1.0.27-1"
+    "readable-stream": "^1.0.32"
   },
   "devDependencies": {
-    "mocha": "~1.20.1",
+    "mocha": "~1.21.4",
     "mocha-lcov-reporter": "0.0.1",
-    "coveralls": "~2.10.1",
-    "istanbul": "~0.2.13",
+    "coveralls": "~2.11.2",
+    "istanbul": "~0.3.2",
     "sax": "~0.6.0"
   },
   "author": {

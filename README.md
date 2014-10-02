@@ -76,6 +76,11 @@ Type: `Number`
 Default value: `MAX(icons.height)`
 The outputted font height  (defaults to the height of the highest input icon).
 
+#### options.round
+Type: `Number`
+Default value: `10e12`
+Setup SVG path rounding.
+
 #### options.descent
 Type: `Number`
 Default value: `0`

@@ -21,7 +21,7 @@ function parseTransforms(value) {
 function transformPath(path, transforms) {
   transforms.forEach(function(transform) {
     path[transform[0]].apply(path, transform.slice(1).map(function(n) {
-      return parseInt(n, 10);
+      return parseFloat(n, 10);
     }));
   });
   return path;

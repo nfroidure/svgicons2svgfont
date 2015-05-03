@@ -99,6 +99,7 @@ var Path = require("path")
   , Stream = require("readable-stream")
   , Sax = require("sax")
   , SVGPathData = require("svg-pathdata")
+  , ucs2 = require('punycode').ucs2
 ;
 
 function svgicons2svgfont(glyphs, options) {
@@ -308,6 +309,20 @@ function svgicons2svgfont(glyphs, options) {
     <glyph glyph-name="' + glyph.name + '"\n\
       unicode="&#x' + (glyph.codepoint.toString(16)).toUpperCase() + ';"\n\
       horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');
+          if('ligatures' in glyph) {
+            if(!Array.isArray(glyph.ligatures)) {
+              throw new Error('“ligatures” needs to be an array of strings');
+            }
+            glyph.ligatures.forEach(function(ligature) {
+              if(ucs2.decode(ligature).length <= 1) {
+                throw new Error('Ligature definition needs to be larger than one code point, found: '+ligature);
+              }
+              outputStream.write('\
+    <glyph glyph-name="' + ligature + '"\n\
+      unicode="' + ligature + '"\n\
+      horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');
+            });
+          }
         });
         outputStream.write('\
   </font>\n\

@@ -20,10 +20,13 @@ NodeJS module:
 ```js
 var svgicons2svgfont = require('svgicons2svgfont')
   , fs = require('fs');
-  , fontStream = svgicons2svgfont([
-    'icons/directory/icon1.svg',
-    'icons/directory/icon2.svg'
-  ], options);
+  , fontStream = svgicons2svgfont([{
+    codepoint: 0xE001,
+    stream: fs.createReadStream('icons/icon1.svg')
+  }, {
+    codepoint: 0xE002,
+    stream: fs.createReadStream('icons/icon2.svg')
+  }], options);
 
 // Saving in a file
 fontStream.pipe(fs.createWriteStream('font/destination/file.svg'))
@@ -107,7 +110,7 @@ Allows you to provide your own logging function. Set to `function(){}` to
 
 ### Gulp plugins
 
-Try [gulp-iconfont](https://github.com/nfroidure/gulp-iconfont) and 
+Try [gulp-iconfont](https://github.com/nfroidure/gulp-iconfont) and
   [gulp-svgicons2svgfont](https://github.com/nfroidure/gulp-svgicons2svgfont).
 
 ### Stylus plugin

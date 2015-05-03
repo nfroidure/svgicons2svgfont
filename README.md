@@ -110,9 +110,22 @@ Allows you to provide your own logging function. Set to `function(){}` to
 Try [gulp-iconfont](https://github.com/nfroidure/gulp-iconfont) and 
   [gulp-svgicons2svgfont](https://github.com/nfroidure/gulp-svgicons2svgfont).
 
+### Stylus plugin
+
+Use [stylus-iconfont](https://www.npmjs.org/package/stylus-iconfont).
+
 ### Mimosa plugin
 
-[https://www.npmjs.org/package/mimosa-svgs-to-iconfonts](mimosa-svgs-to-iconfonts)
+Use [mimosa-svgs-to-iconfonts](https://www.npmjs.org/package/mimosa-svgs-to-iconfonts).
+
+## CLI alternatives
+
+You can combine this plugin's CLI interface with
+ [svg2ttf](https://www.npmjs.com/package/),
+ [ttf2eot](https://www.npmjs.com/package/),
+ [ttf2woff](https://www.npmjs.com/package/)
+ and [ttf2woff2](https://www.npmjs.com/package/).
+You can also use [webfonts-generator](https://www.npmjs.com/package/webfonts-generator).
 
 ## Stats
 

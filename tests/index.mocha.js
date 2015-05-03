@@ -162,6 +162,12 @@ describe('Generating fonts to files', function() {
     }, done);
   });
 
+  it("should work with a icons with path with fill none", function(done) {
+    generateFontToFile({
+      fontName: 'pathfillnone'
+    }, done);
+  });
+
 });
 
 describe('Generating fonts to memory', function() {

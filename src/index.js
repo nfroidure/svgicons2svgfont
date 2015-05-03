@@ -36,6 +36,64 @@ function applyTransforms(d, parents) {
   return transformPath(new SVGPathData(d), transforms).encode();
 }
 
+// Shapes helpers (should also move elsewhere)
+
+
+function rectToPath(attributes) {
+  var x = 'undefined' !== typeof attributes.x ?
+    parseFloat(attributes.x, 10) :
+    0;
+  var y = 'undefined' !== typeof attributes.y ?
+    parseFloat(attributes.y, 10) :
+    0;
+  var width = 'undefined' !== typeof attributes.width ?
+    parseFloat(attributes.width, 10) :
+    0;
+  var height = 'undefined' !== typeof attributes.height ?
+    parseFloat(attributes.height, 10) :
+    0;
+  var rx = 'undefined' !== typeof attributes.rx ?
+    parseFloat(attributes.rx, 10) :
+    0;
+  var ry = 'undefined' !== typeof attributes.ry ?
+    parseFloat(attributes.ry, 10) :
+    0;
+
+  return '' +
+    // start at the left corner
+    'M' + (x + rx) + ' ' + y +
+    // top line
+    'h' + (width - (rx * 2)) +
+    // upper right corner
+    ( rx || ry ?
+      'a ' + rx + ' ' + ry + ' 0 0 1 ' + rx + ' ' + ry :
+      ''
+    ) +
+    // Draw right side
+    'v' + (height - (ry * 2)) +
+    // Draw bottom right corner
+    ( rx || ry ?
+      'a ' + rx + ' ' + ry + ' 0 0 1 ' + (rx * -1) + ' ' + ry :
+      ''
+    ) +
+    // Down the down side
+    'h' + ((width  - (rx * 2)) * -1) +
+    // Draw bottom right corner
+    ( rx || ry ?
+      'a ' + rx + ' ' + ry + ' 0 0 1 ' + (rx * -1) + ' ' + (ry * -1) :
+      ''
+    ) +
+    // Down the left side
+    'v' + ((height  - (ry * 2)) * -1) +
+    // Draw bottom right corner
+    ( rx || ry ?
+      'a ' + rx + ' ' + ry + ' 0 0 1 ' + rx + ' ' + (ry * -1) :
+      ''
+    ) +
+    // Close path
+    'z';
+}
+
 // Required modules
 var Path = require("path")
   , Stream = require("readable-stream")
@@ -115,16 +173,7 @@ function svgicons2svgfont(glyphs, options) {
           + 'result may be different than expected.');
       // Change rect elements to the corresponding path
       } else if('rect' === tag.name && 'none' !== tag.attributes.fill) {
-        glyph.d.push(applyTransforms(
-          // Move to the left corner
-          'M' + parseFloat(tag.attributes.x || 0,10).toString(10)
-          + ' ' + parseFloat(tag.attributes.y || 0,10).toString(10)
-          // Draw the rectangle
-          + 'h' + parseFloat(tag.attributes.width, 10).toString(10)
-          + 'v' + (parseFloat(tag.attributes.height, 10)).toString(10)
-          + 'h' + (parseFloat(tag.attributes.width, 10)*-1).toString(10)
-          + 'z', parents
-        ));
+        glyph.d.push(applyTransforms(rectToPath(tag.attributes), parents));
       } else if('line' === tag.name && 'none' !== tag.attributes.fill) {
         log('Found a line element in the icon "' + glyph.name + '" the result'
           +' could be different than expected.');

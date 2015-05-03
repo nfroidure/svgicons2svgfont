@@ -24,7 +24,7 @@
       horiz-adv-x="150" d=" M10 120L10 60L140 60L140 120L10 120" />
     <glyph glyph-name="rect"
       unicode="&#xE006;"
-      horiz-adv-x="150" d=" M10 60H140V30H10z" />
+      horiz-adv-x="150" d=" M10 60H140V30H10V60z" />
   </font>
 </defs>
 </svg>

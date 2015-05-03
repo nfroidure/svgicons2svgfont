@@ -168,6 +168,12 @@ describe('Generating fonts to files', function() {
     }, done);
   });
 
+  it("should work with shapes with rounded corners", function(done) {
+    generateFontToFile({
+      fontName: 'roundedcorners'
+    }, done);
+  });
+
 });
 
 describe('Generating fonts to memory', function() {

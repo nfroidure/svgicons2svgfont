@@ -114,7 +114,7 @@ function svgicons2svgfont(glyphs, options) {
         log('Found a clipPath element in the icon "' + glyph.name + '" the'
           + 'result may be different than expected.');
       // Change rect elements to the corresponding path
-      } else if('rect' === tag.name) {
+      } else if('rect' === tag.name && 'none' !== tag.attributes.fill) {
         glyph.d.push(applyTransforms(
           // Move to the left corner
           'M' + parseFloat(tag.attributes.x || 0,10).toString(10)
@@ -125,7 +125,7 @@ function svgicons2svgfont(glyphs, options) {
           + 'h' + (parseFloat(tag.attributes.width, 10)*-1).toString(10)
           + 'z', parents
         ));
-      } else if('line' === tag.name) {
+      } else if('line' === tag.name && 'none' !== tag.attributes.fill) {
         log('Found a line element in the icon "' + glyph.name + '" the result'
           +' could be different than expected.');
         glyph.d.push(applyTransforms(
@@ -140,17 +140,18 @@ function svgicons2svgfont(glyphs, options) {
           + ' ' + (parseFloat(tag.attributes.y2,10)||0).toString(10)
           + 'Z', parents
         ));
-      } else if('polyline' === tag.name) {
+      } else if('polyline' === tag.name && 'none' !== tag.attributes.fill) {
         log('Found a polyline element in the icon "' + glyph.name + '" the'
           +' result could be different than expected.');
         glyph.d.push(applyTransforms(
           'M' + tag.attributes.points, parents
         ));
-      } else if('polygon' === tag.name) {
+      } else if('polygon' === tag.name && 'none' !== tag.attributes.fill) {
         glyph.d.push(applyTransforms(
           'M' + tag.attributes.points + 'Z', parents
         ));
-      } else if('circle' === tag.name || 'ellipse' === tag.name) {
+      } else if('circle' === tag.name || 'ellipse' === tag.name &&
+        'none' !== tag.attributes.fill) {
         var cx = parseFloat(tag.attributes.cx,10)
           , cy = parseFloat(tag.attributes.cy,10)
           , rx = 'undefined' !== typeof tag.attributes.rx ?
@@ -173,7 +174,8 @@ function svgicons2svgfont(glyphs, options) {
           + ' ' + (cx - rx) + ',' + cy
           + 'Z', parents
         ));
-      } else if('path' === tag.name && tag.attributes.d) {
+      } else if('path' === tag.name && tag.attributes.d &&
+        'none' !== tag.attributes.fill) {
         glyph.d.push(applyTransforms(tag.attributes.d, parents));
       }
     });

@@ -321,20 +321,20 @@ function svgicons2svgfont(glyphs, options) {
       }
     });
     if('string' !== typeof glyph.name) {
-      throw Error('Please provide a name for the glyph at index ' + index);
+      throw new Error('Please provide a name for the glyph at index ' + index);
     }
     if(glyphs.some(function(g) {
       return (g !== glyph && g.name === glyph.name);
     })) {
-      throw Error('The glyph name "' + glyph.name + '" must be unique.');
+      throw new Error('The glyph name "' + glyph.name + '" must be unique.');
     }
     if('number' !== typeof glyph.codepoint) {
-      throw Error('Please provide a codepoint for the glyph "' + glyph.name + '"');
+      throw new Error('Please provide a codepoint for the glyph "' + glyph.name + '"');
     }
     if(glyphs.some(function(g) {
       return (g !== glyph && g.codepoint === glyph.codepoint);
     })) {
-      throw Error('The glyph "' + glyph.name
+      throw new Error('The glyph "' + glyph.name
         + '" codepoint seems to be used already elsewhere.');
     }
     glyph.running = true;

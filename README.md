@@ -16,28 +16,52 @@ You may want to convert fonts to icons, if so use
  [svgfont2svgicons](https://github.com/nfroidure/svgifont2svgicons).
 
 ## Usage
-NodeJS module:
+
+### In your scripts
 ```js
-var svgicons2svgfont = require('svgicons2svgfont')
-  , fs = require('fs');
-  , fontStream = svgicons2svgfont([{
-    codepoint: 0xE001,
-    stream: fs.createReadStream('icons/icon1.svg')
-  }, {
-    codepoint: 0xE002,
-    stream: fs.createReadStream('icons/icon2.svg')
-  }], options);
+var svgicons2svgfont = require('svgicons2svgfont');
+var fs = require('fs');
+var fontStream = svgicons2svgfont({
+  fontName: 'hello'
+});
+
+// Writing glyphs
+var glyph = fs.createReadStream('icons/icon1.svg');
+glyph.metadata = {
+  codepoints: ['0xE001'],
+  name: 'icon1'
+};
+fontStream.write(glyph);
+glyph.metadata = {
+  codepoints: ['0xE002'],
+  name: 'icon2'
+};
+fontStream.write(glyph);
+// Ligatures
+glyph.metadata = {
+  codepoints: ['0xE001', '0xE002'],
+  name: 'icon1-icon2'
+};
+fontStream.write(glyph);
+
+// Do not forget to end the stream
+fontStream.end();
 
 // Saving in a file
-fontStream.pipe(fs.createWriteStream('font/destination/file.svg'))
+fontStream.pipe(fs.createWriteStream('fonts/hello.svg'))
   .on('finish',function() {
-    console.log('Font written !')
+    console.log('Font successfully created!')
+  })
+  .on('error',function(err) {
+    console.log(err);
   });
 ```
 
-CLI (install the module globally):
+# CLI interface
+All options are available ewcept the `log` one by using this pattern:
+ `--{LOWER_CASE(optionName)}={optionValue}`.
 ```sh
-svgicons2svgfont icons/directory font/destination/file.svg
+svgicons2svgfont --fontname=hello icons/directory font/destination/file.svg
 ```
 
 ## API

@@ -225,10 +225,20 @@ function SVGIcons2SVGFontStream(options) {
       _this.emit('error', new Error('The glyph name "' + glyph.name +
         '" must be unique.'));
     }
-    if('string' !== typeof glyph.unicode) {
+    if(glyph.unicode && glyph.unicode instanceof Array && glyph.unicode.length) {
+      if(glyph.unicode.some(function(unicodeA, i) {
+        return glyph.unicode.some(function(unicodeB, j) {
+          return i !== j && unicodeA === unicodeB;
+        });
+      })) {
+        _this.emit('error', new Error('Given codepoints for the glyph "' +
+          glyph.name + '" contain duplicates.'));
+      }
+    } else if('string' !== typeof glyph.unicode) {
       _this.emit('error', new Error('Please provide a codepoint for the glyph "' +
         glyph.name + '"'));
     }
+
     if(glyphs.some(function(anotherGlyph) {
       return (anotherGlyph !== glyph && anotherGlyph.unicode === glyph.unicode);
     })) {
@@ -386,10 +396,15 @@ function SVGIcons2SVGFontStream(options) {
           }
           delete glyph.d;
           delete glyph.running;
-          _this.push('\
-    <glyph glyph-name="' + glyph.name + '"\n\
-      unicode="&#x' + ((glyph.unicode).charCodeAt(0).toString(16)).toUpperCase() + ';"\n\
+          (glyph.unicode instanceof Array ?
+            glyph.unicode :
+            [glyph.unicode]
+          ).forEach(function(unicode, i){
+            _this.push('\
+    <glyph glyph-name="' + glyph.name + (i == 0 ? '' : '-' + i) + '"\n\
+      unicode="&#x' + ((unicode).charCodeAt(0).toString(16)).toUpperCase() + ';"\n\
       horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');
+          });
     });
     _this.push('\
   </font>\n\

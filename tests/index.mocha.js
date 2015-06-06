@@ -255,6 +255,37 @@ describe('Using options', function() {
 
 });
 
+describe('Using multiple unicode values for a single icon', function() {
+
+  it("should work", function(done) {
+    var svgIconStream = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    svgIconStream.metadata = {
+      name: 'account',
+      unicode: ['\uE001', '\uE002']
+    };
+
+    var svgFontStream = SVGIcons2SVGFontStream();
+    var content = '';
+    var decoder = new StringDecoder('utf8');
+
+    svgFontStream.on('data', function(chunk) {
+      content += decoder.write(chunk);
+    });
+
+    svgFontStream.on('finish', function() {
+      assert.equal(
+        fs.readFileSync(__dirname + '/expected/cleanicons-multi.svg',
+          {encoding: 'utf8'}),
+        content
+      );
+      done();
+    });
+    svgFontStream.write(svgIconStream);
+    svgFontStream.end();
+  });
+
+});
+
 describe('Providing bad glyphs', function() {
 
   it("should fail when not providing glyph name", function(done) {
@@ -292,14 +323,14 @@ describe('Providing bad glyphs', function() {
         name: 'test2',
         unicode: '\uE002'
     };
-    var fontStream = SVGIcons2SVGFontStream();
-    fontStream.on('error', function(err) {
+    var svgFontStream = SVGIcons2SVGFontStream();
+    svgFontStream.on('error', function(err) {
       assert.equal(err instanceof Error, true);
       assert.equal(err.message, 'The glyph "test2" codepoint seems to be used already elsewhere.');
       done();
     });
-    fontStream.write(svgIconStream);
-    fontStream.write(svgIconStream2);
+    svgFontStream.write(svgIconStream);
+    svgFontStream.write(svgIconStream2);
   });
 
   it("should fail when providing the same name twice", function(done) {
@@ -313,14 +344,14 @@ describe('Providing bad glyphs', function() {
         name: 'test',
         unicode: '\uE002'
     };
-    var fontStream = SVGIcons2SVGFontStream();
-    fontStream.on('error', function(err) {
+    var svgFontStream = SVGIcons2SVGFontStream();
+    svgFontStream.on('error', function(err) {
       assert.equal(err instanceof Error, true);
       assert.equal(err.message, 'The glyph name "test" must be unique.');
       done();
     });
-    fontStream.write(svgIconStream);
-    fontStream.write(svgIconStream2);
+    svgFontStream.write(svgIconStream);
+    svgFontStream.write(svgIconStream2);
   });
 
 });

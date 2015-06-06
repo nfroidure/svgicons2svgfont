@@ -25,29 +25,7 @@ var fontStream = svgicons2svgfont({
   fontName: 'hello'
 });
 
-// Writing glyphs
-var glyph = fs.createReadStream('icons/icon1.svg');
-glyph.metadata = {
-  codepoints: ['0xE001'],
-  name: 'icon1'
-};
-fontStream.write(glyph);
-glyph.metadata = {
-  codepoints: ['0xE002'],
-  name: 'icon2'
-};
-fontStream.write(glyph);
-// Ligatures
-glyph.metadata = {
-  codepoints: ['0xE001', '0xE002'],
-  name: 'icon1-icon2'
-};
-fontStream.write(glyph);
-
-// Do not forget to end the stream
-fontStream.end();
-
-// Saving in a file
+// Setting the font destination
 fontStream.pipe(fs.createWriteStream('fonts/hello.svg'))
   .on('finish',function() {
     console.log('Font successfully created!')
@@ -55,14 +33,44 @@ fontStream.pipe(fs.createWriteStream('fonts/hello.svg'))
   .on('error',function(err) {
     console.log(err);
   });
+
+// Writing glyphs
+var glyph1 = fs.createReadStream('icons/icon1.svg');
+glyph1.metadata = {
+  unicode: '\uE001\uE002',
+  name: 'icon1'
+};
+fontStream.write(glyph);
+// Multiple unicode values are possible
+var glyph2 = fs.createReadStream('icons/icon1.svg');
+glyph2.metadata = {
+  unicode: ['\uE002', '\uEA02'],
+  name: 'icon2'
+};
+fontStream.write(glyph2);
+// Either ligatures are available
+var glyph3 = fs.createReadStream('icons/icon1.svg');
+glyph3.metadata = {
+  unicode: '\uE001\uE002',
+  name: 'icon1-icon2'
+};
+fontStream.write(glyph3);
+
+// Do not forget to end the stream
+fontStream.end();
 ```
 
 # CLI interface
-All options are available ewcept the `log` one by using this pattern:
+All options are available except the `log` one by using this pattern:
  `--{LOWER_CASE(optionName)}={optionValue}`.
 ```sh
 svgicons2svgfont --fontname=hello icons/directory font/destination/file.svg
 ```
+Note that you won't be able to customize icon names or icons unicodes by
+ passing options but by using the following convention to name your icons files:
+ `${icon.unicode}-${icon.name}.svg` where `icon.unicode` is a comma separated
+ list of unicode strings (ex: 'uEA01,uE001,uEOO1uEOO2', note that the last
+ string is in fact a ligature).
 
 ## API
 

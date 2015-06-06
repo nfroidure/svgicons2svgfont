@@ -286,6 +286,37 @@ describe('Using multiple unicode values for a single icon', function() {
 
 });
 
+describe('Using ligatures', function() {
+
+  it("should work", function(done) {
+    var svgIconStream = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    svgIconStream.metadata = {
+      name: 'account',
+      unicode: ['\uE001\uE002']
+    };
+
+    var svgFontStream = SVGIcons2SVGFontStream();
+    var content = '';
+    var decoder = new StringDecoder('utf8');
+
+    svgFontStream.on('data', function(chunk) {
+      content += decoder.write(chunk);
+    });
+
+    svgFontStream.on('finish', function() {
+      assert.equal(
+        fs.readFileSync(__dirname + '/expected/cleanicons-lig.svg',
+          {encoding: 'utf8'}),
+        content
+      );
+      done();
+    });
+    svgFontStream.write(svgIconStream);
+    svgFontStream.end();
+  });
+
+});
+
 describe('Providing bad glyphs', function() {
 
   it("should fail when not providing glyph name", function(done) {

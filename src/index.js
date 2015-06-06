@@ -402,7 +402,9 @@ function SVGIcons2SVGFontStream(options) {
           ).forEach(function(unicode, i){
             _this.push('\
     <glyph glyph-name="' + glyph.name + (i == 0 ? '' : '-' + i) + '"\n\
-      unicode="&#x' + ((unicode).charCodeAt(0).toString(16)).toUpperCase() + ';"\n\
+      unicode="' + unicode.split('').map(function(char) {
+        return '&#x' + char.charCodeAt(0).toString(16).toUpperCase() + ';';
+      }).join('') + '"\n\
       horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');
           });
     });

@@ -2,7 +2,7 @@
  * svgicons2svgfont
  * https://github.com/nfroidure/svgicons2svgfont
  *
- * Copyright (c) 2013 Nicolas Froidure, Cameron Hunter
+ * Copyright (c) 2013-2015 Nicolas Froidure and contributors
  * Licensed under the MIT license.
  */
 "use strict";
@@ -166,13 +166,18 @@ function polygonToPath(attributes) {
 }
 
 // Required modules
-var Path = require("path");
+var util = require("util");
 var Stream = require("readable-stream");
 var Sax = require("sax");
 var SVGPathData = require("svg-pathdata");
 
-function svgicons2svgfont(glyphs, options) {
-  var outputStream = new Stream.PassThrough();
+// Inherit of duplex stream
+util.inherits(SVGIcons2SVGFontStream, Stream.Transform);
+
+// Constructor
+function SVGIcons2SVGFontStream(options) {
+  var _this = this;
+  var glyphs = [];
   var log;
   var error;
 
@@ -185,14 +190,51 @@ function svgicons2svgfont(glyphs, options) {
   log = (options.log || console.log.bind(console));
   error = options.error || console.error.bind(console);
 
-  glyphs = glyphs.forEach(function(glyph, index, glyphs) {
+  // Ensure new were used
+  if(!(this instanceof SVGIcons2SVGFontStream)) {
+    return new SVGIcons2SVGFontStream(options);
+  }
+
+  // Parent constructor
+  Stream.Transform.call(this, {
+    objectMode: true
+  });
+
+  // Setting objectMode separately
+  this._writableState.objectMode = true;
+  this._readableState.objectMode = false;
+
+  // Parse input
+  this._transform = function _svgIcons2SVGFontStreamTransform(
+    svgIconStream, unused, svgIconStreamCallback
+  ) {
     // Parsing each icons asynchronously
     var saxStream = Sax.createStream(true);
     var parents = [];
+    var glyph = svgIconStream.metadata || {};
+    glyph.d = [];
+    glyphs.push(glyph);
 
-    saxStream.on('closetag', function(tag) {
-      parents.pop();
-    });
+    if('string' !== typeof glyph.name) {
+      _this.emit('error', new Error('Please provide a name for the glyph at' +
+        ' index ' + (glyphs.length - 1)));
+    }
+    if(glyphs.some(function(anotherGlyph) {
+      return (anotherGlyph !== glyph && anotherGlyph.name === glyph.name);
+    })) {
+      _this.emit('error', new Error('The glyph name "' + glyph.name +
+        '" must be unique.'));
+    }
+    if('number' !== typeof glyph.codepoint) {
+      _this.emit('error', new Error('Please provide a codepoint for the glyph "' +
+        glyph.name + '"'));
+    }
+    if(glyphs.some(function(anotherGlyph) {
+      return (anotherGlyph !== glyph && anotherGlyph.codepoint === glyph.codepoint);
+    })) {
+      _this.emit('error', new Error('The glyph "' + glyph.name +
+        '" codepoint seems to be used already elsewhere.'));
+    }
 
     saxStream.on('opentag', function(tag) {
       parents.push(tag);
@@ -249,38 +291,48 @@ function svgicons2svgfont(glyphs, options) {
         glyph.d.push(applyTransforms(tag.attributes.d, parents));
       }
     });
+
+    saxStream.on('closetag', function(tag) {
+      parents.pop();
+    });
+
     saxStream.on('end', function() {
-      glyph.running = false;
-      if(glyphs.every(function(glyph) {
-        return !glyph.running;
-      })) {
-        var fontWidth = (
-          glyphs.length > 1 ?
-          glyphs.reduce(function (curMax, glyph) {
-            return Math.max(curMax, glyph.width);
-          }, 0) :
-          glyphs[0].width);
-        var fontHeight = options.fontHeight || (
-          glyphs.length > 1 ? glyphs.reduce(function (curMax, glyph) {
-            return Math.max(curMax, glyph.height);
-          }, 0) :
-          glyphs[0].height);
-        if(
-          (!options.normalize) &&
-          fontHeight>(glyphs.length > 1 ?
-            glyphs.reduce(function (curMin, glyph) {
-              return Math.min(curMin, glyph.height);
-            }, Infinity) :
-            glyphs[0].height
-          )
-        ) {
-          log('The provided icons does not have the same height it could lead' +
-            ' to unexpected results. Using the normalize option could' +
-            ' solve the problem.');
-        }
-        // Output the SVG file
-        // (find a SAX parser that allows modifying SVG on the fly)
-        outputStream.write('<?xml version="1.0" standalone="no"?> \n\
+      svgIconStreamCallback();
+    });
+
+    svgIconStream.pipe(saxStream);
+  };
+
+  // Output data
+  this._flush = function _svgIcons2SVGFontStreamFlush(svgFontFlushCallback) {
+    var fontWidth = (
+      glyphs.length > 1 ?
+      glyphs.reduce(function (curMax, glyph) {
+        return Math.max(curMax, glyph.width);
+      }, 0) :
+      glyphs[0].width);
+    var fontHeight = options.fontHeight || (
+      glyphs.length > 1 ? glyphs.reduce(function (curMax, glyph) {
+        return Math.max(curMax, glyph.height);
+      }, 0) :
+      glyphs[0].height);
+    if(
+      (!options.normalize) &&
+      fontHeight>(glyphs.length > 1 ?
+        glyphs.reduce(function (curMin, glyph) {
+          return Math.min(curMin, glyph.height);
+        }, Infinity) :
+        glyphs[0].height
+      )
+    ) {
+      log('The provided icons does not have the same height it could lead' +
+        ' to unexpected results. Using the normalize option could' +
+        ' solve the problem.');
+    }
+    // Output the SVG file
+    // (find a SAX parser that allows modifying SVG on the fly)
+    _this.push('\
+<?xml version="1.0" standalone="no"?> \n\
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >\n\
 <svg xmlns="http://www.w3.org/2000/svg">\n\
 <defs>\n\
@@ -334,44 +386,20 @@ function svgicons2svgfont(glyphs, options) {
           }
           delete glyph.d;
           delete glyph.running;
-          outputStream.write('\
+          _this.push('\
     <glyph glyph-name="' + glyph.name + '"\n\
       unicode="&#x' + (glyph.codepoint.toString(16)).toUpperCase() + ';"\n\
       horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');
-        });
-        outputStream.write('\
+    });
+    _this.push('\
   </font>\n\
 </defs>\n\
 </svg>\n');
-        outputStream.on('finish', function() {
-          log("Font created");
-          'function' === (typeof options.callback) && (options.callback)(glyphs);
-        });
-        outputStream.end();
-      }
-    });
-    if('string' !== typeof glyph.name) {
-      throw new Error('Please provide a name for the glyph at index ' + index);
-    }
-    if(glyphs.some(function(g) {
-      return (g !== glyph && g.name === glyph.name);
-    })) {
-      throw new Error('The glyph name "' + glyph.name + '" must be unique.');
-    }
-    if('number' !== typeof glyph.codepoint) {
-      throw new Error('Please provide a codepoint for the glyph "' + glyph.name + '"');
-    }
-    if(glyphs.some(function(g) {
-      return (g !== glyph && g.codepoint === glyph.codepoint);
-    })) {
-      throw new Error('The glyph "' + glyph.name +
-        '" codepoint seems to be used already elsewhere.');
-    }
-    glyph.running = true;
-    glyph.d = [];
-    glyph.stream.pipe(saxStream);
-  });
-  return outputStream;
+    log("Font created");
+    'function' === (typeof options.callback) && (options.callback)(glyphs);
+    svgFontFlushCallback();
+  };
+
 }
 
-module.exports = svgicons2svgfont;
+module.exports = SVGIcons2SVGFontStream;

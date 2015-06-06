@@ -1,21 +1,13 @@
 #! /usr/bin/env node
 
-var svgicons2svgfont = require(__dirname + '/../src/index.js')
-  , Fs = require('fs')
-  , codepoint = 0xE001
-;
+var svgicons2svgfont = require(__dirname + '/../src/index.js');
+var SVGIconsDirStream = require(__dirname + '/../src/iconsdir.js');
+var fs = require('fs');
+var codepoint = 0xE001;
 
-svgicons2svgfont(
-  Fs.readdirSync(process.argv[2]).map(function(file) {
-    return {
-      name: 'glyph' + codepoint,
-      codepoint: codepoint++,
-      stream: Fs.createReadStream(
-        process.argv[2] + '/' + file
-      )
-    };
-  }), {
+SVGIconsDirStream(process.argv[2])
+  .pipe(svgicons2svgfont({
     fontName: process.argv[4] || ''
-  }
-).pipe(Fs.createWriteStream(process.argv[3]));
-
+    }
+  ))
+  .pipe(fs.createWriteStream(process.argv[3]));

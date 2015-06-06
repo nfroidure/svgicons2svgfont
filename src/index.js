@@ -33,6 +33,30 @@ function applyTransforms(d, parents) {
   return transformPath(new SVGPathData(d), transforms).encode();
 }
 
+// Rendering
+function tagShouldRender(tag, parents) {
+  return !parents.some(function(tag) {
+    if('undefined' !== typeof tag.attributes.display &&
+      'none' == tag.attributes.display.toLowerCase()) {
+      return true;
+    }
+    if('undefined' !== typeof tag.attributes.width &&
+      0 === parseFloat(tag.attributes.width, 0)) {
+      return true;
+    }
+    if('undefined' !== typeof tag.attributes.height &&
+      0 === parseFloat(tag.attributes.height, 0)) {
+      return true;
+    }
+    if('undefined' !== typeof tag.attributes.viewBox) {
+      var values = tag.attributes.viewBox.split(/\s*,*\s|\s,*\s*|,/);
+      if(0 === parseFloat(values[2]) || 0 === parseFloat(values[3])) {
+        return true;
+      }
+    }
+  });
+}
+
 // Shapes helpers (should also move elsewhere)
 function rectToPath(attributes) {
   var x = 'undefined' !== typeof attributes.x ?
@@ -142,52 +166,38 @@ function polygonToPath(attributes) {
 }
 
 // Required modules
-var Path = require("path")
-  , Stream = require("readable-stream")
-  , Sax = require("sax")
-  , SVGPathData = require("svg-pathdata")
-;
+var Path = require("path");
+var Stream = require("readable-stream");
+var Sax = require("sax");
+var SVGPathData = require("svg-pathdata");
 
 function svgicons2svgfont(glyphs, options) {
+  var outputStream = new Stream.PassThrough();
+  var log;
+  var error;
+
   options = options || {};
   options.fontName = options.fontName || 'iconfont';
   options.fixedWidth = options.fixedWidth || false;
   options.descent = options.descent || 0;
   options.round = options.round || 10e12;
-  var outputStream = new Stream.PassThrough()
-    , log = (options.log || console.log.bind(console))
-    , error = options.error || console.error.bind(console);
-  glyphs = glyphs.forEach(function (glyph, index, glyphs) {
+
+  log = (options.log || console.log.bind(console));
+  error = options.error || console.error.bind(console);
+
+  glyphs = glyphs.forEach(function(glyph, index, glyphs) {
     // Parsing each icons asynchronously
-    var saxStream = Sax.createStream(true)
-      , parents = []
-    ;
+    var saxStream = Sax.createStream(true);
+    var parents = [];
+
     saxStream.on('closetag', function(tag) {
       parents.pop();
     });
+
     saxStream.on('opentag', function(tag) {
       parents.push(tag);
       // Checking if any parent rendering is disabled and exit if so
-      if(parents.some(function(tag) {
-        if('undefined' != typeof tag.attributes.display
-            && 'none' == tag.attributes.display.toLowerCase()) {
-          return true;
-        }
-        if('undefined' != typeof tag.attributes.width
-            && 0 === parseFloat(tag.attributes.width, 0)) {
-          return true;
-        }
-        if('undefined' != typeof tag.attributes.height
-            && 0 === parseFloat(tag.attributes.height, 0)) {
-          return true;
-        }
-        if('undefined' != typeof tag.attributes.viewBox) {
-          var values = tag.attributes.viewBox.split(/\s*,*\s|\s,*\s*|,/);
-          if(0 === parseFloat(values[2]) || 0 === parseFloat(values[3])) {
-            return true;
-          }
-        }
-      })) {
+      if(!tagShouldRender(tag, parents)) {
         return;
       }
       // Save the view size

@@ -7,9 +7,6 @@
  */
 "use strict";
 
-// http://www.whizkidtech.redprince.net/bezier/circle/
-var KAPPA = ((Math.sqrt(2)-1)/3)*4;
-
 // Transform helpers (will move elsewhere later)
 function parseTransforms(value) {
  return value.match(
@@ -37,8 +34,6 @@ function applyTransforms(d, parents) {
 }
 
 // Shapes helpers (should also move elsewhere)
-
-
 function rectToPath(attributes) {
   var x = 'undefined' !== typeof attributes.x ?
     parseFloat(attributes.x, 10) :
@@ -92,6 +87,58 @@ function rectToPath(attributes) {
     ) +
     // Close path
     'z';
+}
+
+function polylineToPath(attributes) {
+  return 'M' + attributes.points;
+}
+
+function lineToPath(attributes) {
+  // Move to the line start
+  return '' +
+  'M' + (parseFloat(attributes.x1,10)||0).toString(10) +
+  ' ' + (parseFloat(attributes.y1,10)||0).toString(10) +
+  ' ' + ((parseFloat(attributes.x1,10)||0)+1).toString(10) +
+  ' ' + ((parseFloat(attributes.y1,10)||0)+1).toString(10) +
+  ' ' + ((parseFloat(attributes.x2,10)||0)+1).toString(10) +
+  ' ' + ((parseFloat(attributes.y2,10)||0)+1).toString(10) +
+  ' ' + (parseFloat(attributes.x2,10)||0).toString(10) +
+  ' ' + (parseFloat(attributes.y2,10)||0).toString(10) +
+  'Z';
+}
+
+
+// http://www.whizkidtech.redprince.net/bezier/circle/
+var KAPPA = ((Math.sqrt(2)-1)/3)*4;
+
+function circleToPath(attributes) {
+  var cx = parseFloat(attributes.cx, 10);
+  var cy = parseFloat(attributes.cy, 10);
+  var rx = 'undefined' !== typeof attributes.rx ?
+    parseFloat(attributes.rx, 10) :
+    parseFloat(attributes.r, 10);
+  var ry = 'undefined' !== typeof attributes.ry ?
+    parseFloat(attributes.ry, 10) :
+    parseFloat(attributes.r, 10);
+  return '' +
+    'M' + (cx - rx) + ',' + cy +
+    'C' + (cx - rx) + ',' + (cy + ry*KAPPA) +
+    ' ' + (cx - rx*KAPPA) + ',' + (cy + ry) +
+    ' ' + cx + ',' + (cy + ry) +
+    'C' + (cx + rx*KAPPA) + ',' + (cy+ry) +
+    ' ' + (cx + rx) + ',' + (cy + ry*KAPPA) +
+    ' ' + (cx + rx) + ',' + cy +
+    'C' + (cx + rx) + ',' + (cy - ry*KAPPA) +
+    ' ' + (cx + rx*KAPPA) + ',' + (cy - ry) +
+    ' ' + cx + ',' + (cy - ry) +
+    'C' + (cx - rx*KAPPA) + ',' + (cy - ry) +
+    ' ' + (cx - rx) + ',' + (cy - ry*KAPPA) +
+    ' ' + (cx - rx) + ',' + cy +
+    'Z';
+}
+
+function polygonToPath(attributes) {
+  return 'M' + attributes.points + 'Z';
 }
 
 // Required modules
@@ -177,52 +224,16 @@ function svgicons2svgfont(glyphs, options) {
       } else if('line' === tag.name && 'none' !== tag.attributes.fill) {
         log('Found a line element in the icon "' + glyph.name + '" the result'
           +' could be different than expected.');
-        glyph.d.push(applyTransforms(
-          // Move to the line start
-          'M' + (parseFloat(tag.attributes.x1,10)||0).toString(10)
-          + ' ' + (parseFloat(tag.attributes.y1,10)||0).toString(10)
-          + ' ' + ((parseFloat(tag.attributes.x1,10)||0)+1).toString(10)
-          + ' ' + ((parseFloat(tag.attributes.y1,10)||0)+1).toString(10)
-          + ' ' + ((parseFloat(tag.attributes.x2,10)||0)+1).toString(10)
-          + ' ' + ((parseFloat(tag.attributes.y2,10)||0)+1).toString(10)
-          + ' ' + (parseFloat(tag.attributes.x2,10)||0).toString(10)
-          + ' ' + (parseFloat(tag.attributes.y2,10)||0).toString(10)
-          + 'Z', parents
-        ));
+        glyph.d.push(applyTransforms(lineToPath(tag.attributes), parents));
       } else if('polyline' === tag.name && 'none' !== tag.attributes.fill) {
         log('Found a polyline element in the icon "' + glyph.name + '" the'
           +' result could be different than expected.');
-        glyph.d.push(applyTransforms(
-          'M' + tag.attributes.points, parents
-        ));
+        glyph.d.push(applyTransforms(polylineToPath(tag.attributes), parents));
       } else if('polygon' === tag.name && 'none' !== tag.attributes.fill) {
-        glyph.d.push(applyTransforms(
-          'M' + tag.attributes.points + 'Z', parents
-        ));
+        glyph.d.push(applyTransforms(polygonToPath(tag.attributes), parents));
       } else if('circle' === tag.name || 'ellipse' === tag.name &&
         'none' !== tag.attributes.fill) {
-        var cx = parseFloat(tag.attributes.cx,10)
-          , cy = parseFloat(tag.attributes.cy,10)
-          , rx = 'undefined' !== typeof tag.attributes.rx ?
-              parseFloat(tag.attributes.rx,10) : parseFloat(tag.attributes.r,10)
-          , ry = 'undefined' !== typeof tag.attributes.ry ?
-              parseFloat(tag.attributes.ry,10) : parseFloat(tag.attributes.r,10);
-        glyph.d.push(applyTransforms(
-          'M' + (cx - rx) + ',' + cy
-          + 'C' + (cx - rx) + ',' + (cy + ry*KAPPA)
-          + ' ' + (cx - rx*KAPPA) + ',' + (cy + ry)
-          + ' ' + cx + ',' + (cy + ry)
-          + 'C' + (cx + rx*KAPPA) + ',' + (cy+ry)
-          + ' ' + (cx + rx) + ',' + (cy + ry*KAPPA)
-          + ' ' + (cx + rx) + ',' + cy
-          + 'C' + (cx + rx) + ',' + (cy - ry*KAPPA)
-          + ' ' + (cx + rx*KAPPA) + ',' + (cy - ry)
-          + ' ' + cx + ',' + (cy - ry)
-          + 'C' + (cx - rx*KAPPA) + ',' + (cy - ry)
-          + ' ' + (cx - rx) + ',' + (cy - ry*KAPPA)
-          + ' ' + (cx - rx) + ',' + cy
-          + 'Z', parents
-        ));
+        glyph.d.push(applyTransforms(circleToPath(tag.attributes), parents));
       } else if('path' === tag.name && tag.attributes.d &&
         'none' !== tag.attributes.fill) {
         glyph.d.push(applyTransforms(tag.attributes.d, parents));

@@ -1,21 +1,39 @@
 #! /usr/bin/env node
 
-var svgicons2svgfont = require(__dirname + '/../src/index.js')
-  , Fs = require('fs')
-  , codepoint = 0xE001
-;
+var program = require('commander');
+var fs = require('fs');
 
-svgicons2svgfont(
-  Fs.readdirSync(process.argv[2]).map(function(file) {
-    return {
-      name: 'glyph' + codepoint,
-      codepoint: codepoint++,
-      stream: Fs.createReadStream(
-        process.argv[2] + '/' + file
-      )
-    };
-  }), {
-    fontName: process.argv[4] || ''
-  }
-).pipe(Fs.createWriteStream(process.argv[3]));
+var SVGIcons2SVGFontStream = require(__dirname + '/../src/index.js');
+var SVGIconsDirStream = require(__dirname + '/../src/iconsdir.js');
 
+program
+  .version('2.0.0')
+  .usage('[options] <icons ...>')
+  .option('-v, --verbose', 'tell me everything!')
+  .option('-o, --output [/dev/stdout]', 'Output file.')
+  .option('-f, --fontname [value]', 'the font family name you want [iconfont].')
+  .option('-w, --fixedWidth', 'creates a monospace font of the width of the largest input icon.')
+  .option('-c, --centerhorizontally', 'calculate the bounds of a glyph and center it horizontally.')
+  .option('-n, --normalize', 'normalize icons by scaling them to the height of the highest icon.')
+  .option('-h, --height [value]', 'the outputted font height [MAX(icons.height)].', parseInt)
+  .option('-r, --round [value]', 'setup the SVG path rounding [10e12].', parseInt)
+  .option('-d, --descent [value]', 'the font descent [0].', parseInt)
+  .parse(process.argv);
+
+if(!program.args.length) {
+  console.error('No icons specified!');
+  process.exit(1);
+}
+
+SVGIconsDirStream(program.args)
+  .pipe(SVGIcons2SVGFontStream({
+    fontName: program.fontname,
+    fixedwidth: program.fixedwidth,
+    centerhorizontally: program.centerHorizontally,
+    normalize: program.normalize,
+    height: program.height,
+    round: program.round,
+    descent: program.descent,
+    log: program.v ? console.log : function() {}
+  }))
+  .pipe(program.output ? fs.createWriteStream(program.output) : process.stdout);

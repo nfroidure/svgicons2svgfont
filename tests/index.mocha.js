@@ -1,141 +1,134 @@
-var assert = require('assert')
-  , svgicons2svgfont = require(__dirname + '/../src/index.js')
-  , Fs = require('fs')
-  , StringDecoder = require('string_decoder').StringDecoder
-  , Path = require("path");
+var assert = require('assert');
+var fs = require('fs');
+
+var SVGIcons2SVGFontStream = require(__dirname + '/../src/index.js');
+var StringDecoder = require('string_decoder').StringDecoder;
+var SVGIconsDirStream = require(__dirname + '/../src/iconsdir');
 
 // Helpers
 function generateFontToFile(options, done, fileSuffix) {
-  var codepoint = 0xE001
-    , dest = __dirname + '/results/' + options.fontName
-      + (fileSuffix || '') + '.svg'
-    , stream = svgicons2svgfont(Fs.readdirSync(__dirname + '/fixtures/' + options.fontName)
-      .map(function(file) {
-        var matches = file.match(/^(?:u([0-9a-f]{4})\-)?(.*).svg$/i);
-        return {
-          codepoint: (matches[1] ? parseInt(matches[1], 16) : codepoint++),
-          name: matches[2],
-          stream: Fs.createReadStream(__dirname + '/fixtures/' + options.fontName + '/' + file)
-        };
-      }), options);
-  stream.pipe(Fs.createWriteStream(dest)).on('finish', function() {
+  var dest = __dirname + '/results/' + options.fontName +
+    (fileSuffix || '') + '.svg';
+  var svgFontStream = SVGIcons2SVGFontStream(options);
+
+  svgFontStream.pipe(fs.createWriteStream(dest)).on('finish', function() {
     assert.equal(
-      Fs.readFileSync(__dirname + '/expected/' + options.fontName
-        + (fileSuffix || '') + '.svg',
+      fs.readFileSync(__dirname + '/expected/' + options.fontName +
+        (fileSuffix || '') + '.svg',
         {encoding: 'utf8'}),
-      Fs.readFileSync(dest,
+      fs.readFileSync(dest,
         {encoding: 'utf8'})
     );
     done();
   });
+
+  SVGIconsDirStream(__dirname + '/fixtures/' + options.fontName)
+    .pipe(svgFontStream);
 }
 
 function generateFontToMemory(options, done) {
-  var content = ''
-    , decoder = new StringDecoder('utf8')
-    , codepoint = 0xE001
-    , stream = svgicons2svgfont(Fs.readdirSync(__dirname + '/fixtures/' + options.fontName)
-      .map(function(file) {
-        var matches = file.match(/^(?:u([0-9a-f]{4})\-)?(.*).svg$/i);
-        return {
-          codepoint: (matches[1] ? parseInt(matches[1], 16) : codepoint++),
-          name: matches[2],
-          stream: Fs.createReadStream(__dirname + '/fixtures/' + options.fontName + '/' + file)
-        };
-      }), options);
-  stream.on('data', function(chunk) {
+  var content = '';
+  var decoder = new StringDecoder('utf8');
+  var svgFontStream = SVGIcons2SVGFontStream(options);
+
+  svgFontStream.on('data', function(chunk) {
     content += decoder.write(chunk);
   });
-  stream.on('finish', function() {
+
+  svgFontStream.on('finish', function() {
     assert.equal(
-      Fs.readFileSync(__dirname + '/expected/' + options.fontName + '.svg',
+      fs.readFileSync(__dirname + '/expected/' + options.fontName + '.svg',
         {encoding: 'utf8'}),
       content
     );
     done();
   });
+
+  SVGIconsDirStream(__dirname + '/fixtures/' + options.fontName)
+    .pipe(svgFontStream);
+
 }
 
 // Tests
 describe('Generating fonts to files', function() {
 
-	it("should work for simple SVG", function(done) {
+  it("should work for simple SVG", function(done) {
     generateFontToFile({
       fontName: 'originalicons'
     }, done);
-	});
+  });
 
-	it("should work for simple fixedWidth and normalize option", function(done) {
+  it("should work for simple fixedWidth and normalize option", function(done) {
     generateFontToFile({
       fontName: 'originalicons',
       fixedWidth: true,
       normalize: true
     }, done, 'n');
-	});
+  });
 
-	it("should work for simple SVG", function(done) {
+  it("should work for simple SVG", function(done) {
     generateFontToFile({
       fontName: 'cleanicons'
     }, done);
-	});
+  });
 
-	it("should work for codepoint mapped SVG icons", function(done) {
+  it("should work for codepoint mapped SVG icons", function(done) {
     generateFontToFile({
       fontName: 'prefixedicons',
       callback: function(){}
     }, done);
-	});
+  });
 
-	it("should work with multipath SVG icons", function(done) {
+  it("should work with multipath SVG icons", function(done) {
     generateFontToFile({
       fontName: 'multipathicons'
     }, done);
-	});
+  });
 
-	it("should work with simple shapes SVG icons", function(done) {
+  it("should work with simple shapes SVG icons", function(done) {
     generateFontToFile({
       fontName: 'shapeicons'
     }, done);
-	});
+  });
 
-	it("should work with variable height icons", function(done) {
+  it("should work with variable height icons", function(done) {
     generateFontToFile({
       fontName: 'variableheighticons'
     }, done);
-	});
+  });
 
-	it("should work with variable height icons and the normalize option", function(done) {
+  it("should work with variable height icons and the normalize option", function(done) {
     generateFontToFile({
       fontName: 'variableheighticons',
       normalize: true
     }, done, 'n');
-	});
+  });
 
-	it("should work with variable width icons", function(done) {
+  it("should work with variable width icons", function(done) {
     generateFontToFile({
       fontName: 'variablewidthicons'
     }, done);
-	});
+  });
 
-	it("should work with centered variable width icons and the fixed width option", function(done) {
+  it("should work with centered variable width icons and the fixed width option", function(done) {
     generateFontToFile({
       fontName: 'variablewidthicons',
       fixedWidth: true,
       centerHorizontally: true
     }, done, 'n');
-	});
+  });
 
-	it("should not display hidden pathes", function(done) {
+  it("should not display hidden pathes", function(done) {
     generateFontToFile({
       fontName: 'hiddenpathesicons'
     }, done);
-	});
+  });
 
-	it("should work with real world icons", function(done) {
+  it("should work with real world icons", function(done) {
     generateFontToFile({
       fontName: 'realicons'
     }, done);
-	});
+  });
 
   it("should work with rendering test SVG icons", function(done) {
     generateFontToFile({
@@ -262,97 +255,134 @@ describe('Using options', function() {
 
 });
 
-describe('Testing CLI', function() {
+describe('Using multiple unicode values for a single icon', function() {
 
-  it("should work for simple SVG", function(done) {
-    (require('child_process').exec)(
-      'node '+__dirname+'../bin/svgicons2svgfont.js '
-      + __dirname + '/expected/originalicons.svg '
-      + __dirname + '/results/originalicons.svg',
-      function() {
-        assert.equal(
-          Fs.readFileSync(__dirname + '/expected/originalicons.svg',
-            {encoding: 'utf8'}),
-          Fs.readFileSync(__dirname + '/results/originalicons.svg',
-            {encoding: 'utf8'})
-        );
-        done();
-      }
-    );
+  it("should work", function(done) {
+    var svgIconStream = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    svgIconStream.metadata = {
+      name: 'account',
+      unicode: ['\uE001', '\uE002']
+    };
+
+    var svgFontStream = SVGIcons2SVGFontStream();
+    var content = '';
+    var decoder = new StringDecoder('utf8');
+
+    svgFontStream.on('data', function(chunk) {
+      content += decoder.write(chunk);
+    });
+
+    svgFontStream.on('finish', function() {
+      assert.equal(
+        fs.readFileSync(__dirname + '/expected/cleanicons-multi.svg',
+          {encoding: 'utf8'}),
+        content
+      );
+      done();
+    });
+    svgFontStream.write(svgIconStream);
+    svgFontStream.end();
+  });
+
+});
+
+describe('Using ligatures', function() {
+
+  it("should work", function(done) {
+    var svgIconStream = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    svgIconStream.metadata = {
+      name: 'account',
+      unicode: ['\uE001\uE002']
+    };
+
+    var svgFontStream = SVGIcons2SVGFontStream();
+    var content = '';
+    var decoder = new StringDecoder('utf8');
+
+    svgFontStream.on('data', function(chunk) {
+      content += decoder.write(chunk);
+    });
+
+    svgFontStream.on('finish', function() {
+      assert.equal(
+        fs.readFileSync(__dirname + '/expected/cleanicons-lig.svg',
+          {encoding: 'utf8'}),
+        content
+      );
+      done();
+    });
+    svgFontStream.write(svgIconStream);
+    svgFontStream.end();
   });
 
 });
 
 describe('Providing bad glyphs', function() {
 
-	it("should fail when not providing glyph name", function() {
-	  var hadError = false;
-    try {
-      svgicons2svgfont([{
-	      stream: Fs.createReadStream('/dev/null'),
-	      codepoint: 0xE001
-      }]);
-    } catch(err) {
-	    assert.equal(err instanceof Error, true);
-	    assert.equal(err.message, 'Please provide a name for the glyph at index 0');
-	    hadError = true;
-    }
-    assert.equal(hadError, true);
-	});
+  it("should fail when not providing glyph name", function(done) {
+    var svgIconStream = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    svgIconStream.metadata = {
+      unicode: '\uE001'
+    };
+    SVGIcons2SVGFontStream().on('error', function(err) {
+      assert.equal(err instanceof Error, true);
+      assert.equal(err.message, 'Please provide a name for the glyph at index 0');
+      done();
+    }).write(svgIconStream);
+  });
 
-	it("should fail when not providing codepoints", function() {
-	  var hadError = false;
-    try {
-      svgicons2svgfont([{
-	      stream: Fs.createReadStream('/dev/null'),
-	      name: 'test'
-      }]);
-    } catch(err) {
-	    assert.equal(err instanceof Error, true);
-	    assert.equal(err.message, 'Please provide a codepoint for the glyph "test"');
-	    hadError = true;
-    }
-    assert.equal(hadError, true);
-	});
+  it("should fail when not providing codepoints", function(done) {
+    var svgIconStream = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    svgIconStream.metadata = {
+        name: 'test'
+    };
+    SVGIcons2SVGFontStream().on('error', function(err) {
+      assert.equal(err instanceof Error, true);
+      assert.equal(err.message, 'Please provide a codepoint for the glyph "test"');
+      done();
+    }).write(svgIconStream);
+  });
 
-	it("should fail when providing the same codepoint twice", function() {
-	  var hadError = false;
-    try {
-      svgicons2svgfont([{
-	      stream: Fs.createReadStream('/dev/null'),
-	      name: 'test',
-	      codepoint: 0xE001
-      },{
-	      stream: Fs.createReadStream('/dev/null'),
-	      name: 'test2',
-	      codepoint: 0xE001
-      }]);
-    } catch(err) {
-	    assert.equal(err instanceof Error, true);
-	    assert.equal(err.message, 'The glyph "test" codepoint seems to be used already elsewhere.');
-	    hadError = true;
-    }
-    assert.equal(hadError, true);
-	});
+  it("should fail when providing the same codepoint twice", function(done) {
+    var svgIconStream = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    svgIconStream.metadata = {
+        name: 'test',
+        unicode: '\uE002'
+    };
+    var svgIconStream2 = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    svgIconStream2.metadata = {
+        name: 'test2',
+        unicode: '\uE002'
+    };
+    var svgFontStream = SVGIcons2SVGFontStream();
+    svgFontStream.on('error', function(err) {
+      assert.equal(err instanceof Error, true);
+      assert.equal(err.message, 'The glyph "test2" codepoint seems to be used already elsewhere.');
+      done();
+    });
+    svgFontStream.write(svgIconStream);
+    svgFontStream.write(svgIconStream2);
+  });
 
-	it("should fail when providing the same name twice", function() {
-	  var hadError = false;
-    try {
-      svgicons2svgfont([{
-	      stream: Fs.createReadStream('/dev/null'),
-	      name: 'test',
-	      codepoint: 0xE001
-      },{
-	      stream: Fs.createReadStream('/dev/null'),
-	      name: 'test',
-	      codepoint: 0xE002
-      }]);
-    } catch(err) {
-	    assert.equal(err instanceof Error, true);
-	    assert.equal(err.message, 'The glyph name "test" must be unique.');
-	    hadError = true;
-    }
-    assert.equal(hadError, true);
-	});
+  it("should fail when providing the same name twice", function(done) {
+    var svgIconStream = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    svgIconStream.metadata = {
+        name: 'test',
+        unicode: '\uE001'
+    };
+    var svgIconStream2 = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    svgIconStream2.metadata = {
+        name: 'test',
+        unicode: '\uE002'
+    };
+    var svgFontStream = SVGIcons2SVGFontStream();
+    svgFontStream.on('error', function(err) {
+      assert.equal(err instanceof Error, true);
+      assert.equal(err.message, 'The glyph name "test" must be unique.');
+      done();
+    });
+    svgFontStream.write(svgIconStream);
+    svgFontStream.write(svgIconStream2);
+  });
 
 });

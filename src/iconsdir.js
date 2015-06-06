@@ -1,5 +1,6 @@
 var fs = require('fs');
 var util = require("util");
+var path = require("path");
 
 var Readable = require('stream').Readable;
 
@@ -7,10 +8,20 @@ var Readable = require('stream').Readable;
 util.inherits(SVGIconsDirStream, Readable);
 
 // Constructor
-function SVGIconsDirStream(path) {
+function SVGIconsDirStream(dir) {
   var _this = this;
   var code = 0xE001;
   var files;
+
+  // Ensure new were used
+  if(!(this instanceof SVGIconsDirStream)) {
+    return new SVGIconsDirStream(dir);
+  }
+
+  if(dir instanceof Array) {
+    files = dir;
+    dir = '';
+  }
 
   function _pushSVGIcons() {
     var file;
@@ -19,8 +30,8 @@ function SVGIconsDirStream(path) {
 
     while(files.length) {
       file = files.shift();
-      matches = file.match(/^(?:u([0-9a-f]{4})\-)?(.*).svg$/i);
-      svgIconStream = fs.createReadStream(path + '/' + file);
+      matches = path.basename(file).match(/^(?:u([0-9a-f]{4})\-)?(.*).svg$/i);
+      svgIconStream = fs.createReadStream(file);
       svgIconStream.metadata = {
         unicode: String.fromCharCode(matches[1] ? parseInt(matches[1], 16) : code++),
         name: matches[2]
@@ -30,11 +41,6 @@ function SVGIconsDirStream(path) {
       }
     }
     _this.push(null);
-  }
-
-  // Ensure new were used
-  if(!(this instanceof SVGIconsDirStream)) {
-    return new SVGIconsDirStream(path);
   }
 
   // Parent constructor
@@ -48,9 +54,14 @@ function SVGIconsDirStream(path) {
       return;
     }
     fs.readdir(
-      path,
+      dir,
       function(err, theFiles) {
-        files = theFiles;
+        if(err) {
+          _this.emit('error', err);
+        }
+        files = theFiles.map(function(file) {
+          return dir + '/' + file;
+        });
         _pushSVGIcons();
       }
     );

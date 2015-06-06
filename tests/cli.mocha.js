@@ -6,9 +6,9 @@ describe('Testing CLI', function() {
 
   it("should work for simple SVG", function(done) {
     (require('child_process').exec)(
-      'node ' + __dirname + '/../bin/svgicons2svgfont.js ' +
-      __dirname + '/fixtures/originalicons ' +
-      __dirname + '/results/originalicons-cli.svg',
+      'node ' + __dirname + '/../bin/svgicons2svgfont.js' +
+      ' -o ' + __dirname + '/results/originalicons-cli.svg' +
+      '-- ' + __dirname + '/fixtures/originalicons/*.svg ',
       function(err) {
         if(err) {
           throw err;

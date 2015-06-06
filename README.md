@@ -64,7 +64,7 @@ fontStream.end();
 All options are available except the `log` one by using this pattern:
  `--{LOWER_CASE(optionName)}={optionValue}`.
 ```sh
-svgicons2svgfont --fontname=hello icons/directory font/destination/file.svg
+svgicons2svgfont --fontname=hello -o font/destination/file.svg icons/directory/*.svg
 ```
 Note that you won't be able to customize icon names or icons unicodes by
  passing options but by using the following convention to name your icons files:
@@ -96,7 +96,7 @@ Calculate the bounds of a glyph and center it horizontally.
 
 **Warning:** The bounds calculation is currently a naive implementation that
  may not work for some icons. We need to create a svg-pathdata-draw module on
- top of svg-pathdata to get the real bounds of the icon. It's in on the bottom
+ top of svg-pathdata to get the real bounds of the icon. It's on the bottom
  of my to do, but feel free to work on it. Discuss it in the
  [related issue](https://github.com/nfroidure/svgicons2svgfont/issues/18).
 

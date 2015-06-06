@@ -1,22 +1,22 @@
 var assert = require('assert');
-var svgicons2svgfont = require(__dirname + '/../src/index.js');
-var Fs = require('fs');
+var fs = require('fs');
+
+var SVGIcons2SVGFontStream = require(__dirname + '/../src/index.js');
 var StringDecoder = require('string_decoder').StringDecoder;
-var Path = require("path");
 var SVGIconsDirStream = require(__dirname + '/../src/iconsdir');
 
 // Helpers
 function generateFontToFile(options, done, fileSuffix) {
   var dest = __dirname + '/results/' + options.fontName +
     (fileSuffix || '') + '.svg';
-  var svgFontStream = svgicons2svgfont(options);
+  var svgFontStream = SVGIcons2SVGFontStream(options);
 
-  svgFontStream.pipe(Fs.createWriteStream(dest)).on('finish', function() {
+  svgFontStream.pipe(fs.createWriteStream(dest)).on('finish', function() {
     assert.equal(
-      Fs.readFileSync(__dirname + '/expected/' + options.fontName +
+      fs.readFileSync(__dirname + '/expected/' + options.fontName +
         (fileSuffix || '') + '.svg',
         {encoding: 'utf8'}),
-      Fs.readFileSync(dest,
+      fs.readFileSync(dest,
         {encoding: 'utf8'})
     );
     done();
@@ -29,7 +29,7 @@ function generateFontToFile(options, done, fileSuffix) {
 function generateFontToMemory(options, done) {
   var content = '';
   var decoder = new StringDecoder('utf8');
-  var svgFontStream = svgicons2svgfont(options);
+  var svgFontStream = SVGIcons2SVGFontStream(options);
 
   svgFontStream.on('data', function(chunk) {
     content += decoder.write(chunk);
@@ -37,7 +37,7 @@ function generateFontToMemory(options, done) {
 
   svgFontStream.on('finish', function() {
     assert.equal(
-      Fs.readFileSync(__dirname + '/expected/' + options.fontName + '.svg',
+      fs.readFileSync(__dirname + '/expected/' + options.fontName + '.svg',
         {encoding: 'utf8'}),
       content
     );
@@ -258,11 +258,11 @@ describe('Using options', function() {
 describe('Providing bad glyphs', function() {
 
   it("should fail when not providing glyph name", function(done) {
-    var svgIconStream = Fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    var svgIconStream = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
     svgIconStream.metadata = {
-      codepoint: 0xE001
+      unicode: '\uE001'
     };
-    svgicons2svgfont().on('error', function(err) {
+    SVGIcons2SVGFontStream().on('error', function(err) {
       assert.equal(err instanceof Error, true);
       assert.equal(err.message, 'Please provide a name for the glyph at index 0');
       done();
@@ -270,11 +270,11 @@ describe('Providing bad glyphs', function() {
   });
 
   it("should fail when not providing codepoints", function(done) {
-    var svgIconStream = Fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    var svgIconStream = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
     svgIconStream.metadata = {
         name: 'test'
     };
-    svgicons2svgfont().on('error', function(err) {
+    SVGIcons2SVGFontStream().on('error', function(err) {
       assert.equal(err instanceof Error, true);
       assert.equal(err.message, 'Please provide a codepoint for the glyph "test"');
       done();
@@ -282,17 +282,17 @@ describe('Providing bad glyphs', function() {
   });
 
   it("should fail when providing the same codepoint twice", function(done) {
-    var svgIconStream = Fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    var svgIconStream = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
     svgIconStream.metadata = {
         name: 'test',
-        codepoint: 0xE002
+        unicode: '\uE002'
     };
-    var svgIconStream2 = Fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    var svgIconStream2 = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
     svgIconStream2.metadata = {
         name: 'test2',
-        codepoint: 0xE002
+        unicode: '\uE002'
     };
-    var fontStream = svgicons2svgfont();
+    var fontStream = SVGIcons2SVGFontStream();
     fontStream.on('error', function(err) {
       assert.equal(err instanceof Error, true);
       assert.equal(err.message, 'The glyph "test2" codepoint seems to be used already elsewhere.');
@@ -303,17 +303,17 @@ describe('Providing bad glyphs', function() {
   });
 
   it("should fail when providing the same name twice", function(done) {
-    var svgIconStream = Fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    var svgIconStream = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
     svgIconStream.metadata = {
         name: 'test',
-        codepoint: 0xE001
+        unicode: '\uE001'
     };
-    var svgIconStream2 = Fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    var svgIconStream2 = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
     svgIconStream2.metadata = {
         name: 'test',
-        codepoint: 0xE002
+        unicode: '\uE002'
     };
-    var fontStream = svgicons2svgfont();
+    var fontStream = SVGIcons2SVGFontStream();
     fontStream.on('error', function(err) {
       assert.equal(err instanceof Error, true);
       assert.equal(err.message, 'The glyph name "test" must be unique.');

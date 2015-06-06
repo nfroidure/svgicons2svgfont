@@ -1,5 +1,5 @@
 var svgicons2svgfont = require(__dirname + '/../src/index.js');
-var Fs = require('fs');
+var fs = require('fs');
 var assert = require('assert');
 
 describe('Testing CLI', function() {
@@ -14,9 +14,9 @@ describe('Testing CLI', function() {
           throw err;
         }
         assert.equal(
-          Fs.readFileSync(__dirname + '/expected/originalicons-cli.svg',
+          fs.readFileSync(__dirname + '/expected/originalicons-cli.svg',
             {encoding: 'utf8'}),
-          Fs.readFileSync(__dirname + '/results/originalicons-cli.svg',
+          fs.readFileSync(__dirname + '/results/originalicons-cli.svg',
             {encoding: 'utf8'})
         );
         done();

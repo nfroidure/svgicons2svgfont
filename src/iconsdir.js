@@ -1,7 +1,7 @@
 var fs = require('fs');
 var util = require("util");
-var Readable = require('stream').Readable;
 
+var Readable = require('stream').Readable;
 
 // Inherit of duplex stream
 util.inherits(SVGIconsDirStream, Readable);
@@ -9,7 +9,7 @@ util.inherits(SVGIconsDirStream, Readable);
 // Constructor
 function SVGIconsDirStream(path) {
   var _this = this;
-  var codepoint = 0xE001;
+  var code = 0xE001;
   var files;
 
   function _pushSVGIcons() {
@@ -22,7 +22,7 @@ function SVGIconsDirStream(path) {
       matches = file.match(/^(?:u([0-9a-f]{4})\-)?(.*).svg$/i);
       svgIconStream = fs.createReadStream(path + '/' + file);
       svgIconStream.metadata = {
-        codepoint: (matches[1] ? parseInt(matches[1], 16) : codepoint++),
+        unicode: String.fromCharCode(matches[1] ? parseInt(matches[1], 16) : code++),
         name: matches[2]
       };
       if(!_this.push(svgIconStream)) {

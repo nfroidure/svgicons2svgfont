@@ -225,12 +225,12 @@ function SVGIcons2SVGFontStream(options) {
       _this.emit('error', new Error('The glyph name "' + glyph.name +
         '" must be unique.'));
     }
-    if('number' !== typeof glyph.codepoint) {
+    if('string' !== typeof glyph.unicode) {
       _this.emit('error', new Error('Please provide a codepoint for the glyph "' +
         glyph.name + '"'));
     }
     if(glyphs.some(function(anotherGlyph) {
-      return (anotherGlyph !== glyph && anotherGlyph.codepoint === glyph.codepoint);
+      return (anotherGlyph !== glyph && anotherGlyph.unicode === glyph.unicode);
     })) {
       _this.emit('error', new Error('The glyph "' + glyph.name +
         '" codepoint seems to be used already elsewhere.'));
@@ -388,7 +388,7 @@ function SVGIcons2SVGFontStream(options) {
           delete glyph.running;
           _this.push('\
     <glyph glyph-name="' + glyph.name + '"\n\
-      unicode="&#x' + (glyph.codepoint.toString(16)).toUpperCase() + ';"\n\
+      unicode="&#x' + ((glyph.unicode).charCodeAt(0).toString(16)).toUpperCase() + ';"\n\
       horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');
     });
     _this.push('\

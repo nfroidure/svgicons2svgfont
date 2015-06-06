@@ -1,12 +1,12 @@
 #! /usr/bin/env node
 
-var svgicons2svgfont = require(__dirname + '/../src/index.js');
-var SVGIconsDirStream = require(__dirname + '/../src/iconsdir.js');
 var fs = require('fs');
-var codepoint = 0xE001;
+
+var SVGIcons2SVGFontStream = require(__dirname + '/../src/index.js');
+var SVGIconsDirStream = require(__dirname + '/../src/iconsdir.js');
 
 SVGIconsDirStream(process.argv[2])
-  .pipe(svgicons2svgfont({
+  .pipe(SVGIcons2SVGFontStream({
     fontName: process.argv[4] || ''
     }
   ))

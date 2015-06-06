@@ -218,26 +218,26 @@ function svgicons2svgfont(glyphs, options) {
           glyph.height = parseFloat(tag.attributes.height, 10);
         }
         if(!glyph.width || !glyph.height) {
-          log('Glyph "' + glyph.name + '" has no size attribute on which to'
-            + ' get the gylph dimensions (heigh and width or viewBox'
-            + ' attributes)');
+          log('Glyph "' + glyph.name + '" has no size attribute on which to' +
+            ' get the gylph dimensions (heigh and width or viewBox' +
+            ' attributes)');
           glyph.width = 150;
           glyph.height = 150;
         }
       // Clipping path unsupported
       } else if('clipPath' === tag.name) {
-        log('Found a clipPath element in the icon "' + glyph.name + '" the'
-          + 'result may be different than expected.');
+        log('Found a clipPath element in the icon "' + glyph.name + '" the' +
+          'result may be different than expected.');
       // Change rect elements to the corresponding path
       } else if('rect' === tag.name && 'none' !== tag.attributes.fill) {
         glyph.d.push(applyTransforms(rectToPath(tag.attributes), parents));
       } else if('line' === tag.name && 'none' !== tag.attributes.fill) {
-        log('Found a line element in the icon "' + glyph.name + '" the result'
-          +' could be different than expected.');
+        log('Found a line element in the icon "' + glyph.name + '" the result' +
+          ' could be different than expected.');
         glyph.d.push(applyTransforms(lineToPath(tag.attributes), parents));
       } else if('polyline' === tag.name && 'none' !== tag.attributes.fill) {
-        log('Found a polyline element in the icon "' + glyph.name + '" the'
-          +' result could be different than expected.');
+        log('Found a polyline element in the icon "' + glyph.name + '" the' +
+          ' result could be different than expected.');
         glyph.d.push(applyTransforms(polylineToPath(tag.attributes), parents));
       } else if('polygon' === tag.name && 'none' !== tag.attributes.fill) {
         glyph.d.push(applyTransforms(polygonToPath(tag.attributes), parents));
@@ -254,20 +254,29 @@ function svgicons2svgfont(glyphs, options) {
       if(glyphs.every(function(glyph) {
         return !glyph.running;
       })) {
-        var fontWidth = (glyphs.length > 1 ? glyphs.reduce(function (curMax, glyph) {
-              return Math.max(curMax, glyph.width);
-            }, 0) : glyphs[0].width)
-          , fontHeight = options.fontHeight ||
-            (glyphs.length > 1 ? glyphs.reduce(function (curMax, glyph) {
-              return Math.max(curMax, glyph.height);
-            }, 0) : glyphs[0].height);
-        if((!options.normalize)
-          && fontHeight>(glyphs.length > 1 ? glyphs.reduce(function (curMin, glyph) {
-          return Math.min(curMin, glyph.height);
-        }, Infinity) : glyphs[0].height)) {
-          log('The provided icons does not have the same height it could lead'
-            +' to unexpected results. Using the normalize option could'
-            +' solve the problem.');
+        var fontWidth = (
+          glyphs.length > 1 ?
+          glyphs.reduce(function (curMax, glyph) {
+            return Math.max(curMax, glyph.width);
+          }, 0) :
+          glyphs[0].width);
+        var fontHeight = options.fontHeight || (
+          glyphs.length > 1 ? glyphs.reduce(function (curMax, glyph) {
+            return Math.max(curMax, glyph.height);
+          }, 0) :
+          glyphs[0].height);
+        if(
+          (!options.normalize) &&
+          fontHeight>(glyphs.length > 1 ?
+            glyphs.reduce(function (curMin, glyph) {
+              return Math.min(curMin, glyph.height);
+            }, Infinity) :
+            glyphs[0].height
+          )
+        ) {
+          log('The provided icons does not have the same height it could lead' +
+            ' to unexpected results. Using the normalize option could' +
+            ' solve the problem.');
         }
         // Output the SVG file
         // (find a SAX parser that allows modifying SVG on the fly)
@@ -355,8 +364,8 @@ function svgicons2svgfont(glyphs, options) {
     if(glyphs.some(function(g) {
       return (g !== glyph && g.codepoint === glyph.codepoint);
     })) {
-      throw new Error('The glyph "' + glyph.name
-        + '" codepoint seems to be used already elsewhere.');
+      throw new Error('The glyph "' + glyph.name +
+        '" codepoint seems to be used already elsewhere.');
     }
     glyph.running = true;
     glyph.d = [];

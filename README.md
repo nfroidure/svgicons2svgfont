@@ -37,7 +37,7 @@ fontStream.pipe(fs.createWriteStream('fonts/hello.svg'))
 // Writing glyphs
 var glyph1 = fs.createReadStream('icons/icon1.svg');
 glyph1.metadata = {
-  unicode: '\uE001\uE002',
+  unicode: ['\uE001\uE002'],
   name: 'icon1'
 };
 fontStream.write(glyph);
@@ -51,7 +51,7 @@ fontStream.write(glyph2);
 // Either ligatures are available
 var glyph3 = fs.createReadStream('icons/icon1.svg');
 glyph3.metadata = {
-  unicode: '\uE001\uE002',
+  unicode: ['\uE001\uE002'],
   name: 'icon1-icon2'
 };
 fontStream.write(glyph3);
@@ -60,7 +60,7 @@ fontStream.write(glyph3);
 fontStream.end();
 ```
 
-# CLI interface
+## CLI interface
 All options are available except the `log` one by using this pattern:
  `--{LOWER_CASE(optionName)}={optionValue}`.
 ```sh
@@ -69,7 +69,7 @@ svgicons2svgfont --fontname=hello -o font/destination/file.svg icons/directory/*
 Note that you won't be able to customize icon names or icons unicodes by
  passing options but by using the following convention to name your icons files:
  `${icon.unicode}-${icon.name}.svg` where `icon.unicode` is a comma separated
- list of unicode strings (ex: 'uEA01,uE001,uEOO1uEOO2', note that the last
+ list of unicode strings (ex: 'uEA01,uE001,uE001uE002', note that the last
  string is in fact a ligature).
 
 There is a few more options for the CLI interface, you can list all of them:
@@ -91,7 +91,7 @@ svgicons2svgfont --help
 #    -r, --round [value]         setup the SVG path rounding [10e12].
 #    -d, --descent [value]       the font descent [0].
 #    -s, --startunicode [value]  the start unicode codepoint for unprefixed files [0xEA01].
-#    -a, --appendunicode         prefix files with their allocated unicode codepoint.
+#    -a, --appendunicode         prefix files with their automatically allocated unicode codepoint.
 ```
 
 ## API

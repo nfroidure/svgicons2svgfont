@@ -128,14 +128,14 @@ The ascent formula is: ascent = fontHeight - descent.
 
 #### options.log
 Type: `Function`
-Default value: `false`
+Default value: `console.log`
 
 Allows you to provide your own logging function. Set to `function(){}` to
  impeach logging.
 
 #### options.error
 Type: `Function`
-Default value: `false`
+Default value: `console.error`
 
 Allows you to provide your own error logging function. Set to `function(){}` to
  impeach logging.

@@ -396,10 +396,7 @@ function SVGIcons2SVGFontStream(options) {
           }
           delete glyph.d;
           delete glyph.running;
-          (glyph.unicode instanceof Array ?
-            glyph.unicode :
-            [glyph.unicode]
-          ).forEach(function(unicode, i){
+          glyph.unicode.forEach(function(unicode, i){
             _this.push('\
     <glyph glyph-name="' + glyph.name + (i == 0 ? '' : '-' + i) + '"\n\
       unicode="' + unicode.split('').map(function(char) {

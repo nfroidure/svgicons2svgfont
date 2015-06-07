@@ -1,0 +1,88 @@
+var metadata = require(__dirname + '/../src/metadata.js');
+var fs = require('fs');
+var assert = require('assert');
+
+describe('Metadata service', function() {
+
+  describe('for code generation', function() {
+
+    it("should extract right unicodes from files", function() {
+      var metadataService = metadata();
+      assert.deepEqual(
+        metadataService('/var/plop/hello.svg'), {
+          name: 'hello',
+          unicode: [String.fromCharCode(0xE001)]
+        }
+      );
+    });
+
+    it("should append unicodes to files when the option is set", function(done) {
+      fs.writeFileSync(__dirname + '/results/plop.svg', 'plop', 'utf-8');
+      var metadataService = metadata({
+        appendUnicode: true,
+        log: function() {
+          assert(fs.existsSync(__dirname + '/results/uE001-plop.svg'));
+          assert(!fs.existsSync(__dirname + '/results/plop.svg'));
+          fs.unlinkSync(__dirname + '/results/uE001-plop.svg');
+          done();
+        },
+        error: done
+      });
+      assert.deepEqual(
+        metadataService(__dirname + '/results/plop.svg'), {
+          name: 'plop',
+          unicode: [String.fromCharCode(0xE001)]
+        }
+      );
+    });
+
+  });
+
+  describe('for code extraction', function() {
+
+    it("should work for simple codes", function() {
+      var metadataService = metadata();
+      assert.deepEqual(
+        metadataService('/var/plop/u0001-hello.svg'), {
+          name: 'hello',
+          unicode: [String.fromCharCode(0x0001)]
+        }
+      );
+    });
+
+    it("should work for several codes", function() {
+      var metadataService = metadata();
+      assert.deepEqual(
+        metadataService('/var/plop/u0001,u0002-hello.svg'), {
+          name: 'hello',
+          unicode: [String.fromCharCode(0x0001), String.fromCharCode(0x0002)]
+        }
+      );
+    });
+
+    it("should work for ligature codes", function() {
+      var metadataService = metadata();
+      assert.deepEqual(
+        metadataService('/var/plop/u0001u0002-hello.svg'), {
+          name: 'hello',
+          unicode: [String.fromCharCode(0x0001) + String.fromCharCode(0x0002)]
+        }
+      );
+    });
+
+    it("should work for nested codes", function() {
+      var metadataService = metadata();
+      assert.deepEqual(
+        metadataService('/var/plop/u0001u0002,u0001-hello.svg'), {
+          name: 'hello',
+          unicode: [
+            String.fromCharCode(0x0001) + String.fromCharCode(0x0002),
+            String.fromCharCode(0x0001)
+          ]
+        }
+      );
+    });
+
+  });
+
+});

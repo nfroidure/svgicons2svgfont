@@ -15,7 +15,7 @@ function SVGIconsDirStream(dir, options) {
 
   // Ensure new were used
   if(!(this instanceof SVGIconsDirStream)) {
-    return new SVGIconsDirStream(dir);
+    return new SVGIconsDirStream(dir, options);
   }
 
   if(dir instanceof Array) {

@@ -11,7 +11,7 @@ describe('Metadata service', function() {
       assert.deepEqual(
         metadataService('/var/plop/hello.svg'), {
           name: 'hello',
-          unicode: [String.fromCharCode(0xE001)]
+          unicode: [String.fromCharCode(0xEA01)]
         }
       );
     });
@@ -21,9 +21,9 @@ describe('Metadata service', function() {
       var metadataService = metadata({
         appendUnicode: true,
         log: function() {
-          assert(fs.existsSync(__dirname + '/results/uE001-plop.svg'));
+          assert(fs.existsSync(__dirname + '/results/uEA01-plop.svg'));
           assert(!fs.existsSync(__dirname + '/results/plop.svg'));
-          fs.unlinkSync(__dirname + '/results/uE001-plop.svg');
+          fs.unlinkSync(__dirname + '/results/uEA01-plop.svg');
           done();
         },
         error: done
@@ -31,7 +31,7 @@ describe('Metadata service', function() {
       assert.deepEqual(
         metadataService(__dirname + '/results/plop.svg'), {
           name: 'plop',
-          unicode: [String.fromCharCode(0xE001)]
+          unicode: [String.fromCharCode(0xEA01)]
         }
       );
     });

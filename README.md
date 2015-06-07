@@ -72,6 +72,27 @@ Note that you won't be able to customize icon names or icons unicodes by
  list of unicode strings (ex: 'uEA01,uE001,uEOO1uEOO2', note that the last
  string is in fact a ligature).
 
+There is a few more options for the CLI interface, you can list all of them:
+```js
+svgicons2svgfont --help
+#  Usage: svgicons2svgfont [options] <icons ...>
+#
+#  Options:
+#
+#    -h, --help                  output usage information
+#    -V, --version               output the version number
+#    -v, --verbose               tell me everything!
+#    -o, --output [/dev/stdout]  Output file.
+#    -f, --fontname [value]      the font family name you want [iconfont].
+#    -w, --fixedWidth            creates a monospace font of the width of the largest input icon.
+#    -c, --centerhorizontally    calculate the bounds of a glyph and center it horizontally.
+#    -n, --normalize             normalize icons by scaling them to the height of the highest icon.
+#    -h, --height [value]        the outputted font height [MAX(icons.height)].
+#    -r, --round [value]         setup the SVG path rounding [10e12].
+#    -d, --descent [value]       the font descent [0].
+#    -s, --startunicode [value]  the start unicode codepoint for unprefixed files [0xEA01].
+```
+
 ## API
 
 ### svgicons2svgfont(options)

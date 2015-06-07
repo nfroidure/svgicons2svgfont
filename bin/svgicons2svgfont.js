@@ -18,6 +18,7 @@ program
   .option('-h, --height [value]', 'the outputted font height [MAX(icons.height)].', parseInt)
   .option('-r, --round [value]', 'setup the SVG path rounding [10e12].', parseInt)
   .option('-d, --descent [value]', 'the font descent [0].', parseInt)
+  .option('-s, --startunicode [value]', 'the start unicode codepoint for unprefixed files [0xEA01].', parseInt)
   .parse(process.argv);
 
 if(!program.args.length) {
@@ -25,7 +26,9 @@ if(!program.args.length) {
   process.exit(1);
 }
 
-SVGIconsDirStream(program.args)
+SVGIconsDirStream(program.args, {
+    startUnicode: program.startunicode
+})
   .pipe(SVGIcons2SVGFontStream({
     fontName: program.fontname,
     fixedwidth: program.fixedwidth,

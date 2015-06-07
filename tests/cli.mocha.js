@@ -8,6 +8,7 @@ describe('Testing CLI', function() {
     (require('child_process').exec)(
       'node ' + __dirname + '/../bin/svgicons2svgfont.js' +
       ' -o ' + __dirname + '/results/originalicons-cli.svg' +
+      ' -s 0xE001' +
       ' ' + __dirname + '/fixtures/originalicons/*.svg ',
       function(err) {
         if(err) {

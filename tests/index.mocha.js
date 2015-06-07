@@ -22,7 +22,9 @@ function generateFontToFile(options, done, fileSuffix) {
     done();
   });
 
-  SVGIconsDirStream(__dirname + '/fixtures/' + options.fontName)
+  SVGIconsDirStream(__dirname + '/fixtures/' + options.fontName, {
+    startUnicode: 0xE001
+  })
     .pipe(svgFontStream);
 }
 
@@ -44,7 +46,9 @@ function generateFontToMemory(options, done) {
     done();
   });
 
-  SVGIconsDirStream(__dirname + '/fixtures/' + options.fontName)
+  SVGIconsDirStream(__dirname + '/fixtures/' + options.fontName, {
+    startUnicode: 0xE001
+  })
     .pipe(svgFontStream);
 
 }

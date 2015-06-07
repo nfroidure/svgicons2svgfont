@@ -3,13 +3,12 @@ var fs = require('fs');
 
 function getMetadataService(options) {
   var usedUnicodes = [];
-
   // Default options
   options = options || {};
   options.appendUnicode = !!options.appendUnicode;
   options.startUnicode = 'number' === typeof options.startUnicode ?
     options.startUnicode :
-    0xE001;
+    0xEA01;
   options.log = options.log || console.log;
   options.err = options.err || console.err;
 

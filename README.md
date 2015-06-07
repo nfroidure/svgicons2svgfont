@@ -91,6 +91,7 @@ svgicons2svgfont --help
 #    -r, --round [value]         setup the SVG path rounding [10e12].
 #    -d, --descent [value]       the font descent [0].
 #    -s, --startunicode [value]  the start unicode codepoint for unprefixed files [0xEA01].
+#    -a, --appendunicode         prefix files with their allocated unicode codepoint.
 ```
 
 ## API

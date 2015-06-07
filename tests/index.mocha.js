@@ -343,6 +343,19 @@ describe('Providing bad glyphs', function() {
     }).write(svgIconStream);
   });
 
+  it("should fail when providing unicode value with duplicates", function(done) {
+    var svgIconStream = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
+    svgIconStream.metadata = {
+        name: 'test',
+        unicode: ['\uE002','\uE002']
+    };
+    SVGIcons2SVGFontStream().on('error', function(err) {
+      assert.equal(err instanceof Error, true);
+      assert.equal(err.message, 'Given codepoints for the glyph "test" contain duplicates.');
+      done();
+    }).write(svgIconStream);
+  });
+
   it("should fail when providing the same codepoint twice", function(done) {
     var svgIconStream = fs.createReadStream(__dirname + '/fixtures/cleanicons/account.svg');
     svgIconStream.metadata = {

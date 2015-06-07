@@ -36,6 +36,27 @@ describe('Metadata service', function() {
       );
     });
 
+    it("should log file rename errors", function(done) {
+      var metadataService = metadata({
+        appendUnicode: true,
+        startUnicode: 0xEA02,
+        error: function(err) {
+          assert(!fs.existsSync(__dirname + '/results/uEA02-plop.svg'));
+          assert(err);
+          done();
+        },
+        log: function() {
+          done(new Error('Not supposed to be here'));
+        }
+      });
+      assert.deepEqual(
+        metadataService(__dirname + '/results/plop.svg'), {
+          name: 'plop',
+          unicode: [String.fromCharCode(0xEA02)]
+        }
+      );
+    });
+
   });
 
   describe('for code extraction', function() {

@@ -315,6 +315,7 @@ function SVGIcons2SVGFontStream(options) {
 
   // Output data
   this._flush = function _svgIcons2SVGFontStreamFlush(svgFontFlushCallback) {
+    var error = false;
     var fontWidth = (
       glyphs.length > 1 ?
       glyphs.reduce(function (curMax, glyph) {
@@ -364,7 +365,8 @@ function SVGIcons2SVGFontStream(options) {
             }
           }
           glyph.d.forEach(function(cD) {
-            d+=' '+new SVGPathData(cD)
+           try {
+             d+=' '+new SVGPathData(cD)
                 .toAbs()
                 .translate(-glyph.dX, -glyph.dY)
                 .scale(
@@ -373,6 +375,10 @@ function SVGIcons2SVGFontStream(options) {
                 .ySymetry(glyph.height - options.descent)
                 .round(options.round)
                 .encode();
+           } catch (e) {
+             error = true;
+             _this.emit('error', e);
+           }
           });
           if(options.centerHorizontally) {
             // Naive bounds calculation (should draw, then calculate bounds...)
@@ -405,6 +411,9 @@ function SVGIcons2SVGFontStream(options) {
       horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');
           });
     });
+    if (error) {
+      return svgFontFlushCallback();
+    }
     _this.push('\
   </font>\n\
 </defs>\n\

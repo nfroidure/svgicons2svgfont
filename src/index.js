@@ -301,6 +301,10 @@ function SVGIcons2SVGFontStream(options) {
         glyph.d.push(applyTransforms(tag.attributes.d, parents));
       }
     });
+    
+    saxStream.on('error', function (error) {
+	     svgIconStream.emit('error', error);
+    });
 
     saxStream.on('closetag', function(tag) {
       parents.pop();

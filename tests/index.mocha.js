@@ -4,6 +4,7 @@ var fs = require('fs');
 var SVGIcons2SVGFontStream = require(__dirname + '/../src/index.js');
 var StringDecoder = require('string_decoder').StringDecoder;
 var SVGIconsDirStream = require(__dirname + '/../src/iconsdir');
+var streamtest = require('streamtest');
 
 // Helpers
 function generateFontToFile(options, done, fileSuffix, startUnicode) {
@@ -408,6 +409,19 @@ describe('Providing bad glyphs', function() {
     });
     svgFontStream.write(svgIconStream);
     svgFontStream.write(svgIconStream2);
+  });
+
+  it("should fail when providing bad XML", function(done) {
+    var svgIconStream = streamtest.v2.fromChunks(['bad', 'xml']);
+    svgIconStream.metadata = {
+        name: 'test',
+        unicode: ['\uE002']
+    };
+    SVGIcons2SVGFontStream().on('error', function(err) {
+      assert.equal(err instanceof Error, true);
+      assert.equal(err.message, 'Non-whitespace before first tag.\nLine: 0\nColumn: 1\nChar: b');
+      done();
+    }).write(svgIconStream);
   });
 
 });

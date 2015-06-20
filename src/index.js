@@ -367,7 +367,8 @@ function SVGIcons2SVGFontStream(options) {
             }
           }
           glyph.d.forEach(function(cD) {
-            d+=' '+new SVGPathData(cD)
+            try {
+              d += ' ' + new SVGPathData(cD)
                 .toAbs()
                 .translate(-glyph.dX, -glyph.dY)
                 .scale(
@@ -376,6 +377,10 @@ function SVGIcons2SVGFontStream(options) {
                 .ySymetry(glyph.height - options.descent)
                 .round(options.round)
                 .encode();
+              } catch(err) {
+                _this.emit('error', 'Got an error parsing the glyph "' +
+                  glyph.name + '" path data: ' + cD + '.');
+              }
           });
           if(options.centerHorizontally) {
             // Naive bounds calculation (should draw, then calculate bounds...)

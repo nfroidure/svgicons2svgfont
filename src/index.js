@@ -303,6 +303,10 @@ function SVGIcons2SVGFontStream(options) {
       }
     });
 
+    saxStream.on('error', function (error) {
+      _this.emit('error', error);
+    });
+
     saxStream.on('closetag', function(tag) {
       parents.pop();
     });

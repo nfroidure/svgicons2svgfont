@@ -19,7 +19,6 @@ function getMetadataService(options) {
       unicode: []
     };
     matches = basename.match(/^(?:((?:u[0-9a-f]{4,6},?)+)\-)?(.*).svg$/i);
-    metadata.name = matches[2];
     if(matches && matches[1]) {
       metadata.unicode = matches[1].split(',').map(function(match) {
         match = match.substr(1);
@@ -51,6 +50,9 @@ function getMetadataService(options) {
         );
       }
     }
+    metadata.name = matches && matches[2] ?
+      matches[2] :
+      'icon' + options.startUnicode;
     return metadata;
   };
 

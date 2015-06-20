@@ -25,4 +25,29 @@ describe('Testing CLI', function() {
     );
   });
 
+  describe("with nested icons", function(done) {
+
+    it("should work", function(done) {
+
+      (require('child_process').exec)(
+        'node ' + __dirname + '/../bin/svgicons2svgfont.js' +
+        ' -o ' + __dirname + '/results/nestedicons-cli.svg' +
+        ' ' + __dirname + '/fixtures/nestedicons/*.svg ',
+        function(err) {
+          if(err) {
+            throw err;
+          }
+          assert.equal(
+            fs.readFileSync(__dirname + '/expected/nestedicons-cli.svg',
+              {encoding: 'utf8'}),
+            fs.readFileSync(__dirname + '/results/nestedicons-cli.svg',
+              {encoding: 'utf8'})
+          );
+          done();
+        }
+      );
+    });
+
+  });
+
 });

@@ -20,6 +20,7 @@ program
   .option('-d, --descent [value]', 'the font descent [0].', parseInt)
   .option('-s, --startunicode [value]', 'the start unicode codepoint for unprefixed files [0xEA01].', parseInt)
   .option('-a, --appendunicode', 'prefix files with their automatically allocated unicode codepoint.', parseInt)
+  .option('-m, --metadata', 'content of the metadata tag.')
   .parse(process.argv);
 
 if(!program.args.length) {
@@ -40,6 +41,7 @@ SVGIconsDirStream(program.args, {
     height: program.height,
     round: program.round,
     descent: program.descent,
+    metadata: program.metadata,
     log: program.v ? console.log : function() {}
   }))
   .pipe(program.output ? fs.createWriteStream(program.output) : process.stdout);

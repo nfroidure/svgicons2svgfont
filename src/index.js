@@ -186,6 +186,7 @@ function SVGIcons2SVGFontStream(options) {
   options.fixedWidth = options.fixedWidth || false;
   options.descent = options.descent || 0;
   options.round = options.round || 10e12;
+  options.metadata = options.metadata || '';
 
   log = (options.log || console.log.bind(console));
   error = options.error || console.error.bind(console);
@@ -344,7 +345,9 @@ function SVGIcons2SVGFontStream(options) {
     _this.push('\
 <?xml version="1.0" standalone="no"?> \n\
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >\n\
-<svg xmlns="http://www.w3.org/2000/svg">\n\
+<svg xmlns="http://www.w3.org/2000/svg">\n' + (
+  options.metadata ? '<metadata>' + options.metadata + '</metadata>\n' : ''
+) + '\
 <defs>\n\
   <font id="' + options.fontName + '" horiz-adv-x="' + fontWidth + '">\n\
     <font-face font-family="' + options.fontName + '"\n\

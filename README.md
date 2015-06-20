@@ -92,6 +92,7 @@ svgicons2svgfont --help
 #    -d, --descent [value]       the font descent [0].
 #    -s, --startunicode [value]  the start unicode codepoint for unprefixed files [0xEA01].
 #    -a, --appendunicode         prefix files with their automatically allocated unicode codepoint.
+#    -m, --metadata              content of the metadata tag.
 ```
 
 ## API
@@ -147,6 +148,13 @@ The font descent. It is usefull to fix the font baseline yourself.
 **Warning:**  The descent is a positive value!
 
 The ascent formula is: ascent = fontHeight - descent.
+
+#### options.metadata
+Type: `String`
+Default value: `undefined`
+
+The font [metadata](http://www.w3.org/TR/SVG/metadata.html). You can set any
+ character data in but it is the be suited place for a copyright mention.
 
 #### options.log
 Type: `Function`

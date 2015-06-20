@@ -6,9 +6,10 @@ var StringDecoder = require('string_decoder').StringDecoder;
 var SVGIconsDirStream = require(__dirname + '/../src/iconsdir');
 
 // Helpers
-function generateFontToFile(options, done, fileSuffix) {
+function generateFontToFile(options, done, fileSuffix, startUnicode) {
   var dest = __dirname + '/results/' + options.fontName +
     (fileSuffix || '') + '.svg';
+  options.log = function() {};
   var svgFontStream = SVGIcons2SVGFontStream(options);
 
   svgFontStream.pipe(fs.createWriteStream(dest)).on('finish', function() {
@@ -23,14 +24,15 @@ function generateFontToFile(options, done, fileSuffix) {
   });
 
   SVGIconsDirStream(__dirname + '/fixtures/' + options.fontName, {
-    startUnicode: 0xE001
+    startUnicode: startUnicode || 0xE001
   })
     .pipe(svgFontStream);
 }
 
-function generateFontToMemory(options, done) {
+function generateFontToMemory(options, done, fileSuffix, startUnicode) {
   var content = '';
   var decoder = new StringDecoder('utf8');
+  options.log = function() {};
   var svgFontStream = SVGIcons2SVGFontStream(options);
 
   svgFontStream.on('data', function(chunk) {
@@ -47,7 +49,7 @@ function generateFontToMemory(options, done) {
   });
 
   SVGIconsDirStream(__dirname + '/fixtures/' + options.fontName, {
-    startUnicode: 0xE001
+    startUnicode: startUnicode || 0xE001
   })
     .pipe(svgFontStream);
 
@@ -255,6 +257,12 @@ describe('Using options', function() {
       fixedWidth: true,
       centerHorizontally: true
     }, done, '7');
+  });
+
+  it("should work with nested icons", function(done) {
+    generateFontToFile({
+      fontName: 'nestedicons'
+    }, done, '', 0xEA01);
   });
 
 });

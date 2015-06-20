@@ -12,13 +12,18 @@ function getMetadataService(options) {
   options.log = options.log || console.log;
   options.err = options.err || console.err;
 
-  return function getMetadataFromFile(file) {
+  return function getMetadataFromFile(file, cb) {
     var basename = path.basename(file);
     var metadata = {
+      path: file,
       name: '',
-      unicode: []
+      unicode: [],
+      renamed: false
     };
-    matches = basename.match(/^(?:((?:u[0-9a-f]{4,6},?)+)\-)?(.*).svg$/i);
+    matches = basename.match(/^(?:((?:u[0-9a-f]{4,6},?)+)\-)?(.+)\.svg$/i);
+    metadata.name = matches && matches[2] ?
+      matches[2] :
+      'icon' + options.startUnicode;
     if(matches && matches[1]) {
       metadata.unicode = matches[1].split(',').map(function(match) {
         match = match.substr(1);
@@ -26,6 +31,10 @@ function getMetadataService(options) {
           return String.fromCharCode(parseInt(code, 16));
         }).join('');
       });
+      if(-1 !== usedUnicodes.indexOf(metadata.unicode[0])) {
+        return cb(new Error('The unicode codepoint of the glyph ' + metadata.name +
+          ' seems to be already used by another glyph.'));
+      }
       usedUnicodes = usedUnicodes.concat(metadata.unicode);
     } else {
       do {
@@ -33,27 +42,27 @@ function getMetadataService(options) {
       } while(-1 !== usedUnicodes.indexOf(metadata.unicode[0]));
       usedUnicodes.push(metadata.unicode[0]);
       if(options.appendUnicode) {
-        fs.rename(file, path.dirname(file) + '/' +
+        metadata.renamed = true;
+        metadata.path = path.dirname(file) + '/' +
           'u' + metadata.unicode[0].charCodeAt(0).toString(16).toUpperCase() +
-          '-' + basename,
+          '-' + basename;
+        fs.rename(file, metadata.path,
           function(err) {
             if(err) {
-              options.error(new Error('Could not save codepoint: ' +
+              return cb(new Error('Could not save codepoint: ' +
                 'u' + metadata.unicode[0].charCodeAt(0).toString(16).toUpperCase() +
                 ' for ' + basename));
-            } else {
-              options.log('Saved codepoint: ' +
-                'u' + metadata.unicode[0].charCodeAt(0).toString(16).toUpperCase() +
-                ' for ' + basename);
             }
+            cb(null, metadata);
           }
         );
       }
     }
-    metadata.name = matches && matches[2] ?
-      matches[2] :
-      'icon' + options.startUnicode;
-    return metadata;
+    if(!metadata.renamed) {
+      setImmediate(function() {
+        cb(null, metadata);
+      });
+    }
   };
 
 }

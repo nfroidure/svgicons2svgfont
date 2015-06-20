@@ -15,9 +15,9 @@ describe('Testing CLI', function() {
           throw err;
         }
         assert.equal(
-          fs.readFileSync(__dirname + '/expected/originalicons-cli.svg',
-            {encoding: 'utf8'}),
           fs.readFileSync(__dirname + '/results/originalicons-cli.svg',
+            {encoding: 'utf8'}),
+          fs.readFileSync(__dirname + '/expected/originalicons-cli.svg',
             {encoding: 'utf8'})
         );
         done();
@@ -38,9 +38,9 @@ describe('Testing CLI', function() {
             throw err;
           }
           assert.equal(
-            fs.readFileSync(__dirname + '/expected/nestedicons-cli.svg',
-              {encoding: 'utf8'}),
             fs.readFileSync(__dirname + '/results/nestedicons-cli.svg',
+              {encoding: 'utf8'}),
+            fs.readFileSync(__dirname + '/expected/nestedicons-cli.svg',
               {encoding: 'utf8'})
           );
           done();

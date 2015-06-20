@@ -8,100 +8,131 @@ describe('Metadata service', function() {
 
     it("should extract right unicodes from files", function() {
       var metadataService = metadata();
-      assert.deepEqual(
-        metadataService('/var/plop/hello.svg'), {
-          name: 'hello',
-          unicode: [String.fromCharCode(0xEA01)]
+      metadataService('/var/plop/hello.svg', function(err, infos) {
+        if(err) {
+          return done(err);
         }
-      );
+        assert.deepEqual(
+          infos, {
+            path: '/var/plop/hello.svg',
+            name: 'hello',
+            unicode: [String.fromCharCode(0xEA01)],
+            renamed: false
+          }
+        );
+      });
     });
 
     it("should append unicodes to files when the option is set", function(done) {
       fs.writeFileSync(__dirname + '/results/plop.svg', 'plop', 'utf-8');
       var metadataService = metadata({
         appendUnicode: true,
-        log: function() {
-          assert(fs.existsSync(__dirname + '/results/uEA01-plop.svg'));
-          assert(!fs.existsSync(__dirname + '/results/plop.svg'));
-          fs.unlinkSync(__dirname + '/results/uEA01-plop.svg');
-          done();
-        },
-        error: done
-      });
-      assert.deepEqual(
-        metadataService(__dirname + '/results/plop.svg'), {
-          name: 'plop',
-          unicode: [String.fromCharCode(0xEA01)]
+        log: function() {},
+        error: function() {
+          done(new Error('Not supposed to be here'));
         }
-      );
+      });
+      metadataService(__dirname + '/results/plop.svg', function(err, infos) {
+        if(err) {
+          return done(err);
+        }
+        assert.deepEqual(
+          infos, {
+            path: __dirname + '/results/uEA01-plop.svg',
+            name: 'plop',
+            unicode: [String.fromCharCode(0xEA01)],
+            renamed: true
+          }
+        );
+        assert(fs.existsSync(__dirname + '/results/uEA01-plop.svg'));
+        assert(!fs.existsSync(__dirname + '/results/plop.svg'));
+        fs.unlinkSync(__dirname + '/results/uEA01-plop.svg');
+        done();
+      });
     });
 
     it("should log file rename errors", function(done) {
       var metadataService = metadata({
         appendUnicode: true,
         startUnicode: 0xEA02,
-        error: function(err) {
-          assert(!fs.existsSync(__dirname + '/results/uEA02-plop.svg'));
-          assert(err);
-          done();
-        },
+        error: function(err) {},
         log: function() {
           done(new Error('Not supposed to be here'));
         }
       });
-      assert.deepEqual(
-        metadataService(__dirname + '/results/plop.svg'), {
-          name: 'plop',
-          unicode: [String.fromCharCode(0xEA02)]
-        }
-      );
+      metadataService(__dirname + '/results/plop.svg', function(err, infos) {
+        assert(!infos);
+        assert(err);
+        assert(!fs.existsSync(__dirname + '/results/uEA02-plop.svg'));
+        done();
+      });
     });
 
   });
 
   describe('for code extraction', function() {
 
-    it("should work for simple codes", function() {
+    it("should work for simple codes", function(done) {
       var metadataService = metadata();
-      assert.deepEqual(
-        metadataService('/var/plop/u0001-hello.svg'), {
-          name: 'hello',
-          unicode: [String.fromCharCode(0x0001)]
-        }
-      );
+      metadataService('/var/plop/u0001-hello.svg', function(err, infos) {
+        assert(!err);
+        assert.deepEqual(infos, {
+            path: '/var/plop/u0001-hello.svg',
+            name: 'hello',
+            unicode: [String.fromCharCode(0x0001)],
+            renamed: false
+          }
+        );
+        done();
+      });
     });
 
-    it("should work for several codes", function() {
+    it("should work for several codes", function(done) {
       var metadataService = metadata();
-      assert.deepEqual(
-        metadataService('/var/plop/u0001,u0002-hello.svg'), {
-          name: 'hello',
-          unicode: [String.fromCharCode(0x0001), String.fromCharCode(0x0002)]
-        }
-      );
+      metadataService('/var/plop/u0001,u0002-hello.svg', function(err, infos) {
+        assert(!err);
+        assert.deepEqual(infos, {
+            path: '/var/plop/u0001,u0002-hello.svg',
+            name: 'hello',
+            unicode: [String.fromCharCode(0x0001), String.fromCharCode(0x0002)],
+            renamed: false
+          }
+        );
+        done();
+      });
     });
 
-    it("should work for ligature codes", function() {
+    it("should work for ligature codes", function(done) {
       var metadataService = metadata();
-      assert.deepEqual(
-        metadataService('/var/plop/u0001u0002-hello.svg'), {
-          name: 'hello',
-          unicode: [String.fromCharCode(0x0001) + String.fromCharCode(0x0002)]
-        }
-      );
+      metadataService('/var/plop/u0001u0002-hello.svg', function(err, infos) {
+        assert(!err);
+        assert.deepEqual(infos, {
+            path: '/var/plop/u0001u0002-hello.svg',
+            name: 'hello',
+            unicode: [String.fromCharCode(0x0001) + String.fromCharCode(0x0002)],
+            renamed: false
+          }
+        );
+        done();
+      });
     });
 
-    it("should work for nested codes", function() {
+    it("should work for nested codes", function(done) {
       var metadataService = metadata();
-      assert.deepEqual(
-        metadataService('/var/plop/u0001u0002,u0001-hello.svg'), {
-          name: 'hello',
-          unicode: [
-            String.fromCharCode(0x0001) + String.fromCharCode(0x0002),
-            String.fromCharCode(0x0001)
-          ]
-        }
-      );
+      metadataService('/var/plop/u0001u0002,u0001-hello.svg', function(err, infos) {
+        assert(!err);
+        assert.deepEqual(infos, {
+            path: '/var/plop/u0001u0002,u0001-hello.svg',
+            name: 'hello',
+            unicode: [
+              String.fromCharCode(0x0001) + String.fromCharCode(0x0002),
+              String.fromCharCode(0x0001)
+            ],
+            renamed: false
+          }
+        );
+        done();
+      });
     });
 
   });

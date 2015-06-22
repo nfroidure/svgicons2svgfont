@@ -2,6 +2,8 @@ var metadata = require(__dirname + '/../src/metadata.js');
 var fs = require('fs');
 var assert = require('assert');
 
+require('string.fromcodepoint');
+
 describe('Metadata service', function() {
 
   describe('for code generation', function() {
@@ -95,6 +97,21 @@ describe('Metadata service', function() {
             path: '/var/plop/u0001,u0002-hello.svg',
             name: 'hello',
             unicode: [String.fromCharCode(0x0001), String.fromCharCode(0x0002)],
+            renamed: false
+          }
+        );
+        done();
+      });
+    });
+
+    it("should work for higher codepoint codes", function(done) {
+      var metadataService = metadata();
+      metadataService('/var/plop/u1F63A-hello.svg', function(err, infos) {
+        assert(!err);
+        assert.deepEqual(infos, {
+            path: '/var/plop/u1F63A-hello.svg',
+            name: 'hello',
+            unicode: [String.fromCodePoint(0x1f63a)],
             renamed: false
           }
         );

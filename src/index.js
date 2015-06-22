@@ -7,6 +7,8 @@
  */
 "use strict";
 
+require('string.prototype.codepointat');
+
 // Transform helpers (will move elsewhere later)
 function parseTransforms(value) {
  return value.match(
@@ -412,7 +414,7 @@ function SVGIcons2SVGFontStream(options) {
             _this.push('\
     <glyph glyph-name="' + glyph.name + (i == 0 ? '' : '-' + i) + '"\n\
       unicode="' + unicode.split('').map(function(char) {
-        return '&#x' + char.charCodeAt(0).toString(16).toUpperCase() + ';';
+        return '&#x' + char.codePointAt(0).toString(16).toUpperCase() + ';';
       }).join('') + '"\n\
       horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');
           });

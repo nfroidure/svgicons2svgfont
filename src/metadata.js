@@ -1,6 +1,9 @@
 var path = require('path');
 var fs = require('fs');
 
+require('string.fromcodepoint');
+require('string.prototype.codepointat');
+
 function getMetadataService(options) {
   var usedUnicodes = [];
   // Default options
@@ -28,7 +31,7 @@ function getMetadataService(options) {
       metadata.unicode = matches[1].split(',').map(function(match) {
         match = match.substr(1);
         return match.split('u').map(function(code) {
-          return String.fromCharCode(parseInt(code, 16));
+          return String.fromCodePoint(parseInt(code, 16));
         }).join('');
       });
       if(-1 !== usedUnicodes.indexOf(metadata.unicode[0])) {
@@ -38,19 +41,19 @@ function getMetadataService(options) {
       usedUnicodes = usedUnicodes.concat(metadata.unicode);
     } else {
       do {
-        metadata.unicode[0] = String.fromCharCode(options.startUnicode++);
+        metadata.unicode[0] = String.fromCodePoint(options.startUnicode++);
       } while(-1 !== usedUnicodes.indexOf(metadata.unicode[0]));
       usedUnicodes.push(metadata.unicode[0]);
       if(options.appendUnicode) {
         metadata.renamed = true;
         metadata.path = path.dirname(file) + '/' +
-          'u' + metadata.unicode[0].charCodeAt(0).toString(16).toUpperCase() +
+          'u' + metadata.unicode[0].codePointAt(0).toString(16).toUpperCase() +
           '-' + basename;
         fs.rename(file, metadata.path,
           function(err) {
             if(err) {
               return cb(new Error('Could not save codepoint: ' +
-                'u' + metadata.unicode[0].charCodeAt(0).toString(16).toUpperCase() +
+                'u' + metadata.unicode[0].codePointAt(0).toString(16).toUpperCase() +
                 ' for ' + basename));
             }
             cb(null, metadata);

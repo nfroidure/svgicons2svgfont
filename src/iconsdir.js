@@ -4,6 +4,8 @@ var path = require('path');
 
 var Readable = require('stream').Readable;
 
+require('string.prototype.codepointat');
+
 // Inherit of duplex stream
 util.inherits(SVGIconsDirStream, Readable);
 
@@ -59,7 +61,7 @@ function SVGIconsDirStream(dir, options) {
         } else {
           if(metadata.renamed) {
             options.log('Saved codepoint: ' +
-              'u' + metadata.unicode[0].charCodeAt(0).toString(16).toUpperCase() +
+              'u' + metadata.unicode[0].codePointAt(0).toString(16).toUpperCase() +
               ' for the glyph "' + metadata.name + '"');
           }
           filesInfos.push(metadata);

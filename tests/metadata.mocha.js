@@ -152,6 +152,31 @@ describe('Metadata service', function() {
       });
     });
 
+    it("should not set the same codepoint twice", function(done) {
+      var metadataService = metadata();
+      metadataService('/var/plop/uEA01-hello.svg', function(err, infos) {
+        assert(!err);
+        assert.deepEqual(infos, {
+            path: '/var/plop/uEA01-hello.svg',
+            name: 'hello',
+            unicode: [String.fromCharCode(0xEA01)],
+            renamed: false
+          }
+        );
+        metadataService('/var/plop/plop.svg', function(err, infos) {
+          assert(!err);
+          assert.deepEqual(infos, {
+              path: '/var/plop/plop.svg',
+              name: 'plop',
+              unicode: [String.fromCharCode(0xEA02)],
+              renamed: false
+            }
+          );
+          done();
+        });
+      });
+    });
+
   });
 
 });

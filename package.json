@@ -22,7 +22,7 @@
   ],
   "dependencies": {
     "commander": "^2.8.1",
-    "readable-stream": "^2.0.0",
+    "readable-stream": "^2.0.1",
     "sax": "1.1.x",
     "string.fromcodepoint": "^0.2.1",
     "string.prototype.codepointat": "^0.2.0",
@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "coveralls": "~2.11.2",
-    "istanbul": "~0.3.15",
+    "istanbul": "~0.3.16",
     "mocha": "~2.2.5",
     "mocha-lcov-reporter": "0.0.2",
     "streamtest": "^1.2.1"

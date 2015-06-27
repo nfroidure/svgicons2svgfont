@@ -1,6 +1,7 @@
 var fs = require('fs');
 var util = require('util');
 var path = require('path');
+var fileSorter = require('./filesorter');
 
 var Readable = require('stream').Readable;
 
@@ -30,29 +31,7 @@ function SVGIconsDirStream(dir, options) {
     var filesProcessed = 0;
     filesInfos = [];
     // Ensure prefixed files come first
-    files = files.slice(0).sort(function(fileA, fileB) {
-      var result = 0;
-      if((/(^|\/)(?:((?:u[0-9a-f]{4,6},?)+)\-)(.+)\.svg$/i).test(fileA)) {
-        if((/(^|\/)(?:((?:u[0-9a-f]{4,6},?)+)\-)(.+)\.svg$/i).test(fileB)) {
-          if(fileA < fileB) {
-            result = -1;
-          } else {
-            result = 1;
-          }
-        } else {
-          result = -1;
-        }
-      } else {
-        if((/(^|\/)(?:((?:u[0-9a-f]{4,6},?)+)\-)(.+)\.svg$/i).test(fileB)) {
-          result = 1;
-        } else if(fileA < fileB) {
-          result = -1;
-        } else {
-          result = 1;
-        }
-      }
-      return result;
-    });
+    files = files.slice(0).sort(fileSorter);
     files.forEach(function(file) {
       getMetadata((dir ? dir + '/' : '') + file, function(err, metadata) {
         filesProcessed++;

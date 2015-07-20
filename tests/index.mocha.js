@@ -7,7 +7,7 @@ var SVGIconsDirStream = require(__dirname + '/../src/iconsdir');
 var streamtest = require('streamtest');
 
 // Helpers
-function generateFontToFile(options, done, fileSuffix, startUnicode) {
+function generateFontToFile(options, done, fileSuffix, startUnicode, files) {
   var dest = __dirname + '/results/' + options.fontName +
     (fileSuffix || '') + '.svg';
   options.log = function() {};
@@ -24,13 +24,13 @@ function generateFontToFile(options, done, fileSuffix, startUnicode) {
     done();
   });
 
-  SVGIconsDirStream(__dirname + '/fixtures/' + options.fontName, {
+  SVGIconsDirStream(files || __dirname + '/fixtures/' + options.fontName, {
     startUnicode: startUnicode || 0xE001
   })
     .pipe(svgFontStream);
 }
 
-function generateFontToMemory(options, done, fileSuffix, startUnicode) {
+function generateFontToMemory(options, done, files, startUnicode) {
   var content = '';
   var decoder = new StringDecoder('utf8');
   options.log = function() {};
@@ -49,7 +49,7 @@ function generateFontToMemory(options, done, fileSuffix, startUnicode) {
     done();
   });
 
-  SVGIconsDirStream(__dirname + '/fixtures/' + options.fontName, {
+  SVGIconsDirStream(files || __dirname + '/fixtures/' + options.fontName, {
     startUnicode: startUnicode || 0xE001
   })
     .pipe(svgFontStream);
@@ -172,6 +172,47 @@ describe('Generating fonts to files', function() {
     generateFontToFile({
       fontName: 'roundedcorners'
     }, done);
+  });
+
+  it("should work with a lot of icons", function(done) {
+    generateFontToFile({
+      fontName: 'lotoficons'
+    }, done, '', 0, [
+      'tests/fixtures/cleanicons/account.svg',
+      'tests/fixtures/cleanicons/arrow-down.svg',
+      'tests/fixtures/cleanicons/arrow-left.svg',
+      'tests/fixtures/cleanicons/arrow-right.svg',
+      'tests/fixtures/cleanicons/arrow-up.svg',
+      'tests/fixtures/cleanicons/basket.svg',
+      'tests/fixtures/cleanicons/close.svg',
+      'tests/fixtures/cleanicons/minus.svg',
+      'tests/fixtures/cleanicons/plus.svg',
+      'tests/fixtures/cleanicons/search.svg',
+      'tests/fixtures/hiddenpathesicons/sound--off.svg',
+      'tests/fixtures/hiddenpathesicons/sound--on.svg',
+      'tests/fixtures/multipathicons/kikoolol.svg',
+      'tests/fixtures/originalicons/mute.svg',
+      'tests/fixtures/originalicons/sound.svg',
+      'tests/fixtures/originalicons/speaker.svg',
+      'tests/fixtures/realicons/diegoliv.svg',
+      'tests/fixtures/realicons/hannesjohansson.svg',
+      'tests/fixtures/realicons/roelvanhitum.svg',
+      'tests/fixtures/realicons/safety-icon.svg',
+      'tests/fixtures/realicons/sb-icon.svg',
+      'tests/fixtures/realicons/settings-icon.svg',
+      'tests/fixtures/realicons/track-icon.svg',
+      'tests/fixtures/realicons/web-icon.svg',
+      'tests/fixtures/roundedcorners/roundedrect.svg',
+      'tests/fixtures/shapeicons/circle.svg',
+      'tests/fixtures/shapeicons/ellipse.svg',
+      'tests/fixtures/shapeicons/lines.svg',
+      'tests/fixtures/shapeicons/polygon.svg',
+      'tests/fixtures/shapeicons/polyline.svg',
+      'tests/fixtures/shapeicons/rect.svg',
+      'tests/fixtures/tocentericons/bottomleft.svg',
+      'tests/fixtures/tocentericons/center.svg',
+      'tests/fixtures/tocentericons/topright.svg'
+    ]);
   });
 
 });

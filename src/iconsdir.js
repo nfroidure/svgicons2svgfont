@@ -15,6 +15,7 @@ function SVGIconsDirStream(dir, options) {
   var getMetadata = require('../src/metadata')(options);
   var _this = this;
   var filesInfos;
+  var gotFilesInfos = false;
 
   // Ensure new were used
   if(!(this instanceof SVGIconsDirStream)) {
@@ -50,6 +51,9 @@ function SVGIconsDirStream(dir, options) {
           filesInfos = filesInfos.sort(function(infosA, infosB) {
             return infosA.unicode[0] > infosB.unicode[0] ? 1 : -1;
           });
+          // Mark directory as processed
+          gotFilesInfos = true;
+          // Start processing
           _pushSVGIcons();
         }
       });
@@ -90,8 +94,11 @@ function SVGIconsDirStream(dir, options) {
           _getFilesInfos(files);
         }
       );
+      return;
     }
-
+    if(gotFilesInfos) {
+      _pushSVGIcons();
+    }
   };
 
 }

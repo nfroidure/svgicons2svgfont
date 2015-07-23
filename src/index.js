@@ -206,7 +206,7 @@ function SVGIcons2SVGFontStream(options) {
   // Setting objectMode separately
   this._writableState.objectMode = true;
   this._readableState.objectMode = false;
-
+var i = 0;
   // Parse input
   this._transform = function _svgIcons2SVGFontStreamTransform(
     svgIconStream, unused, svgIconStreamCallback
@@ -384,8 +384,8 @@ function SVGIcons2SVGFontStream(options) {
                 .round(options.round)
                 .encode();
               } catch(err) {
-                _this.emit('error', 'Got an error parsing the glyph "' +
-                  glyph.name + '" path data: ' + cD + '.');
+                _this.emit('error', new Error('Got an error parsing the glyph' +
+                  ' "' + glyph.name + '" path data: ' + cD + '.'));
               }
           });
           if(options.centerHorizontally) {

@@ -14,6 +14,8 @@ program
   .option('-v, --verbose', 'tell me everything!')
   .option('-o, --output [/dev/stdout]', 'Output file.')
   .option('-f, --fontname [value]', 'the font family name you want [iconfont].')
+  .option('-st, --style [value]', 'the font style you want.')
+  .option('-we, --weight [value]', 'the font weight you want.')
   .option('-w, --fixedWidth', 'creates a monospace font of the width of the largest input icon.')
   .option('-c, --centerhorizontally', 'calculate the bounds of a glyph and center it horizontally.')
   .option('-n, --normalize', 'normalize icons by scaling them to the height of the highest icon.')

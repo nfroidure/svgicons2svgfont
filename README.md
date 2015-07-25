@@ -84,6 +84,8 @@ svgicons2svgfont --help
 #    -v, --verbose               tell me everything!
 #    -o, --output [/dev/stdout]  Output file.
 #    -f, --fontname [value]      the font family name you want [iconfont].
+#    -st, --style [value]        the font style you want [iconfont].
+#    -we, --weight [value]       the font weight you want [iconfont].
 #    -w, --fixedWidth            creates a monospace font of the width of the largest input icon.
 #    -c, --centerhorizontally    calculate the bounds of a glyph and center it horizontally.
 #    -n, --normalize             normalize icons by scaling them to the height of the highest icon.
@@ -105,6 +107,18 @@ Type: `String`
 Default value: `'iconfont'`
 
 The font family name you want.
+
+#### options.fontStyle
+Type: `String`
+Default value: `''`
+
+The font style you want.
+
+#### options.fontWeight
+Type: `String`
+Default value: `''`
+
+The font weight you want.
 
 #### options.fixedWidth
 Type: `Boolean`

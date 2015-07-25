@@ -20,6 +20,7 @@ program
   .option('-h, --height [value]', 'the outputted font height [MAX(icons.height)].', parseInt)
   .option('-r, --round [value]', 'setup the SVG path rounding [10e12].', parseInt)
   .option('-d, --descent [value]', 'the font descent [0].', parseInt)
+  .option('-a, --ascent [value]', 'the font ascent [height - ascent].', parseInt)
   .option('-s, --startunicode [value]', 'the start unicode codepoint for' +
     ' unprefixed files [0xEA01].', parseInt)
   .option('-a, --appendunicode', 'prefix files with their automatically' +
@@ -45,6 +46,7 @@ svgiconsdir(program.args, {
     height: program.height,
     round: program.round,
     descent: program.descent,
+    ascent: program.ascent,
     metadata: program.metadata,
     log: program.v ? console.log : function() {},
   }))

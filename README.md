@@ -90,7 +90,7 @@ svgicons2svgfont --help
 #    -h, --height [value]        the outputted font height [MAX(icons.height)].
 #    -r, --round [value]         setup the SVG path rounding [10e12].
 #    -d, --descent [value]       the font descent [0].
-#    -d, --ascent [value]        the font ascent [height - descent].
+#    -a, --ascent [value]        the font ascent [height - descent].
 #    -s, --startunicode [value]  the start unicode codepoint for unprefixed files [0xEA01].
 #    -a, --appendunicode         prefix files with their automatically allocated unicode codepoint.
 #    -m, --metadata              content of the metadata tag.
@@ -212,4 +212,3 @@ You can also use [webfonts-generator](https://www.npmjs.com/package/webfonts-gen
 
 ## Contributing
 Feel free to push your code if you agree with publishing under the MIT license.
-

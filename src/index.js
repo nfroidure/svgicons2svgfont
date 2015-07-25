@@ -330,6 +330,10 @@ function SVGIcons2SVGFontStream(options) {
       }, 0) :
       glyphs[0].height);
 
+    options.ascent = 'undefined' !== typeof options.ascent ?
+      options.ascent :
+      fontHeight - options.descent;
+
     if(
       (!options.normalize) &&
       fontHeight > (1 < glyphs.length ?
@@ -354,7 +358,7 @@ function SVGIcons2SVGFontStream(options) {
 <defs>\n\
   <font id="' + options.fontName + '" horiz-adv-x="' + fontWidth + '">\n\
     <font-face font-family="' + options.fontName + '"\n\
-      units-per-em="' + fontHeight + '" ascent="' + (fontHeight - options.descent) + '"\n\
+      units-per-em="' + fontHeight + '" ascent="' + options.ascent + '"\n\
       descent="' + options.descent + '" />\n\
     <missing-glyph horiz-adv-x="0" />\n');
     glyphs.forEach(function(glyph) {

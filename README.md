@@ -90,6 +90,7 @@ svgicons2svgfont --help
 #    -h, --height [value]        the outputted font height [MAX(icons.height)].
 #    -r, --round [value]         setup the SVG path rounding [10e12].
 #    -d, --descent [value]       the font descent [0].
+#    -d, --ascent [value]        the font ascent [height - descent].
 #    -s, --startunicode [value]  the start unicode codepoint for unprefixed files [0xEA01].
 #    -a, --appendunicode         prefix files with their automatically allocated unicode codepoint.
 #    -m, --metadata              content of the metadata tag.
@@ -147,7 +148,12 @@ The font descent. It is usefull to fix the font baseline yourself.
 
 **Warning:**  The descent is a positive value!
 
-The ascent formula is: ascent = fontHeight - descent.
+#### options.ascent
+Type: `Number`
+Default value: `fontHeight - descent`
+
+The font ascent. Use this options only if you know what you're doing. A suitable
+ value for this is computed for you.
 
 #### options.metadata
 Type: `String`

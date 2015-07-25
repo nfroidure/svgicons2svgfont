@@ -7,7 +7,10 @@
   "scripts": {
     "test": "node_modules/mocha/bin/mocha tests/*.mocha.js",
     "coveralls": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha --report lcovonly -- tests/*.mocha.js -R spec -t 5000 && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "cover": "./node_modules/istanbul/lib/cli.js cover --report html ./node_modules/mocha/bin/_mocha -- tests/*.mocha.js -R spec -t 5000"
+    "cover": "./node_modules/istanbul/lib/cli.js cover --report html ./node_modules/mocha/bin/_mocha -- tests/*.mocha.js -R spec -t 5000",
+    "lint": "eslint **/*.js",
+    "lintconfig": "sf-lint-sync",
+    "cli": "env NPM_RUN_CLI=1"
   },
   "repository": {
     "type": "git",
@@ -33,9 +36,11 @@
   },
   "devDependencies": {
     "coveralls": "^2.11.2",
+    "eslint": "^0.24.1",
     "istanbul": "^0.3.16",
     "mocha": "^2.2.5",
     "mocha-lcov-reporter": "^0.0.2",
+    "sf-lint": "^1.0.2",
     "streamtest": "^1.2.1"
   },
   "author": {

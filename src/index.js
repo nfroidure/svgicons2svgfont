@@ -359,7 +359,9 @@ function SVGIcons2SVGFontStream(options) {
   <font id="' + options.fontName + '" horiz-adv-x="' + fontWidth + '">\n\
     <font-face font-family="' + options.fontName + '"\n\
       units-per-em="' + fontHeight + '" ascent="' + options.ascent + '"\n\
-      descent="' + options.descent + '" />\n\
+      descent="' + options.descent + '"' + (options.fontWeight ? '\n\
+      font-weight="' + options.fontWeight + '"' : '') + (options.fontStyle ? '\n\
+      font-style="' + options.fontStyle + '"' : '') + ' />\n\
     <missing-glyph horiz-adv-x="0" />\n');
     glyphs.forEach(function(glyph) {
       var ratio = fontHeight / glyph.height;

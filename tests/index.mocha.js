@@ -97,6 +97,14 @@ describe('Generating fonts to files', function() {
     }, done, '-ascent');
   });
 
+  it('should work for simple SVG and custom properties', function(done) {
+    generateFontToFile({
+      fontName: 'cleanicons',
+      fontStyle: 'italic',
+      fontWeight: 'bold',
+    }, done, '-stw');
+  });
+
   it('should work for codepoint mapped SVG icons', function(done) {
     generateFontToFile({
       fontName: 'prefixedicons',

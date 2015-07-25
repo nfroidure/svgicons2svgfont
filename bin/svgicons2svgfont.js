@@ -1,10 +1,12 @@
 #! /usr/bin/env node
 
+'use strict';
+
 var program = require('commander');
 var fs = require('fs');
 
-var SVGIcons2SVGFontStream = require(__dirname + '/../src/index.js');
-var SVGIconsDirStream = require(__dirname + '/../src/iconsdir.js');
+var svgicons2svgfont = require('../src/index.js');
+var svgiconsdir = require('../src/iconsdir.js');
 
 program
   .version('2.0.0')
@@ -18,8 +20,10 @@ program
   .option('-h, --height [value]', 'the outputted font height [MAX(icons.height)].', parseInt)
   .option('-r, --round [value]', 'setup the SVG path rounding [10e12].', parseInt)
   .option('-d, --descent [value]', 'the font descent [0].', parseInt)
-  .option('-s, --startunicode [value]', 'the start unicode codepoint for unprefixed files [0xEA01].', parseInt)
-  .option('-a, --appendunicode', 'prefix files with their automatically allocated unicode codepoint.', parseInt)
+  .option('-s, --startunicode [value]', 'the start unicode codepoint for' +
+    ' unprefixed files [0xEA01].', parseInt)
+  .option('-a, --appendunicode', 'prefix files with their automatically' +
+    ' allocated unicode codepoint.', parseInt)
   .option('-m, --metadata', 'content of the metadata tag.')
   .parse(process.argv);
 
@@ -28,12 +32,12 @@ if(!program.args.length) {
   process.exit(1);
 }
 
-SVGIconsDirStream(program.args, {
+svgiconsdir(program.args, {
     startUnicode: program.startunicode,
     appendUnicode: program.appendunicode,
-    log: program.v ? console.log : function() {}
+    log: program.v ? console.log : function() {},
 })
-  .pipe(SVGIcons2SVGFontStream({
+  .pipe(svgicons2svgfont({
     fontName: program.fontname,
     fixedwidth: program.fixedwidth,
     centerhorizontally: program.centerHorizontally,
@@ -42,6 +46,6 @@ SVGIconsDirStream(program.args, {
     round: program.round,
     descent: program.descent,
     metadata: program.metadata,
-    log: program.v ? console.log : function() {}
+    log: program.v ? console.log : function() {},
   }))
   .pipe(program.output ? fs.createWriteStream(program.output) : process.stdout);

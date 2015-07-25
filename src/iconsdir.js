@@ -1,6 +1,7 @@
+'use strict';
+
 var fs = require('fs');
 var util = require('util');
-var path = require('path');
 var fileSorter = require('./filesorter');
 
 var Readable = require('stream').Readable;
@@ -30,6 +31,7 @@ function SVGIconsDirStream(dir, options) {
 
   function _getFilesInfos(files) {
     var filesProcessed = 0;
+
     filesInfos = [];
     // Ensure prefixed files come first
     files = files.slice(0).sort(fileSorter);
@@ -62,14 +64,14 @@ function SVGIconsDirStream(dir, options) {
 
   function _pushSVGIcons() {
     var fileInfo;
-    var matches;
     var svgIconStream;
+
     while(filesInfos.length) {
       fileInfo = filesInfos.shift();
       svgIconStream = fs.createReadStream(fileInfo.path);
       svgIconStream.metadata = {
         name: fileInfo.name,
-        unicode: fileInfo.unicode
+        unicode: fileInfo.unicode,
       };
       if(!_this.push(svgIconStream)) {
         return;
@@ -80,7 +82,7 @@ function SVGIconsDirStream(dir, options) {
 
   // Parent constructor
   Readable.call(this, {
-    objectMode: true
+    objectMode: true,
   });
 
   this._read = function() {

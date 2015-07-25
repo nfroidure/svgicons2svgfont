@@ -1,75 +1,97 @@
-var svgicons2svgfont = require(__dirname + '/../src/index.js');
+'use strict';
+
 var fs = require('fs');
+var path = require('path');
 var assert = require('assert');
 
 describe('Testing CLI', function() {
 
-  it("should work for simple SVG", function(done) {
+  it('should work for simple SVG', function(done) {
+    var command = 'node' +
+     ' ' + path.join(__dirname, '..', 'bin', 'svgicons2svgfont.js') +
+     ' -o ' + path.join(__dirname, 'results', 'originalicons-cli.svg') +
+     ' -s 0xE001' +
+     ' ' + path.join(__dirname, 'fixtures', 'originalicons', '*.svg');
+
     (require('child_process').exec)(
-      'node ' + __dirname + '/../bin/svgicons2svgfont.js' +
-      ' -o ' + __dirname + '/results/originalicons-cli.svg' +
-      ' -s 0xE001' +
-      ' ' + __dirname + '/fixtures/originalicons/*.svg ',
+      command,
       function(err) {
         if(err) {
           throw err;
         }
         assert.equal(
-          fs.readFileSync(__dirname + '/results/originalicons-cli.svg',
-            {encoding: 'utf8'}),
-          fs.readFileSync(__dirname + '/expected/originalicons-cli.svg',
-            {encoding: 'utf8'})
+          fs.readFileSync(
+            path.join(__dirname, 'results', 'originalicons-cli.svg'),
+            { encoding: 'utf8' }
+          ),
+          fs.readFileSync(
+            path.join(__dirname, 'expected', 'originalicons-cli.svg'),
+            { encoding: 'utf8' }
+          )
         );
         done();
       }
     );
   });
 
-  it("should work for more than 32 SVG icons", function(done) {
+  it('should work for more than 32 SVG icons', function(done) {
+    var command = 'node' +
+     ' ' + path.join(__dirname, '..', 'bin', 'svgicons2svgfont.js') +
+     ' -o ' + path.join(__dirname, 'results', 'lotoficons-cli.svg') +
+     ' -s 0xE001' +
+     ' ' + path.join(__dirname, 'fixtures', 'cleanicons', '*.svg') +
+     ' ' + path.join(__dirname, 'fixtures', 'hiddenpathesicons', '*.svg') +
+     ' ' + path.join(__dirname, 'fixtures', 'multipathicons', 'kikoolol.svg') +
+     ' ' + path.join(__dirname, 'fixtures', 'originalicons', '*.svg') +
+     ' ' + path.join(__dirname, 'fixtures', 'realicons', '*.svg') +
+     ' ' + path.join(__dirname, 'fixtures', 'roundedcorners', '*.svg') +
+     ' ' + path.join(__dirname, 'fixtures', 'shapeicons', '*.svg') +
+     ' ' + path.join(__dirname, 'fixtures', 'tocentericons', '*.svg');
+
     (require('child_process').exec)(
-      'node ' + __dirname + '/../bin/svgicons2svgfont.js' +
-      ' -o ' + __dirname + '/results/lotoficons-cli.svg' +
-      ' -s 0xE001' +
-      ' ' + __dirname + '/fixtures/cleanicons/*.svg ' +
-      ' ' + __dirname + '/fixtures/hiddenpathesicons/*.svg ' +
-      ' ' + __dirname + '/fixtures/multipathicons/kikoolol.svg ' +
-      ' ' + __dirname + '/fixtures/originalicons/*.svg ' +
-      ' ' + __dirname + '/fixtures/realicons/*.svg ' +
-      ' ' + __dirname + '/fixtures/roundedcorners/*.svg ' +
-      ' ' + __dirname + '/fixtures/shapeicons/*.svg ' +
-      ' ' + __dirname + '/fixtures/tocentericons/*.svg ',
+      command,
       function(err) {
         if(err) {
           throw err;
         }
         assert.equal(
-          fs.readFileSync(__dirname + '/results/lotoficons-cli.svg',
-            {encoding: 'utf8'}),
-          fs.readFileSync(__dirname + '/expected/lotoficons-cli.svg',
-            {encoding: 'utf8'})
+          fs.readFileSync(
+            path.join(__dirname, 'results', 'lotoficons-cli.svg'),
+            { encoding: 'utf8' }
+          ),
+          fs.readFileSync(
+            path.join(__dirname, 'expected', 'lotoficons-cli.svg'),
+            { encoding: 'utf8' }
+          )
         );
         done();
       }
     );
   });
 
-  describe("with nested icons", function(done) {
+  describe('with nested icons', function() {
 
-    it("should work", function(done) {
+    it('should work', function(done) {
+      var command = 'node' +
+        ' ' + path.join(__dirname, '..', 'bin', 'svgicons2svgfont.js') +
+        ' -o ' + path.join(__dirname, 'results', 'nestedicons-cli.svg') +
+        ' ' + path.join(__dirname, 'fixtures', 'nestedicons', '*.svg');
 
       (require('child_process').exec)(
-        'node ' + __dirname + '/../bin/svgicons2svgfont.js' +
-        ' -o ' + __dirname + '/results/nestedicons-cli.svg' +
-        ' ' + __dirname + '/fixtures/nestedicons/*.svg ',
+        command,
         function(err) {
           if(err) {
             throw err;
           }
           assert.equal(
-            fs.readFileSync(__dirname + '/results/nestedicons-cli.svg',
-              {encoding: 'utf8'}),
-            fs.readFileSync(__dirname + '/expected/nestedicons-cli.svg',
-              {encoding: 'utf8'})
+            fs.readFileSync(
+              path.join(__dirname, 'results', 'nestedicons-cli.svg'),
+              { encoding: 'utf8' }
+            ),
+            fs.readFileSync(
+              path.join(__dirname, 'expected', 'nestedicons-cli.svg'),
+              { encoding: 'utf8' }
+            )
           );
           done();
         }

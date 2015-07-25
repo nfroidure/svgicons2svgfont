@@ -1,3 +1,5 @@
+'use strict';
+
 var path = require('path');
 var fs = require('fs');
 
@@ -6,8 +8,9 @@ require('string.prototype.codepointat');
 
 function getMetadataService(options) {
   var usedUnicodes = [];
+
   // Default options
-  options = options || {};
+  options = options || {};
   options.appendUnicode = !!options.appendUnicode;
   options.startUnicode = 'number' === typeof options.startUnicode ?
     options.startUnicode :
@@ -21,9 +24,10 @@ function getMetadataService(options) {
       path: file,
       name: '',
       unicode: [],
-      renamed: false
+      renamed: false,
     };
-    matches = basename.match(/^(?:((?:u[0-9a-f]{4,6},?)+)\-)?(.+)\.svg$/i);
+    var matches = basename.match(/^(?:((?:u[0-9a-f]{4,6},?)+)\-)?(.+)\.svg$/i);
+
     metadata.name = matches && matches[2] ?
       matches[2] :
       'icon' + options.startUnicode;

@@ -1,11 +1,10 @@
-/*
- * svgicons2svgfont
- * https://github.com/nfroidure/svgicons2svgfont
- *
- * Copyright (c) 2013-2015 Nicolas Froidure and contributors
- * Licensed under the MIT license.
- */
 'use strict';
+
+// Required modules
+var util = require('util');
+var Stream = require('readable-stream');
+var Sax = require('sax');
+var SVGPathData = require('svg-pathdata');
 
 require('string.prototype.codepointat');
 
@@ -27,6 +26,7 @@ function transformPath(path, transforms) {
 }
 function applyTransforms(d, parents) {
   var transforms = [];
+
   parents.forEach(function(parent) {
     if('undefined' !== typeof parent.attributes.transform) {
       transforms = transforms.concat(parseTransforms(parent.attributes.transform));
@@ -36,7 +36,7 @@ function applyTransforms(d, parents) {
 }
 
 // Rendering
-function tagShouldRender(tag, parents) {
+function tagShouldRender(curTag, parents) {
   return !parents.some(function(tag) {
     if('undefined' !== typeof tag.attributes.display &&
       'none' === tag.attributes.display.toLowerCase()) {
@@ -168,12 +168,6 @@ function polygonToPath(attributes) {
   return 'M' + attributes.points + 'Z';
 }
 
-// Required modules
-var util = require("util");
-var Stream = require("readable-stream");
-var Sax = require("sax");
-var SVGPathData = require("svg-pathdata");
-
 // Inherit of duplex stream
 util.inherits(SVGIcons2SVGFontStream, Stream.Transform);
 
@@ -183,7 +177,6 @@ function SVGIcons2SVGFontStream(options) {
   var glyphs = [];
   var log;
   var error;
-  var i = 0;
 
   options = options || {};
   options.fontName = options.fontName || 'iconfont';
@@ -423,13 +416,13 @@ function SVGIcons2SVGFontStream(options) {
       }
       delete glyph.d;
       delete glyph.running;
-      glyph.unicode.forEach(function(unicode, i){
+      glyph.unicode.forEach(function(unicode, i) {
         _this.push('\
-    <glyph glyph-name="' + glyph.name + (i == 0 ? '' : '-' + i) + '"\n\
+    <glyph glyph-name="' + glyph.name + (0 === i ? '' : '-' + i) + '"\n\
       unicode="' + unicode.split('').map(function(char) {
         return '&#x' + char.codePointAt(0).toString(16).toUpperCase() + ';';
       }).join('') + '"\n\
-      horiz-adv-x="' + glyph.width + '" d="' + d +'" />\n');
+      horiz-adv-x="' + glyph.width + '" d="' + d + '" />\n');
       });
     });
     _this.push('\

@@ -183,13 +183,6 @@ Default value: `console.log`
 Allows you to provide your own logging function. Set to `function(){}` to
  impeach logging.
 
-#### options.error
-Type: `Function`
-Default value: `console.error`
-
-Allows you to provide your own error logging function. Set to `function(){}` to
- impeach logging.
-
 ## Build systems
 
 ### Grunt plugins

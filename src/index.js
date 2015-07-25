@@ -176,7 +176,6 @@ function SVGIcons2SVGFontStream(options) {
   var _this = this;
   var glyphs = [];
   var log;
-  var error;
 
   options = options || {};
   options.fontName = options.fontName || 'iconfont';
@@ -186,7 +185,6 @@ function SVGIcons2SVGFontStream(options) {
   options.metadata = options.metadata || '';
 
   log = options.log || console.log.bind(console);
-  error = options.error || console.error.bind(console);
 
   // Ensure new were used
   if(!(this instanceof SVGIcons2SVGFontStream)) {

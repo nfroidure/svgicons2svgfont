@@ -503,6 +503,24 @@ describe('Providing bad glyphs', function() {
     svgFontStream.write(svgIconStream2);
   });
 
+  it('should fail when providing bad pathdata', function(done) {
+    var svgIconStream = fs.createReadStream(
+      path.join(__dirname, 'fixtures', 'badicons', 'pathdata.svg')
+    );
+
+    svgIconStream.metadata = {
+        name: 'test',
+        unicode: ['\uE002'],
+    };
+    svgicons2svgfont().on('error', function(err) {
+      assert.equal(err instanceof Error, true);
+      assert.equal(err.message, 'Got an error parsing the glyph "test": Expected a flag, got "120" at index "23".');
+      done();
+    }).on('end', function() {
+      done();
+    }).write(svgIconStream);
+  });
+
   it('should fail when providing bad XML', function(done) {
     var svgIconStream = streamtest.v2.fromChunks(['bad', 'xml']);
 

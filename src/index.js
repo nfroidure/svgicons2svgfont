@@ -249,53 +249,58 @@ function SVGIcons2SVGFontStream(options) {
       if(!tagShouldRender(tag, parents)) {
         return;
       }
-      // Save the view size
-      if('svg' === tag.name) {
-        glyph.dX = 0;
-        glyph.dY = 0;
-        if('viewBox' in tag.attributes) {
-          var values = tag.attributes.viewBox.split(/\s*,*\s|\s,*\s*|,/);
-          glyph.dX = parseFloat(values[0], 10);
-          glyph.dY = parseFloat(values[1], 10);
-          glyph.width = parseFloat(values[2], 10);
-          glyph.height = parseFloat(values[3], 10);
+      try {
+        // Save the view size
+        if('svg' === tag.name) {
+          glyph.dX = 0;
+          glyph.dY = 0;
+          if('viewBox' in tag.attributes) {
+            var values = tag.attributes.viewBox.split(/\s*,*\s|\s,*\s*|,/);
+            glyph.dX = parseFloat(values[0], 10);
+            glyph.dY = parseFloat(values[1], 10);
+            glyph.width = parseFloat(values[2], 10);
+            glyph.height = parseFloat(values[3], 10);
+          }
+          if('width' in tag.attributes) {
+            glyph.width = parseFloat(tag.attributes.width, 10);
+          }
+          if('height' in tag.attributes) {
+            glyph.height = parseFloat(tag.attributes.height, 10);
+          }
+          if(!glyph.width || !glyph.height) {
+            log('Glyph "' + glyph.name + '" has no size attribute on which to' +
+              ' get the gylph dimensions (heigh and width or viewBox' +
+              ' attributes)');
+            glyph.width = 150;
+            glyph.height = 150;
+          }
+        // Clipping path unsupported
+        } else if('clipPath' === tag.name) {
+          log('Found a clipPath element in the icon "' + glyph.name + '" the' +
+            'result may be different than expected.');
+        // Change rect elements to the corresponding path
+        } else if('rect' === tag.name && 'none' !== tag.attributes.fill) {
+          glyph.d.push(applyTransforms(rectToPath(tag.attributes), parents));
+        } else if('line' === tag.name && 'none' !== tag.attributes.fill) {
+          log('Found a line element in the icon "' + glyph.name + '" the result' +
+            ' could be different than expected.');
+          glyph.d.push(applyTransforms(lineToPath(tag.attributes), parents));
+        } else if('polyline' === tag.name && 'none' !== tag.attributes.fill) {
+          log('Found a polyline element in the icon "' + glyph.name + '" the' +
+            ' result could be different than expected.');
+          glyph.d.push(applyTransforms(polylineToPath(tag.attributes), parents));
+        } else if('polygon' === tag.name && 'none' !== tag.attributes.fill) {
+          glyph.d.push(applyTransforms(polygonToPath(tag.attributes), parents));
+        } else if('circle' === tag.name || 'ellipse' === tag.name &&
+          'none' !== tag.attributes.fill) {
+          glyph.d.push(applyTransforms(circleToPath(tag.attributes), parents));
+        } else if('path' === tag.name && tag.attributes.d &&
+          'none' !== tag.attributes.fill) {
+          glyph.d.push(applyTransforms(tag.attributes.d, parents));
         }
-        if('width' in tag.attributes) {
-          glyph.width = parseFloat(tag.attributes.width, 10);
-        }
-        if('height' in tag.attributes) {
-          glyph.height = parseFloat(tag.attributes.height, 10);
-        }
-        if(!glyph.width || !glyph.height) {
-          log('Glyph "' + glyph.name + '" has no size attribute on which to' +
-            ' get the gylph dimensions (heigh and width or viewBox' +
-            ' attributes)');
-          glyph.width = 150;
-          glyph.height = 150;
-        }
-      // Clipping path unsupported
-      } else if('clipPath' === tag.name) {
-        log('Found a clipPath element in the icon "' + glyph.name + '" the' +
-          'result may be different than expected.');
-      // Change rect elements to the corresponding path
-      } else if('rect' === tag.name && 'none' !== tag.attributes.fill) {
-        glyph.d.push(applyTransforms(rectToPath(tag.attributes), parents));
-      } else if('line' === tag.name && 'none' !== tag.attributes.fill) {
-        log('Found a line element in the icon "' + glyph.name + '" the result' +
-          ' could be different than expected.');
-        glyph.d.push(applyTransforms(lineToPath(tag.attributes), parents));
-      } else if('polyline' === tag.name && 'none' !== tag.attributes.fill) {
-        log('Found a polyline element in the icon "' + glyph.name + '" the' +
-          ' result could be different than expected.');
-        glyph.d.push(applyTransforms(polylineToPath(tag.attributes), parents));
-      } else if('polygon' === tag.name && 'none' !== tag.attributes.fill) {
-        glyph.d.push(applyTransforms(polygonToPath(tag.attributes), parents));
-      } else if('circle' === tag.name || 'ellipse' === tag.name &&
-        'none' !== tag.attributes.fill) {
-        glyph.d.push(applyTransforms(circleToPath(tag.attributes), parents));
-      } else if('path' === tag.name && tag.attributes.d &&
-        'none' !== tag.attributes.fill) {
-        glyph.d.push(applyTransforms(tag.attributes.d, parents));
+      } catch(err) {
+        _this.emit('error', new Error('Got an error parsing the glyph' +
+          ' "' + glyph.name + '": ' + err.message + '.'));
       }
     });
 
@@ -375,20 +380,15 @@ function SVGIcons2SVGFontStream(options) {
         }
       }
       glyph.d.forEach(function(cD) {
-        try {
-          d += ' ' + new SVGPathData(cD)
-            .toAbs()
-            .translate(-glyph.dX, -glyph.dY)
-            .scale(
-              options.normalize ? ratio : 1,
-              options.normalize ? ratio : 1)
-            .ySymetry(glyph.height - options.descent)
-            .round(options.round)
-            .encode();
-        } catch(err) {
-          _this.emit('error', new Error('Got an error parsing the glyph' +
-            ' "' + glyph.name + '" path data: ' + cD + '.'));
-        }
+        d += ' ' + new SVGPathData(cD)
+          .toAbs()
+          .translate(-glyph.dX, -glyph.dY)
+          .scale(
+            options.normalize ? ratio : 1,
+            options.normalize ? ratio : 1)
+          .ySymetry(glyph.height - options.descent)
+          .round(options.round)
+          .encode();
       });
       if(options.centerHorizontally) {
         // Naive bounds calculation (should draw, then calculate bounds...)

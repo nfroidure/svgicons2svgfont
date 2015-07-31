@@ -190,6 +190,42 @@ describe('Metadata service', function() {
       });
     });
 
+    it('should not set the same codepoint twice with different cases', function(done) {
+      var metadataService = metadata();
+
+      metadataService('/var/plop/UEA01-hello.svg', function(err, infos) {
+        assert(!err);
+        assert.deepEqual(infos, {
+            path: '/var/plop/UEA01-hello.svg',
+            name: 'hello',
+            unicode: [String.fromCharCode(0xEA01)],
+            renamed: false,
+          }
+        );
+        metadataService('/var/plop/uEA02-hello.svg', function(err2, infos2) {
+          assert(!err2);
+          assert.deepEqual(infos2, {
+              path: '/var/plop/uEA02-hello.svg',
+              name: 'hello',
+              unicode: [String.fromCharCode(0xEA02)],
+              renamed: false,
+            }
+          );
+          metadataService('/var/plop/bell-o.svg', function(err3, infos3) {
+            assert(!err3);
+            assert.deepEqual(infos3, {
+                path: '/var/plop/bell-o.svg',
+                name: 'bell-o',
+                unicode: [String.fromCharCode(0xEA03)],
+                renamed: false,
+              }
+            );
+            done();
+          });
+        });
+      });
+    });
+
   });
 
 });

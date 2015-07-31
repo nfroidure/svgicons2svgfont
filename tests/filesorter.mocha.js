@@ -59,4 +59,28 @@ describe('fileSorter', function() {
     ]);
   });
 
+  it('should work with the @pinin files', function() {
+    assert.deepEqual([
+      'bell-disabled.svg',
+      'bell-disabled-o.svg',
+      'bell-o.svg',
+      'UEA01-calendar-agenda.svg',
+      'UEA02-calendar-alert.svg',
+      'UEA03-calendar.svg',
+      'uEA04-bookmark-favorite.svg',
+      'uEA05-bookmark-o.svg',
+      'uEA06-bookmark.svg',
+    ].sort(fileSorter), [
+      'UEA01-calendar-agenda.svg',
+      'UEA02-calendar-alert.svg',
+      'UEA03-calendar.svg',
+      'uEA04-bookmark-favorite.svg',
+      'uEA05-bookmark-o.svg',
+      'uEA06-bookmark.svg',
+      'bell-disabled-o.svg',
+      'bell-disabled.svg',
+      'bell-o.svg',
+    ]);
+  });
+
 });

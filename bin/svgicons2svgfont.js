@@ -14,6 +14,7 @@ program
   .option('-v, --verbose', 'tell me everything!')
   .option('-o, --output [/dev/stdout]', 'Output file.')
   .option('-f, --fontname [value]', 'the font family name you want [iconfont].')
+  .option('-f, --fontid [value]', 'the font id you want [fontname].')
   .option('-st, --style [value]', 'the font style you want.')
   .option('-we, --weight [value]', 'the font weight you want.')
   .option('-w, --fixedWidth', 'creates a monospace font of the width of the largest input icon.')
@@ -42,6 +43,7 @@ svgiconsdir(program.args, {
 })
   .pipe(svgicons2svgfont({
     fontName: program.fontname,
+	fontId: program.fontid,
     fixedwidth: program.fixedwidth,
     centerhorizontally: program.centerHorizontally,
     normalize: program.normalize,

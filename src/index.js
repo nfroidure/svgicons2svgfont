@@ -179,6 +179,7 @@ function SVGIcons2SVGFontStream(options) {
 
   options = options || {};
   options.fontName = options.fontName || 'iconfont';
+  options.fontId = options.fontId || options.fontName;
   options.fixedWidth = options.fixedWidth || false;
   options.descent = options.descent || 0;
   options.round = options.round || 10e12;
@@ -359,7 +360,7 @@ function SVGIcons2SVGFontStream(options) {
   options.metadata ? '<metadata>' + options.metadata + '</metadata>\n' : ''
 ) + '\
 <defs>\n\
-  <font id="' + options.fontName + '" horiz-adv-x="' + fontWidth + '">\n\
+  <font id="' + options.fontId + '" horiz-adv-x="' + fontWidth + '">\n\
     <font-face font-family="' + options.fontName + '"\n\
       units-per-em="' + fontHeight + '" ascent="' + options.ascent + '"\n\
       descent="' + options.descent + '"' + (options.fontWeight ? '\n\

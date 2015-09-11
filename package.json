@@ -29,18 +29,18 @@
   "dependencies": {
     "commander": "^2.8.1",
     "readable-stream": "^2.0.2",
-    "sax": "^1.1.1",
+    "sax": "^1.1.2",
     "string.fromcodepoint": "^0.2.1",
     "string.prototype.codepointat": "^0.2.0",
     "svg-pathdata": "^1.0.1"
   },
   "devDependencies": {
-    "coveralls": "^2.11.3",
-    "eslint": "^0.24.1",
-    "istanbul": "^0.3.17",
-    "mocha": "^2.2.5",
+    "coveralls": "^2.11.4",
+    "eslint": "^1.4.0",
+    "eslint-config-simplifield": "^1.1.0",
+    "istanbul": "^0.3.19",
+    "mocha": "^2.3.2",
     "mocha-lcov-reporter": "^0.0.2",
-    "sf-lint": "^1.0.2",
     "streamtest": "^1.2.1"
   },
   "author": {

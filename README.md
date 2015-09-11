@@ -84,7 +84,7 @@ svgicons2svgfont --help
 #    -v, --verbose               tell me everything!
 #    -o, --output [/dev/stdout]  Output file.
 #    -f, --fontname [value]      the font family name you want [iconfont].
-#    -i, --fontid [value]        The font id you want [fontname]
+#    -i, --fontId [value]        The font id you want [fontname]
 #    -st, --style [value]        the font style you want [iconfont].
 #    -we, --weight [value]       the font weight you want [iconfont].
 #    -w, --fixedWidth            creates a monospace font of the width of the largest input icon.

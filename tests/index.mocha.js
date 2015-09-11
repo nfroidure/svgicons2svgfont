@@ -151,6 +151,15 @@ describe('Generating fonts to files', function() {
     }, done, 'n');
   });
 
+  it('should work with a font id', function(done) {
+    generateFontToFile({
+      fontName: 'variablewidthicons',
+      fixedWidth: true,
+      centerHorizontally: true,
+      fontId: 'plop',
+    }, done, 'id');
+  });
+
   it('should not display hidden pathes', function(done) {
     generateFontToFile({
       fontName: 'hiddenpathesicons',

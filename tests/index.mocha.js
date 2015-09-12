@@ -32,8 +32,9 @@ function generateFontToFile(options, done, fileSuffix, startUnicode, files) {
 
   svgiconsdir(
     files || path.join(__dirname, 'fixtures', options.fontName), {
-    startUnicode: startUnicode || 0xE001,
-  })
+      startUnicode: startUnicode || 0xE001,
+    }
+  )
     .pipe(svgFontStream);
 }
 
@@ -309,15 +310,18 @@ describe('Using options', function() {
     }, done, '4');
   });
 
-  it('should work with fixedWidth set to true and with custom fontHeight option', function(done) {
-    generateFontToFile({
-      fontName: 'originalicons',
-      fontHeight: 800,
-      fixedWidth: true,
-    }, done, '5');
-  });
+  it('should work with fixedWidth set to true and with custom fontHeight option',
+    function(done) {
+      generateFontToFile({
+        fontName: 'originalicons',
+        fontHeight: 800,
+        fixedWidth: true,
+      }, done, '5');
+    }
+  );
 
-  it('should work with fixedWidth and centerHorizontally set to true and with custom fontHeight option', function(done) {
+  it('should work with fixedWidth and centerHorizontally set to true and with' +
+    ' custom fontHeight option', function(done) {
     generateFontToFile({
       fontName: 'originalicons',
       fontHeight: 800,
@@ -326,7 +330,8 @@ describe('Using options', function() {
     }, done, '6');
   });
 
-  it('should work with fixedWidth, normalize and centerHorizontally set to true and with custom fontHeight option', function(done) {
+  it('should work with fixedWidth, normalize and centerHorizontally set to' +
+    ' true and with custom fontHeight option', function(done) {
     generateFontToFile({
       fontName: 'originalicons',
       fontHeight: 800,
@@ -351,14 +356,14 @@ describe('Using multiple unicode values for a single icon', function() {
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
 
+    var svgFontStream = svgicons2svgfont();
+    var content = '';
+    var decoder = new StringDecoder('utf8');
+
     svgIconStream.metadata = {
       name: 'account',
       unicode: ['\uE001', '\uE002'],
     };
-
-    var svgFontStream = svgicons2svgfont();
-    var content = '';
-    var decoder = new StringDecoder('utf8');
 
     svgFontStream.on('data', function(chunk) {
       content += decoder.write(chunk);
@@ -384,15 +389,14 @@ describe('Using ligatures', function() {
     var svgIconStream = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
+    var svgFontStream = svgicons2svgfont();
+    var content = '';
+    var decoder = new StringDecoder('utf8');
 
     svgIconStream.metadata = {
       name: 'account',
       unicode: ['\uE001\uE002'],
     };
-
-    var svgFontStream = svgicons2svgfont();
-    var content = '';
-    var decoder = new StringDecoder('utf8');
 
     svgFontStream.on('data', function(chunk) {
       content += decoder.write(chunk);
@@ -496,12 +500,12 @@ describe('Providing bad glyphs', function() {
     var svgFontStream = svgicons2svgfont();
 
     svgIconStream.metadata = {
-        name: 'test',
-        unicode: '\uE001',
+      name: 'test',
+      unicode: '\uE001',
     };
     svgIconStream2.metadata = {
-        name: 'test',
-        unicode: '\uE002',
+      name: 'test',
+      unicode: '\uE002',
     };
     svgFontStream.on('error', function(err) {
       assert.equal(err instanceof Error, true);
@@ -518,12 +522,13 @@ describe('Providing bad glyphs', function() {
     );
 
     svgIconStream.metadata = {
-        name: 'test',
-        unicode: ['\uE002'],
+      name: 'test',
+      unicode: ['\uE002'],
     };
     svgicons2svgfont().on('error', function(err) {
       assert.equal(err instanceof Error, true);
-      assert.equal(err.message, 'Got an error parsing the glyph "test": Expected a flag, got "120" at index "23".');
+      assert.equal(err.message, 'Got an error parsing the glyph "test":' +
+        ' Expected a flag, got "120" at index "23".');
       done();
     }).on('end', function() {
       done();
@@ -534,8 +539,8 @@ describe('Providing bad glyphs', function() {
     var svgIconStream = streamtest.v2.fromChunks(['bad', 'xml']);
 
     svgIconStream.metadata = {
-        name: 'test',
-        unicode: ['\uE002'],
+      name: 'test',
+      unicode: ['\uE002'],
     };
     svgicons2svgfont().on('error', function(err) {
       assert.equal(err instanceof Error, true);

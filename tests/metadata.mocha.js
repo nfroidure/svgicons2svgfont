@@ -87,12 +87,11 @@ describe('Metadata service', function() {
       metadataService('/var/plop/u0001-hello.svg', function(err, infos) {
         assert(!err);
         assert.deepEqual(infos, {
-            path: '/var/plop/u0001-hello.svg',
-            name: 'hello',
-            unicode: [String.fromCharCode(0x0001)],
-            renamed: false,
-          }
-        );
+          path: '/var/plop/u0001-hello.svg',
+          name: 'hello',
+          unicode: [String.fromCharCode(0x0001)],
+          renamed: false,
+        });
         done();
       });
     });
@@ -103,12 +102,11 @@ describe('Metadata service', function() {
       metadataService('/var/plop/u0001,u0002-hello.svg', function(err, infos) {
         assert(!err);
         assert.deepEqual(infos, {
-            path: '/var/plop/u0001,u0002-hello.svg',
-            name: 'hello',
-            unicode: [String.fromCharCode(0x0001), String.fromCharCode(0x0002)],
-            renamed: false,
-          }
-        );
+          path: '/var/plop/u0001,u0002-hello.svg',
+          name: 'hello',
+          unicode: [String.fromCharCode(0x0001), String.fromCharCode(0x0002)],
+          renamed: false,
+        });
         done();
       });
     });
@@ -119,12 +117,11 @@ describe('Metadata service', function() {
       metadataService('/var/plop/u1F63A-hello.svg', function(err, infos) {
         assert(!err);
         assert.deepEqual(infos, {
-            path: '/var/plop/u1F63A-hello.svg',
-            name: 'hello',
-            unicode: [String.fromCodePoint(0x1f63a)],
-            renamed: false,
-          }
-        );
+          path: '/var/plop/u1F63A-hello.svg',
+          name: 'hello',
+          unicode: [String.fromCodePoint(0x1f63a)],
+          renamed: false,
+        });
         done();
       });
     });
@@ -135,12 +132,11 @@ describe('Metadata service', function() {
       metadataService('/var/plop/u0001u0002-hello.svg', function(err, infos) {
         assert(!err);
         assert.deepEqual(infos, {
-            path: '/var/plop/u0001u0002-hello.svg',
-            name: 'hello',
-            unicode: [String.fromCharCode(0x0001) + String.fromCharCode(0x0002)],
-            renamed: false,
-          }
-        );
+          path: '/var/plop/u0001u0002-hello.svg',
+          name: 'hello',
+          unicode: [String.fromCharCode(0x0001) + String.fromCharCode(0x0002)],
+          renamed: false,
+        });
         done();
       });
     });
@@ -151,15 +147,14 @@ describe('Metadata service', function() {
       metadataService('/var/plop/u0001u0002,u0001-hello.svg', function(err, infos) {
         assert(!err);
         assert.deepEqual(infos, {
-            path: '/var/plop/u0001u0002,u0001-hello.svg',
-            name: 'hello',
-            unicode: [
-              String.fromCharCode(0x0001) + String.fromCharCode(0x0002),
-              String.fromCharCode(0x0001),
-            ],
-            renamed: false,
-          }
-        );
+          path: '/var/plop/u0001u0002,u0001-hello.svg',
+          name: 'hello',
+          unicode: [
+            String.fromCharCode(0x0001) + String.fromCharCode(0x0002),
+            String.fromCharCode(0x0001),
+          ],
+          renamed: false,
+        });
         done();
       });
     });
@@ -170,21 +165,19 @@ describe('Metadata service', function() {
       metadataService('/var/plop/uEA01-hello.svg', function(err, infos) {
         assert(!err);
         assert.deepEqual(infos, {
-            path: '/var/plop/uEA01-hello.svg',
-            name: 'hello',
-            unicode: [String.fromCharCode(0xEA01)],
-            renamed: false,
-          }
-        );
+          path: '/var/plop/uEA01-hello.svg',
+          name: 'hello',
+          unicode: [String.fromCharCode(0xEA01)],
+          renamed: false,
+        });
         metadataService('/var/plop/plop.svg', function(err2, infos2) {
           assert(!err2);
           assert.deepEqual(infos2, {
-              path: '/var/plop/plop.svg',
-              name: 'plop',
-              unicode: [String.fromCharCode(0xEA02)],
-              renamed: false,
-            }
-          );
+            path: '/var/plop/plop.svg',
+            name: 'plop',
+            unicode: [String.fromCharCode(0xEA02)],
+            renamed: false,
+          });
           done();
         });
       });
@@ -196,30 +189,27 @@ describe('Metadata service', function() {
       metadataService('/var/plop/UEA01-hello.svg', function(err, infos) {
         assert(!err);
         assert.deepEqual(infos, {
-            path: '/var/plop/UEA01-hello.svg',
-            name: 'hello',
-            unicode: [String.fromCharCode(0xEA01)],
-            renamed: false,
-          }
-        );
+          path: '/var/plop/UEA01-hello.svg',
+          name: 'hello',
+          unicode: [String.fromCharCode(0xEA01)],
+          renamed: false,
+        });
         metadataService('/var/plop/uEA02-hello.svg', function(err2, infos2) {
           assert(!err2);
           assert.deepEqual(infos2, {
-              path: '/var/plop/uEA02-hello.svg',
-              name: 'hello',
-              unicode: [String.fromCharCode(0xEA02)],
-              renamed: false,
-            }
-          );
+            path: '/var/plop/uEA02-hello.svg',
+            name: 'hello',
+            unicode: [String.fromCharCode(0xEA02)],
+            renamed: false,
+          });
           metadataService('/var/plop/bell-o.svg', function(err3, infos3) {
             assert(!err3);
             assert.deepEqual(infos3, {
-                path: '/var/plop/bell-o.svg',
-                name: 'bell-o',
-                unicode: [String.fromCharCode(0xEA03)],
-                renamed: false,
-              }
-            );
+              path: '/var/plop/bell-o.svg',
+              name: 'bell-o',
+              unicode: [String.fromCharCode(0xEA03)],
+              renamed: false,
+            });
             done();
           });
         });

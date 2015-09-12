@@ -37,9 +37,9 @@ if(!program.args.length) {
 }
 
 svgiconsdir(program.args, {
-    startUnicode: program.startunicode,
-    appendUnicode: program.appendunicode,
-    log: program.v ? console.log : function() {},
+  startUnicode: program.startunicode,
+  appendUnicode: program.appendunicode,
+  log: program.v ? console.log : function() {},
 })
   .pipe(svgicons2svgfont({
     fontName: program.fontname,

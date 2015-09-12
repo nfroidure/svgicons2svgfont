@@ -5,11 +5,11 @@
   "homepage": "https://github.com/nfroidure/svgicons2svgfont",
   "main": "src/index.js",
   "scripts": {
-    "test": "node_modules/mocha/bin/mocha tests/*.mocha.js",
-    "coveralls": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha --report lcovonly -- tests/*.mocha.js -R spec -t 5000 && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "cover": "./node_modules/istanbul/lib/cli.js cover --report html ./node_modules/mocha/bin/_mocha -- tests/*.mocha.js -R spec -t 5000",
-    "lint": "eslint **/*.js",
-    "lintconfig": "sf-lint-sync",
+    "test": "mocha tests/*.mocha.js",
+    "coveralls": "istanbul cover _mocha --report lcovonly -- tests/*.mocha.js -R spec -t 5000 && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "cover": "istanbul cover --report html _mocha -- tests/*.mocha.js -R spec -t 5000",
+    "lint": "eslint src/*.js bin/*.js tests/*.js",
+    "prepublish": "npm run test",
     "cli": "env NPM_RUN_CLI=1"
   },
   "repository": {

@@ -2,6 +2,7 @@
 
 // Required modules
 var util = require('util');
+var ucs2 = require('punycode').ucs2;
 var Stream = require('readable-stream');
 var Sax = require('sax');
 var SVGPathData = require('svg-pathdata');
@@ -424,8 +425,8 @@ function SVGIcons2SVGFontStream(options) {
       glyph.unicode.forEach(function(unicode, i) {
         _this.push('\
     <glyph glyph-name="' + glyph.name + (0 === i ? '' : '-' + i) + '"\n\
-      unicode="' + unicode.split('').map(function(char) {
-        return '&#x' + char.codePointAt(0).toString(16).toUpperCase() + ';';
+      unicode="' + ucs2.decode(unicode).map(function(point) {
+        return '&#x' + point.toString(16).toUpperCase() + ';';
       }).join('') + '"\n\
       horiz-adv-x="' + glyph.width + '" d="' + d + '" />\n');
       });

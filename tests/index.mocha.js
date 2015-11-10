@@ -349,9 +349,9 @@ describe('Using options', function() {
 
 });
 
-describe('Using multiple unicode values for a single icon', function() {
+describe('Passing code points', function() {
 
-  it('should work', function(done) {
+  it('should work with multiple unicode values for a single icon', function(done) {
     var svgIconStream = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
@@ -381,11 +381,7 @@ describe('Using multiple unicode values for a single icon', function() {
     svgFontStream.end();
   });
 
-});
-
-describe('Using ligatures', function() {
-
-  it('should work', function(done) {
+  it('should work with ligatures', function(done) {
     var svgIconStream = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
@@ -414,6 +410,37 @@ describe('Using ligatures', function() {
     svgFontStream.end();
   });
 
+
+  it('should work with high code points', function(done) {
+    var ucs2 = require('punycode').ucs2;
+
+    var svgIconStream = fs.createReadStream(
+      path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
+    );
+    var svgFontStream = svgicons2svgfont();
+    var content = '';
+    var decoder = new StringDecoder('utf8');
+
+    svgIconStream.metadata = {
+      name: 'account',
+      unicode: [ucs2.encode([0x1F63A])],
+    };
+
+    svgFontStream.on('data', function(chunk) {
+      content += decoder.write(chunk);
+    });
+
+    svgFontStream.on('finish', function() {
+      assert.equal(
+        fs.readFileSync(path.join(__dirname, 'expected', 'cleanicons-high.svg'),
+          { encoding: 'utf8' }),
+        content
+      );
+      done();
+    });
+    svgFontStream.write(svgIconStream);
+    svgFontStream.end();
+  });
 });
 
 describe('Providing bad glyphs', function() {

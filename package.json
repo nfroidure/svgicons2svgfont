@@ -27,20 +27,20 @@
     "node": ">= 0.10.0"
   },
   "dependencies": {
-    "commander": "^2.8.1",
-    "readable-stream": "^2.0.2",
-    "sax": "^1.1.2",
+    "commander": "^2.9.0",
+    "readable-stream": "^2.0.4",
+    "sax": "^1.1.4",
     "string.fromcodepoint": "^0.2.1",
     "string.prototype.codepointat": "^0.2.0",
-    "svg-pathdata": "^1.0.1"
+    "svg-pathdata": "^1.0.3"
   },
   "devDependencies": {
     "coveralls": "^2.11.4",
-    "eslint": "^1.4.0",
+    "eslint": "^1.10.0",
     "eslint-config-simplifield": "^1.1.0",
-    "istanbul": "^0.3.19",
-    "mocha": "^2.3.2",
-    "mocha-lcov-reporter": "^0.0.2",
+    "istanbul": "^0.4.0",
+    "mocha": "^2.3.4",
+    "mocha-lcov-reporter": "^1.0.0",
     "streamtest": "^1.2.1"
   },
   "author": {

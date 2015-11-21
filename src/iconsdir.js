@@ -17,6 +17,7 @@ function SVGIconsDirStream(dir, options) {
   var _this = this;
   var filesInfos;
   var gotFilesInfos = false;
+  var dirCopy;
 
   // Ensure new were used
   if(!(this instanceof SVGIconsDirStream)) {
@@ -24,7 +25,7 @@ function SVGIconsDirStream(dir, options) {
   }
 
   if(dir instanceof Array) {
-    var dirCopy = dir;
+    dirCopy = dir;
     dir = '';
     _getFilesInfos(dirCopy);
   }

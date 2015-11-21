@@ -1,3 +1,5 @@
+ /* eslint max-nested-callbacks:0 */
+
 'use strict';
 
 var metadata = require('../src/metadata.js');

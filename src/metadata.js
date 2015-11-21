@@ -15,8 +15,8 @@ function getMetadataService(options) {
   options.startUnicode = 'number' === typeof options.startUnicode ?
     options.startUnicode :
     0xEA01;
-  options.log = options.log || console.log;
-  options.err = options.err || console.err;
+  options.log = options.log || console.log; // eslint-disable-line
+  options.err = options.err || console.err; // eslint-disable-line
 
   return function getMetadataFromFile(file, cb) {
     var basename = path.basename(file);

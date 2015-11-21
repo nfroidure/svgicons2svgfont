@@ -1,3 +1,5 @@
+ /* eslint no-multi-str:0 */
+
 'use strict';
 
 // Required modules
@@ -6,6 +8,7 @@ var ucs2 = require('punycode').ucs2;
 var Stream = require('readable-stream');
 var Sax = require('sax');
 var SVGPathData = require('svg-pathdata');
+var svgShapesToPath = require('./svgshapes2svgpath');
 
 require('string.prototype.codepointat');
 
@@ -38,6 +41,8 @@ function applyTransforms(d, parents) {
 
 // Rendering
 function tagShouldRender(curTag, parents) {
+  var values;
+
   return !parents.some(function(tag) {
     if('undefined' !== typeof tag.attributes.display &&
       'none' === tag.attributes.display.toLowerCase()) {
@@ -52,121 +57,12 @@ function tagShouldRender(curTag, parents) {
       return true;
     }
     if('undefined' !== typeof tag.attributes.viewBox) {
-      var values = tag.attributes.viewBox.split(/\s*,*\s|\s,*\s*|,/);
+      values = tag.attributes.viewBox.split(/\s*,*\s|\s,*\s*|,/);
       if(0 === parseFloat(values[2]) || 0 === parseFloat(values[3])) {
         return true;
       }
     }
   });
-}
-
-// Shapes helpers (should also move elsewhere)
-function rectToPath(attributes) {
-  var x = 'undefined' !== typeof attributes.x ?
-    parseFloat(attributes.x, 10) :
-    0;
-  var y = 'undefined' !== typeof attributes.y ?
-    parseFloat(attributes.y, 10) :
-    0;
-  var width = 'undefined' !== typeof attributes.width ?
-    parseFloat(attributes.width, 10) :
-    0;
-  var height = 'undefined' !== typeof attributes.height ?
-    parseFloat(attributes.height, 10) :
-    0;
-  var rx = 'undefined' !== typeof attributes.rx ?
-    parseFloat(attributes.rx, 10) :
-    0;
-  var ry = 'undefined' !== typeof attributes.ry ?
-    parseFloat(attributes.ry, 10) :
-    0;
-
-  return '' +
-    // start at the left corner
-    'M' + (x + rx) + ' ' + y +
-    // top line
-    'h' + (width - (rx * 2)) +
-    // upper right corner
-    (rx || ry ?
-      'a ' + rx + ' ' + ry + ' 0 0 1 ' + rx + ' ' + ry :
-      ''
-    ) +
-    // Draw right side
-    'v' + (height - (ry * 2)) +
-    // Draw bottom right corner
-    (rx || ry ?
-      'a ' + rx + ' ' + ry + ' 0 0 1 ' + (rx * -1) + ' ' + ry :
-      ''
-    ) +
-    // Down the down side
-    'h' + ((width - (rx * 2)) * -1) +
-    // Draw bottom right corner
-    (rx || ry ?
-      'a ' + rx + ' ' + ry + ' 0 0 1 ' + (rx * -1) + ' ' + (ry * -1) :
-      ''
-    ) +
-    // Down the left side
-    'v' + ((height - (ry * 2)) * -1) +
-    // Draw bottom right corner
-    (rx || ry ?
-      'a ' + rx + ' ' + ry + ' 0 0 1 ' + rx + ' ' + (ry * -1) :
-      ''
-    ) +
-    // Close path
-    'z';
-}
-
-function polylineToPath(attributes) {
-  return 'M' + attributes.points;
-}
-
-function lineToPath(attributes) {
-  // Move to the line start
-  return '' +
-  'M' + (parseFloat(attributes.x1, 10) || 0).toString(10) +
-  ' ' + (parseFloat(attributes.y1, 10) || 0).toString(10) +
-  ' ' + ((parseFloat(attributes.x1, 10) || 0) + 1).toString(10) +
-  ' ' + ((parseFloat(attributes.y1, 10) || 0) + 1).toString(10) +
-  ' ' + ((parseFloat(attributes.x2, 10) || 0) + 1).toString(10) +
-  ' ' + ((parseFloat(attributes.y2, 10) || 0) + 1).toString(10) +
-  ' ' + (parseFloat(attributes.x2, 10) || 0).toString(10) +
-  ' ' + (parseFloat(attributes.y2, 10) || 0).toString(10) +
-  'Z';
-}
-
-
-// http://www.whizkidtech.redprince.net/bezier/circle/
-var KAPPA = ((Math.sqrt(2) - 1) / 3) * 4;
-
-function circleToPath(attributes) {
-  var cx = parseFloat(attributes.cx, 10);
-  var cy = parseFloat(attributes.cy, 10);
-  var rx = 'undefined' !== typeof attributes.rx ?
-    parseFloat(attributes.rx, 10) :
-    parseFloat(attributes.r, 10);
-  var ry = 'undefined' !== typeof attributes.ry ?
-    parseFloat(attributes.ry, 10) :
-    parseFloat(attributes.r, 10);
-
-  return '' +
-    'M' + (cx - rx) + ',' + cy +
-    'C' + (cx - rx) + ',' + (cy + (ry * KAPPA)) +
-    ' ' + (cx - (rx * KAPPA)) + ',' + (cy + ry) +
-    ' ' + cx + ',' + (cy + ry) +
-    'C' + (cx + (rx * KAPPA)) + ',' + (cy + ry) +
-    ' ' + (cx + rx) + ',' + (cy + (ry * KAPPA)) +
-    ' ' + (cx + rx) + ',' + cy +
-    'C' + (cx + rx) + ',' + (cy - (ry * KAPPA)) +
-    ' ' + (cx + (rx * KAPPA)) + ',' + (cy - ry) +
-    ' ' + cx + ',' + (cy - ry) +
-    'C' + (cx - (rx * KAPPA)) + ',' + (cy - ry) +
-    ' ' + (cx - rx) + ',' + (cy - (ry * KAPPA)) +
-    ' ' + (cx - rx) + ',' + cy +
-    'Z';
-}
-
-function polygonToPath(attributes) {
-  return 'M' + attributes.points + 'Z';
 }
 
 // Inherit of duplex stream
@@ -186,7 +82,7 @@ function SVGIcons2SVGFontStream(options) {
   options.round = options.round || 10e12;
   options.metadata = options.metadata || '';
 
-  log = options.log || console.log.bind(console);
+  log = options.log || console.log.bind(console); // eslint-disable-line
 
   // Ensure new were used
   if(!(this instanceof SVGIcons2SVGFontStream)) {
@@ -246,6 +142,8 @@ function SVGIcons2SVGFontStream(options) {
     }
 
     saxStream.on('opentag', function(tag) {
+      var values;
+
       parents.push(tag);
       // Checking if any parent rendering is disabled and exit if so
       if(!tagShouldRender(tag, parents)) {
@@ -257,7 +155,7 @@ function SVGIcons2SVGFontStream(options) {
           glyph.dX = 0;
           glyph.dY = 0;
           if('viewBox' in tag.attributes) {
-            var values = tag.attributes.viewBox.split(/\s*,*\s|\s,*\s*|,/);
+            values = tag.attributes.viewBox.split(/\s*,*\s|\s,*\s*|,/);
             glyph.dX = parseFloat(values[0], 10);
             glyph.dY = parseFloat(values[1], 10);
             glyph.width = parseFloat(values[2], 10);
@@ -282,20 +180,20 @@ function SVGIcons2SVGFontStream(options) {
             'result may be different than expected.');
         // Change rect elements to the corresponding path
         } else if('rect' === tag.name && 'none' !== tag.attributes.fill) {
-          glyph.d.push(applyTransforms(rectToPath(tag.attributes), parents));
+          glyph.d.push(applyTransforms(svgShapesToPath.rectToPath(tag.attributes), parents));
         } else if('line' === tag.name && 'none' !== tag.attributes.fill) {
           log('Found a line element in the icon "' + glyph.name + '" the result' +
             ' could be different than expected.');
-          glyph.d.push(applyTransforms(lineToPath(tag.attributes), parents));
+          glyph.d.push(applyTransforms(svgShapesToPath.lineToPath(tag.attributes), parents));
         } else if('polyline' === tag.name && 'none' !== tag.attributes.fill) {
           log('Found a polyline element in the icon "' + glyph.name + '" the' +
             ' result could be different than expected.');
-          glyph.d.push(applyTransforms(polylineToPath(tag.attributes), parents));
+          glyph.d.push(applyTransforms(svgShapesToPath.polylineToPath(tag.attributes), parents));
         } else if('polygon' === tag.name && 'none' !== tag.attributes.fill) {
-          glyph.d.push(applyTransforms(polygonToPath(tag.attributes), parents));
+          glyph.d.push(applyTransforms(svgShapesToPath.polygonToPath(tag.attributes), parents));
         } else if('circle' === tag.name || 'ellipse' === tag.name &&
           'none' !== tag.attributes.fill) {
-          glyph.d.push(applyTransforms(circleToPath(tag.attributes), parents));
+          glyph.d.push(applyTransforms(svgShapesToPath.circleToPath(tag.attributes), parents));
         } else if('path' === tag.name && tag.attributes.d &&
           'none' !== tag.attributes.fill) {
           glyph.d.push(applyTransforms(tag.attributes.d, parents));
@@ -356,7 +254,8 @@ function SVGIcons2SVGFontStream(options) {
     // (find a SAX parser that allows modifying SVG on the fly)
     _this.push('\
 <?xml version="1.0" standalone="no"?> \n\
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >\n\
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"' +
+  ' "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >\n\
 <svg xmlns="http://www.w3.org/2000/svg">\n' + (
   options.metadata ? '<metadata>' + options.metadata + '</metadata>\n' : ''
 ) + '\
@@ -371,6 +270,8 @@ function SVGIcons2SVGFontStream(options) {
     glyphs.forEach(function(glyph) {
       var ratio = fontHeight / glyph.height;
       var d = '';
+      var bounds;
+      var pathData;
 
       if(options.fixedWidth) {
         glyph.width = fontWidth;
@@ -394,8 +295,8 @@ function SVGIcons2SVGFontStream(options) {
       });
       if(options.centerHorizontally) {
         // Naive bounds calculation (should draw, then calculate bounds...)
-        var pathData = new SVGPathData(d);
-        var bounds = {
+        pathData = new SVGPathData(d);
+        bounds = {
           x1: Infinity,
           y1: Infinity,
           x2: 0,
@@ -436,7 +337,9 @@ function SVGIcons2SVGFontStream(options) {
 </defs>\n\
 </svg>\n');
     log('Font created');
-    'function' === (typeof options.callback) && (options.callback)(glyphs);
+    if('function' === (typeof options.callback)) {
+      (options.callback)(glyphs);
+    }
     svgFontFlushCallback();
   };
 

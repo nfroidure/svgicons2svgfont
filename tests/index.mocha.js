@@ -10,7 +10,7 @@ var svgiconsdir = require('../src/iconsdir');
 var streamtest = require('streamtest');
 
 // Helpers
-function generateFontToFile(options, done, fileSuffix, startUnicode, files) {
+function generateFontToFile(options, done, fileSuffix, startUnicode, files) {  // eslint-disable-line
   var dest = path.join(__dirname, 'results', options.fontName +
     (fileSuffix || '') + '.svg');
   var svgFontStream;

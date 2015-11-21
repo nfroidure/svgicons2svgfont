@@ -32,14 +32,14 @@ program
   .parse(process.argv);
 
 if(!program.args.length) {
-  console.error('No icons specified!');
+  console.error('No icons specified!'); // eslint-disable-line
   process.exit(1);
 }
 
 svgiconsdir(program.args, {
   startUnicode: program.startunicode,
   appendUnicode: program.appendunicode,
-  log: program.v ? console.log : function() {},
+  log: program.v ? console.log : function() {}, // eslint-disable-line
 })
   .pipe(svgicons2svgfont({
     fontName: program.fontname,
@@ -52,6 +52,6 @@ svgiconsdir(program.args, {
     descent: program.descent,
     ascent: program.ascent,
     metadata: program.metadata,
-    log: program.v ? console.log : function() {},
+    log: program.v ? console.log : function() {}, // eslint-disable-line
   }))
   .pipe(program.output ? fs.createWriteStream(program.output) : process.stdout);

@@ -198,6 +198,11 @@ function SVGIcons2SVGFontStream(options) {
           'none' !== tag.attributes.fill) {
           glyph.d.push(applyTransforms(tag.attributes.d, parents));
         }
+
+        //Map attribute fill to color property
+        if('none' !== tag.attributes.fill) {
+          glyph.color = tag.attributes.fill;
+        }
       } catch(err) {
         _this.emit('error', new Error('Got an error parsing the glyph' +
           ' "' + glyph.name + '": ' + err.message + '.'));

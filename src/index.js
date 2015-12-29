@@ -65,6 +65,32 @@ function tagShouldRender(curTag, parents) {
   });
 }
 
+//according to the document (http://www.w3.org/TR/SVG/painting.html#FillProperties)
+//fill <paint> none|currentColor|inherit|<color>
+//     [<icccolor>]|<funciri> (not support yet)
+function getTagColor(currTag, parents) {
+    var defaultColor = 'black';
+    var fillVal = currTag.attributes.fill;
+    var color = null;
+
+    if('none' == fillVal) {
+      color = null;
+    } else if('currentColor' == fillVal) {
+      color = defaultColor;
+    } else if('inherit' == fillVal) {
+      if(parents.length == 0) {
+        color = defaultColor;
+      } else {
+        var len = parents.length;
+        color = getTagColor(parents[len - 1], parents.slice(0, len - 1));
+      }
+    } else {
+      color = fillVal;
+    }
+
+    return color;
+}
+
 // Inherit of duplex stream
 util.inherits(SVGIcons2SVGFontStream, Stream.Transform);
 
@@ -199,9 +225,13 @@ function SVGIcons2SVGFontStream(options) {
           glyph.d.push(applyTransforms(tag.attributes.d, parents));
         }
 
+        //according to http://www.w3.org/TR/SVG/painting.html#SpecifyingPaint
         //Map attribute fill to color property
         if('none' !== tag.attributes.fill) {
-          glyph.color = tag.attributes.fill;
+          var color = getTagColor(tag, parents);
+          if(color != null) {
+            glyph.color = color;
+          }
         }
       } catch(err) {
         _this.emit('error', new Error('Got an error parsing the glyph' +

@@ -6,7 +6,7 @@
    width="150"
    height="150"
    viewBox="0 0 150 150"
-   id="svg2">
+   id="svg2" fill="currentColor">
   <path
     d="M 50,75 100,30 100,120 z"
     id="path2986" />

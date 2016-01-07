@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "commander": "^2.9.0",
+    "neatequal": "^1.0.0",
     "readable-stream": "^2.0.4",
     "sax": "^1.1.4",
     "string.fromcodepoint": "^0.2.1",

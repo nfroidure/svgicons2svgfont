@@ -9,6 +9,9 @@ var StringDecoder = require('string_decoder').StringDecoder;
 var svgiconsdir = require('../src/iconsdir');
 var streamtest = require('streamtest');
 
+var neatequal = require('neatequal');
+var codepoint = require('./expected/test-codepoint.json');
+
 // Helpers
 function generateFontToFile(options, done, fileSuffix, startUnicode, files) {  // eslint-disable-line
   var dest = path.join(__dirname, 'results', options.fontName +
@@ -44,6 +47,12 @@ function generateFontToMemory(options, done, files, startUnicode) {
   var svgFontStream;
 
   options.log = function() {};
+
+  options.callback = function(glyphs) {
+    var fontName = options.fontName;
+    neatequal(glyphs, codepoint[fontName]);
+  };
+
   svgFontStream = svgicons2svgfont(options);
 
   svgFontStream.on('data', function(chunk) {
@@ -254,10 +263,11 @@ describe('Generating fonts to files', function() {
 });
 
 describe('Generating fonts to memory', function() {
+  
 
   it('should work for simple SVG', function(done) {
     generateFontToMemory({
-      fontName: 'originalicons',
+      fontName: 'originalicons'
     }, done);
   });
 

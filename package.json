@@ -1,6 +1,6 @@
 {
   "name": "svgicons2svgfont",
-  "version": "3.2.1",
+  "version": "4.0.0",
   "description": "Read a set of SVG icons and ouput a SVG font",
   "homepage": "https://github.com/nfroidure/svgicons2svgfont",
   "main": "src/index.js",

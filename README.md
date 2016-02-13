@@ -95,7 +95,7 @@ svgicons2svgfont --help
 #    -d, --descent [value]       the font descent [0].
 #    -a, --ascent [value]        the font ascent [height - descent].
 #    -s, --startunicode [value]  the start unicode codepoint for unprefixed files [0xEA01].
-#    -a, --appendunicode         prefix files with their automatically allocated unicode codepoint.
+#    -a, --prependUnicode         prefix files with their automatically allocated unicode codepoint.
 #    -m, --metadata              content of the metadata tag.
 ```
 

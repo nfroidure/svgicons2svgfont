@@ -10,6 +10,11 @@ var assert = require('assert');
 require('string.fromcodepoint');
 
 describe('Metadata service', function() {
+  it('should throw error when using old options', function() {
+    assert.throws(metadata.bind(metadata, {
+      appendUnicode: true,
+    }));
+  });
 
   describe('for code generation', function() {
 
@@ -34,7 +39,7 @@ describe('Metadata service', function() {
 
     it('should append unicodes to files when the option is set', function(done) {
       var metadataService = metadata({
-        appendUnicode: true,
+        prependUnicode: true,
         log: function() {},
         error: function() {
           done(new Error('Not supposed to be here'));
@@ -63,7 +68,7 @@ describe('Metadata service', function() {
 
     it('should log file rename errors', function(done) {
       var metadataService = metadata({
-        appendUnicode: true,
+        prependUnicode: true,
         startUnicode: 0xEA02,
         error: function() {},
         log: function() {

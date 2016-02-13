@@ -11,12 +11,20 @@ function getMetadataService(options) {
 
   // Default options
   options = options || {};
-  options.appendUnicode = !!options.appendUnicode;
+  options.prependUnicode = !!options.prependUnicode;
   options.startUnicode = 'number' === typeof options.startUnicode ?
     options.startUnicode :
     0xEA01;
   options.log = options.log || console.log; // eslint-disable-line
   options.err = options.err || console.err; // eslint-disable-line
+
+  // Throw on old options usage
+  if('undefined' !== typeof options.appendUnicode) {
+    throw new Error(
+      'The "appendUnicode" option were renamed "prependUnicode".' +
+      ' See https://github.com/nfroidure/gulp-svgicons2svgfont/issues/33'
+    );
+  }
 
   return function getMetadataFromFile(file, cb) {
     var basename = path.basename(file);
@@ -48,7 +56,7 @@ function getMetadataService(options) {
         metadata.unicode[0] = String.fromCodePoint(options.startUnicode++);
       } while(-1 !== usedUnicodes.indexOf(metadata.unicode[0]));
       usedUnicodes.push(metadata.unicode[0]);
-      if(options.appendUnicode) {
+      if(options.prependUnicode) {
         metadata.renamed = true;
         metadata.path = path.dirname(file) + '/' +
           'u' + metadata.unicode[0].codePointAt(0).toString(16).toUpperCase() +

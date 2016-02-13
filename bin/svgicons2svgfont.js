@@ -26,7 +26,7 @@ program
   .option('-a, --ascent [value]', 'the font ascent [height - ascent].', parseInt)
   .option('-s, --startunicode [value]', 'the start unicode codepoint for' +
     ' unprefixed files [0xEA01].', parseInt)
-  .option('-a, --appendunicode', 'prefix files with their automatically' +
+  .option('-a, --prependUnicode', 'prefix files with their automatically' +
     ' allocated unicode codepoint.', parseInt)
   .option('-m, --metadata', 'content of the metadata tag.')
   .parse(process.argv);
@@ -38,7 +38,7 @@ if(!program.args.length) {
 
 svgiconsdir(program.args, {
   startUnicode: program.startunicode,
-  appendUnicode: program.appendunicode,
+  prependUnicode: program.prependUnicode,
   log: program.v ? console.log : function() {}, // eslint-disable-line
 })
   .pipe(svgicons2svgfont({

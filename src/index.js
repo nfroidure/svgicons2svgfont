@@ -65,35 +65,37 @@ function tagShouldRender(curTag, parents) {
   });
 }
 
-//according to the document (http://www.w3.org/TR/SVG/painting.html#FillProperties)
-//fill <paint> none|currentColor|inherit|<color>
+// According to the document (http://www.w3.org/TR/SVG/painting.html#FillProperties)
+// fill <paint> none|currentColor|inherit|<color>
 //     [<icccolor>]|<funciri> (not support yet)
 function getTagColor(currTag, parents) {
-    var defaultColor = 'black';
-    var fillVal = currTag.attributes.fill;
-    var color = null;
+  var defaultColor = 'black';
+  var fillVal = currTag.attributes.fill;
+  var color;
+  var parentsLength = parents.length;
 
-    if('none' == fillVal) {
-      color = null;
-    } else if('currentColor' == fillVal) {
-      color = defaultColor;
-    } else if('inherit' == fillVal) {
-      if(parents.length == 0) {
-        color = defaultColor;
-      } else {
-        var len = parents.length;
-        color = getTagColor(parents[len - 1], parents.slice(0, len - 1));
-      }
-    } else {
-      //this might be null.
-      //For example: <svg ><path fill="inherit" /> </svg>
-      // in this case getTagColor should return null
-      // recursive call, the bottom element should be svg,
-      // and svg didn't fill color, so just return null
-      color = fillVal;
-    }
-
+  if('none' === fillVal) {
     return color;
+  }
+  if('currentColor' === fillVal) {
+    return defaultColor;
+  }
+  if('inherit' === fillVal) {
+    if(0 === parentsLength) {
+      return defaultColor;
+    }
+    return getTagColor(
+      parents[parentsLength - 1],
+      parents.slice(0, parentsLength - 1)
+    );
+    // this might be null.
+    // For example: <svg ><path fill="inherit" /> </svg>
+    // in this case getTagColor should return null
+    // recursive call, the bottom element should be svg,
+    // and svg didn't fill color, so just return null
+  }
+
+  return fillVal;
 }
 
 // Inherit of duplex stream
@@ -174,6 +176,7 @@ function SVGIcons2SVGFontStream(options) {
 
     saxStream.on('opentag', function(tag) {
       var values;
+      var color;
 
       parents.push(tag);
       // Checking if any parent rendering is disabled and exit if so
@@ -230,11 +233,11 @@ function SVGIcons2SVGFontStream(options) {
           glyph.d.push(applyTransforms(tag.attributes.d, parents));
         }
 
-        //according to http://www.w3.org/TR/SVG/painting.html#SpecifyingPaint
-        //Map attribute fill to color property
+        // According to http://www.w3.org/TR/SVG/painting.html#SpecifyingPaint
+        // Map attribute fill to color property
         if('none' !== tag.attributes.fill) {
-          var color = getTagColor(tag, parents);
-          if(color != null) {
+          color = getTagColor(tag, parents);
+          if('undefined' !== typeof color) {
             glyph.color = color;
           }
         }

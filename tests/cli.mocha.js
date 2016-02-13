@@ -3,6 +3,7 @@
 var fs = require('fs');
 var path = require('path');
 var assert = require('assert');
+var childProcess = require('child_process');
 
 describe('Testing CLI', function() {
 
@@ -13,7 +14,7 @@ describe('Testing CLI', function() {
      ' -s 0xE001' +
      ' ' + path.join(__dirname, 'fixtures', 'originalicons', '*.svg');
 
-    (require('child_process').exec)(
+    (childProcess.exec)(
       command,
       function(err) {
         if(err) {
@@ -48,7 +49,7 @@ describe('Testing CLI', function() {
      ' ' + path.join(__dirname, 'fixtures', 'shapeicons', '*.svg') +
      ' ' + path.join(__dirname, 'fixtures', 'tocentericons', '*.svg');
 
-    (require('child_process').exec)(
+    (childProcess.exec)(
       command,
       function(err) {
         if(err) {
@@ -77,7 +78,7 @@ describe('Testing CLI', function() {
         ' -o ' + path.join(__dirname, 'results', 'nestedicons-cli.svg') +
         ' ' + path.join(__dirname, 'fixtures', 'nestedicons', '*.svg');
 
-      (require('child_process').exec)(
+      (childProcess.exec)(
         command,
         function(err) {
           if(err) {

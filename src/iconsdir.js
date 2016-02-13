@@ -3,6 +3,7 @@
 var fs = require('fs');
 var util = require('util');
 var fileSorter = require('./filesorter');
+var initMetadataService = require('../src/metadata');
 
 var Readable = require('stream').Readable;
 
@@ -13,8 +14,8 @@ util.inherits(SVGIconsDirStream, Readable);
 
 // Constructor
 function SVGIconsDirStream(dir, options) {
-  var getMetadata = require('../src/metadata')(options);
   var _this = this;
+  var getMetadata = initMetadataService(options);
   var filesInfos;
   var gotFilesInfos = false;
   var dirCopy;

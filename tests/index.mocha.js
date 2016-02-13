@@ -3,6 +3,7 @@
 var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
+var ucs2 = require('punycode').ucs2;
 
 var svgicons2svgfont = require('../src/index.js');
 var StringDecoder = require('string_decoder').StringDecoder;
@@ -263,11 +264,10 @@ describe('Generating fonts to files', function() {
 });
 
 describe('Generating fonts to memory', function() {
-  
 
   it('should work for simple SVG', function(done) {
     generateFontToMemory({
-      fontName: 'originalicons'
+      fontName: 'originalicons',
     }, done);
   });
 
@@ -422,8 +422,6 @@ describe('Passing code points', function() {
 
 
   it('should work with high code points', function(done) {
-    var ucs2 = require('punycode').ucs2;
-
     var svgIconStream = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );

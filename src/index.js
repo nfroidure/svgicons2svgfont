@@ -293,6 +293,12 @@ function SVGIcons2SVGFontStream(options) {
         ' to unexpected results. Using the normalize option could' +
         ' solve the problem.');
     }
+    if(fontHeight < 1000) {
+      log('The fontHeight should larger than 1000 or it will be converted ' +
+          'into the wrong shape. Using the "normalize" and "fontHeight"' +
+          ' options can solve the problem.');
+    }
+
     // Output the SVG file
     // (find a SAX parser that allows modifying SVG on the fly)
     _this.push('\

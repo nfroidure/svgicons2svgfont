@@ -213,10 +213,10 @@ Use [mimosa-svgs-to-iconfonts](https://www.npmjs.org/package/mimosa-svgs-to-icon
 ## CLI alternatives
 
 You can combine this plugin's CLI interface with
- [svg2ttf](https://www.npmjs.com/package/),
- [ttf2eot](https://www.npmjs.com/package/),
- [ttf2woff](https://www.npmjs.com/package/)
- and [ttf2woff2](https://www.npmjs.com/package/).
+ [svg2ttf](https://www.npmjs.com/package/svg2ttf),
+ [ttf2eot](https://www.npmjs.com/package/ttf2eot),
+ [ttf2woff](https://www.npmjs.com/package/ttf2woff)
+ and [ttf2woff2](https://www.npmjs.com/package/ttf2woff2).
 You can also use [webfonts-generator](https://www.npmjs.com/package/webfonts-generator).
 
 ## Stats

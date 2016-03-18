@@ -13,7 +13,7 @@ You can test this library with the
  [frontend generator](http://nfroidure.github.io/svgiconfont/).
 
 You may want to convert fonts to icons, if so use
- [svgfont2svgicons](https://github.com/nfroidure/svgifont2svgicons).
+ [svgfont2svgicons](https://github.com/nfroidure/svgfont2svgicons).
 
 ## Usage
 

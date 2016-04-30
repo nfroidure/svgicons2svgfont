@@ -40,7 +40,7 @@ glyph1.metadata = {
   unicode: ['\uE001\uE002'],
   name: 'icon1'
 };
-fontStream.write(glyph);
+fontStream.write(glyph1);
 // Multiple unicode values are possible
 var glyph2 = fs.createReadStream('icons/icon1.svg');
 glyph2.metadata = {

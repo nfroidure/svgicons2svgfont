@@ -88,11 +88,11 @@ function getTagColor(currTag, parents) {
       parents[parentsLength - 1],
       parents.slice(0, parentsLength - 1)
     );
-    // this might be null.
+    // this might be undefined.
     // For example: <svg ><path fill="inherit" /> </svg>
-    // in this case getTagColor should return null
+    // in this case getTagColor should return undefined
     // recursive call, the bottom element should be svg,
-    // and svg didn't fill color, so just return null
+    // and svg didn't fill color, so just return undefined
   }
 
   return fillVal;

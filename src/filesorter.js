@@ -2,7 +2,7 @@
 
 function fileSorter(fileA, fileB) {
   var result = 0;
-  var testExpression = /(^|\/)(?:((?:u[0-9a-f]{4,6},?)+)\-)(.+)\.svg$/i;
+  var testExpression = /(^|\/|\\)(?:((?:u[0-9a-f]{4,6},?)+)\-)(.+)\.svg$/i;
 
   if(testExpression.test(fileA)) {
     if(testExpression.test(fileB)) {

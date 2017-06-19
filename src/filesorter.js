@@ -2,9 +2,10 @@
 
 function fileSorter(fileA, fileB) {
   var result = 0;
+  var testExpression = /(^|\/)(?:((?:u[0-9a-f]{4,6},?)+)\-)(.+)\.svg$/i;
 
-  if((/(^|\/)(?:((?:u[0-9a-f]{4,6},?)+)\-)(.+)\.svg$/i).test(fileA)) {
-    if((/(^|\/)(?:((?:u[0-9a-f]{4,6},?)+)\-)(.+)\.svg$/i).test(fileB)) {
+  if(testExpression.test(fileA)) {
+    if(testExpression.test(fileB)) {
       if(fileA < fileB) {
         result = -1;
       } else {
@@ -13,7 +14,7 @@ function fileSorter(fileA, fileB) {
     } else {
       result = -1;
     }
-  } else if((/(^|\/)(?:((?:u[0-9a-f]{4,6},?)+)\-)(.+)\.svg$/i).test(fileB)) {
+  } else if(testExpression.test(fileB)) {
     result = 1;
   } else if(fileA < fileB) {
     result = -1;

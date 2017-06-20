@@ -33,7 +33,7 @@
     "sax": "^1.1.5",
     "string.fromcodepoint": "^0.2.1",
     "string.prototype.codepointat": "^0.2.0",
-    "svg-pathdata": "^1.0.3"
+    "svg-pathdata": "^1.0.4"
   },
   "devDependencies": {
     "coveralls": "^2.11.4",

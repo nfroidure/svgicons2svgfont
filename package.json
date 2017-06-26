@@ -52,7 +52,6 @@
   "bugs": {
     "url": "https://github.com/nfroidure/svgicons2svgfont/issues"
   },
-  "preferGlobal": "true",
   "bin": {
     "svgicons2svgfont": "bin/svgicons2svgfont.js"
   }

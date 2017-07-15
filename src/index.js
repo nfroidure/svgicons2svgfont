@@ -62,6 +62,7 @@ function tagShouldRender(curTag, parents) {
         return true;
       }
     }
+    return false;
   });
 }
 
@@ -238,8 +239,10 @@ function SVGIcons2SVGFontStream(options) {
           glyph.d.push(applyTransforms(svgShapesToPath.polylineToPath(tag.attributes), parents));
         } else if('polygon' === tag.name && 'none' !== tag.attributes.fill) {
           glyph.d.push(applyTransforms(svgShapesToPath.polygonToPath(tag.attributes), parents));
-        } else if('circle' === tag.name || 'ellipse' === tag.name &&
-          'none' !== tag.attributes.fill) {
+        } else if(
+          ['circle', 'ellipse'].includes(tag.name) &&
+          'none' !== tag.attributes.fill
+        ) {
           glyph.d.push(applyTransforms(svgShapesToPath.circleToPath(tag.attributes), parents));
         } else if('path' === tag.name && tag.attributes.d &&
           'none' !== tag.attributes.fill) {
@@ -254,7 +257,7 @@ function SVGIcons2SVGFontStream(options) {
             glyph.color = color;
           }
         }
-      } catch(err) {
+      } catch (err) {
         _this.emit('error', new Error('Got an error parsing the glyph' +
           ' "' + glyph.name + '": ' + err.message + '.'));
       }

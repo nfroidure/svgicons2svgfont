@@ -23,7 +23,8 @@ describe('Metadata service', function() {
 
       metadataService('/var/plop/hello.svg', function(err, infos) {
         if(err) {
-          return done(err);
+          done(err);
+          return;
         }
         assert.deepEqual(
           infos, {
@@ -49,7 +50,8 @@ describe('Metadata service', function() {
       fs.writeFileSync(path.join(__dirname, 'results', 'plop.svg'), 'plop', 'utf-8');
       metadataService(path.join(__dirname, 'results', 'plop.svg'), function(err, infos) {
         if(err) {
-          return done(err);
+          done(err);
+          return;
         }
         assert.deepEqual(
           infos, {

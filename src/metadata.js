@@ -47,8 +47,9 @@ function getMetadataService(options) {
         }).join('');
       });
       if(-1 !== usedUnicodes.indexOf(metadata.unicode[0])) {
-        return cb(new Error('The unicode codepoint of the glyph ' + metadata.name +
+        cb(new Error('The unicode codepoint of the glyph ' + metadata.name +
           ' seems to be already used by another glyph.'));
+        return;
       }
       usedUnicodes = usedUnicodes.concat(metadata.unicode);
     } else {
@@ -64,9 +65,10 @@ function getMetadataService(options) {
         fs.rename(file, metadata.path,
           function(err) {
             if(err) {
-              return cb(new Error('Could not save codepoint: ' +
+              cb(new Error('Could not save codepoint: ' +
                 'u' + metadata.unicode[0].codePointAt(0).toString(16).toUpperCase() +
                 ' for ' + basename));
+              return;
             }
             cb(null, metadata);
           }

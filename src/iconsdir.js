@@ -1,11 +1,11 @@
 'use strict';
 
-var fs = require('fs');
-var util = require('util');
-var fileSorter = require('./filesorter');
-var initMetadataService = require('../src/metadata');
+const fs = require('fs');
+const util = require('util');
+const fileSorter = require('./filesorter');
+const initMetadataService = require('../src/metadata');
 
-var Readable = require('stream').Readable;
+const Readable = require('stream').Readable;
 
 require('string.prototype.codepointat');
 
@@ -14,11 +14,11 @@ util.inherits(SVGIconsDirStream, Readable);
 
 // Constructor
 function SVGIconsDirStream(dir, options) {
-  var _this = this;
-  var getMetadata = initMetadataService(options);
-  var filesInfos;
-  var gotFilesInfos = false;
-  var dirCopy;
+  const _this = this;
+  const getMetadata = initMetadataService(options);
+  let filesInfos;
+  let gotFilesInfos = false;
+  let dirCopy;
 
   // Ensure new were used
   if(!(this instanceof SVGIconsDirStream)) {
@@ -32,12 +32,12 @@ function SVGIconsDirStream(dir, options) {
   }
 
   function _getFilesInfos(files) {
-    var filesProcessed = 0;
+    let filesProcessed = 0;
 
     filesInfos = [];
     // Ensure prefixed files come first
     files = files.slice(0).sort(fileSorter);
-    files.forEach(function(file) {
+    files.forEach((file) => {
       getMetadata((dir ? dir + '/' : '') + file, function(err, metadata) {
         filesProcessed++;
         if(err) {
@@ -65,8 +65,8 @@ function SVGIconsDirStream(dir, options) {
   }
 
   function _pushSVGIcons() {
-    var fileInfo;
-    var svgIconStream;
+    let fileInfo;
+    let svgIconStream;
 
     while(filesInfos.length) {
       fileInfo = filesInfos.shift();
@@ -91,7 +91,7 @@ function SVGIconsDirStream(dir, options) {
     if(!filesInfos) {
       fs.readdir(
         dir,
-        function(err, files) {
+        (err, files) => {
           if(err) {
             _this.emit('error', err);
           }

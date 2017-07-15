@@ -2,11 +2,11 @@
 
 'use strict';
 
-var program = require('commander');
-var fs = require('fs');
+const program = require('commander');
+const fs = require('fs');
 
-var svgicons2svgfont = require('../src/index.js');
-var svgiconsdir = require('../src/iconsdir.js');
+const svgicons2svgfont = require('../src/index.js');
+const svgiconsdir = require('../src/iconsdir.js');
 
 program
   .version('2.0.0')

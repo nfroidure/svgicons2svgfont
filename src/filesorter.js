@@ -1,8 +1,10 @@
 'use strict';
 
+const testExpression =
+  /(^|\/|\\)(?:((?:u[0-9a-f]{4,6},?)+)-)(.+)\.svg$/i;
+
 function fileSorter(fileA, fileB) {
-  var result = 0;
-  var testExpression = /(^|\/|\\)(?:((?:u[0-9a-f]{4,6},?)+)\-)(.+)\.svg$/i;
+  let result = 0;
 
   if(testExpression.test(fileA)) {
     if(testExpression.test(fileB)) {

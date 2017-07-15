@@ -293,7 +293,7 @@ function SVGIcons2SVGFontStream(options) {
         ' to unexpected results. Using the normalize option could' +
         ' solve the problem.');
     }
-    if(fontHeight < 1000) {
+    if(1000 > fontHeight) {
       log('The fontHeight should larger than 1000 or it will be converted ' +
           'into the wrong shape. Using the "normalize" and "fontHeight"' +
           ' options can solve the problem.');

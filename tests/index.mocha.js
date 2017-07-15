@@ -171,6 +171,15 @@ describe('Generating fonts to files', function() {
     }, done, 'id');
   });
 
+  it('should work with scaled icons', function(done) {
+    generateFontToFile({
+      fontName: 'scaledicons',
+      fixedWidth: true,
+      centerHorizontally: true,
+      fontId: 'plop',
+    }, done);
+  });
+
   it('should not display hidden pathes', function(done) {
     generateFontToFile({
       fontName: 'hiddenpathesicons',

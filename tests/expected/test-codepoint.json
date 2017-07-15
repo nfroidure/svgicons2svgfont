@@ -4,6 +4,8 @@
         "unicode": ["\uE001"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150
     }, {
@@ -11,6 +13,8 @@
         "unicode": ["\uE002"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "#0F9925"
@@ -19,6 +23,8 @@
         "unicode": ["\uE003"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "black"
@@ -27,6 +33,8 @@
         "unicode": ["\uE004"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "red"
@@ -35,6 +43,8 @@
         "unicode": ["\uE005"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "blue"
@@ -43,6 +53,8 @@
         "unicode": ["\uE006"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "#F9CE42"
@@ -51,6 +63,8 @@
         "unicode": ["\uE007"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "purple"
@@ -59,6 +73,8 @@
         "unicode": ["\uE008"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150
     }, {
@@ -66,6 +82,8 @@
         "unicode": ["\uE009"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "#F0F"
@@ -74,6 +92,8 @@
         "unicode": ["\uE00A"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "black"
@@ -83,6 +103,8 @@
         "unicode": ["\uE001"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "yellow"
@@ -91,6 +113,8 @@
         "unicode": ["\uE002"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "black"
@@ -100,6 +124,8 @@
         "unicode": ["\uE001"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 439,
         "height": 1024,
         "color": "black"
@@ -108,6 +134,8 @@
         "unicode": ["\uE002"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 439,
         "height": 1024
     }, {
@@ -115,6 +143,8 @@
         "unicode": ["\uE003"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 511.9057,
         "height": 1024,
         "color": "#0F0"
@@ -124,6 +154,8 @@
         "unicode": ["\uE008"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "green"
@@ -132,6 +164,8 @@
         "unicode": ["\uE00F"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "black"
@@ -140,6 +174,8 @@
         "unicode": ["\uE013"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "#0F0F0F"
@@ -148,6 +184,8 @@
         "unicode": ["\uE014"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "#F4F4F4"
@@ -157,6 +195,8 @@
         "unicode": ["\uE001"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "red"
@@ -165,6 +205,8 @@
         "unicode": ["\uE002"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "#1F1F1F"
@@ -173,6 +215,8 @@
         "unicode": ["\uE003"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150,
         "color": "#8F8F8F"
@@ -181,6 +225,8 @@
         "unicode": ["\uE004"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150
     }, {
@@ -188,6 +234,8 @@
         "unicode": ["\uE005"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150
     }, {
@@ -195,6 +243,8 @@
         "unicode": ["\uE006"],
         "dX": 0,
         "dY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
         "width": 150,
         "height": 150
     }]

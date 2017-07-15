@@ -188,20 +188,33 @@ function SVGIcons2SVGFontStream(options) {
         if('svg' === tag.name) {
           glyph.dX = 0;
           glyph.dY = 0;
+          glyph.scaleX = 1;
+          glyph.scaleY = 1;
           if('viewBox' in tag.attributes) {
             values = tag.attributes.viewBox.split(/\s*,*\s|\s,*\s*|,/);
             glyph.dX = parseFloat(values[0], 10);
             glyph.dY = parseFloat(values[1], 10);
             glyph.width = parseFloat(values[2], 10);
             glyph.height = parseFloat(values[3], 10);
+            if('width' in tag.attributes) {
+              glyph.scaleX = glyph.width /
+                parseFloat(tag.attributes.width, 10);
+              glyph.width = parseFloat(tag.attributes.width, 10);
+            }
+            if('height' in tag.attributes) {
+              glyph.scaleY = glyph.height /
+                parseFloat(tag.attributes.height, 10);
+              glyph.height = parseFloat(tag.attributes.height, 10);
+            }
+          } else {
+            if('width' in tag.attributes) {
+              glyph.width = parseFloat(tag.attributes.width, 10);
+            }
+            if('height' in tag.attributes) {
+              glyph.height = parseFloat(tag.attributes.height, 10);
+            }
           }
-          if('width' in tag.attributes) {
-            glyph.width = parseFloat(tag.attributes.width, 10);
-          }
-          if('height' in tag.attributes) {
-            glyph.height = parseFloat(tag.attributes.height, 10);
-          }
-          if(!glyph.width || !glyph.height) {
+          if((!glyph.width) || !glyph.height) {
             log('Glyph "' + glyph.name + '" has no size attribute on which to' +
               ' get the gylph dimensions (heigh and width or viewBox' +
               ' attributes)');
@@ -336,8 +349,17 @@ function SVGIcons2SVGFontStream(options) {
           .toAbs()
           .translate(-glyph.dX, -glyph.dY)
           .scale(
-            options.normalize ? ratio : 1,
-            options.normalize ? ratio : 1)
+            (
+              options.normalize ?
+              ratio :
+              1
+            ) * glyph.scaleX,
+            (
+              options.normalize ?
+              ratio :
+              1
+            ) * glyph.scaleY
+          )
           .ySymetry(glyph.height - options.descent)
           .round(options.round)
           .encode();

@@ -1,0 +1,15 @@
+<?xml version="1.0" standalone="no"?> 
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <font id="plop" horiz-adv-x="48">
+    <font-face font-family="scaledicons"
+      units-per-em="48" ascent="48"
+      descent="0" />
+    <missing-glyph horiz-adv-x="0" />
+    <glyph glyph-name="ic_search_black_48px"
+      unicode="&#xE001;"
+      horiz-adv-x="48" d="M25.8775 41H25.4825L25.3425 41.135C25.8325 41.705 26.1275 42.445 26.1275 43.25C26.1275 45.045 24.6725 46.5 22.8775 46.5S19.6275 45.045 19.6275 43.25S21.0825 40 22.8775 40C23.6825 40 24.4225 40.295 24.9925 40.785L25.1275 40.645V40.25L27.6275 37.755L28.3725 38.5L25.8775 41zM22.8775 41C21.6325 41 20.6275 42.005 20.6275 43.25S21.6325 45.5 22.8775 45.5S25.1275 44.495 25.1275 43.25S24.1225 41 22.8775 41z" />
+  </font>
+</defs>
+</svg>

@@ -360,7 +360,7 @@ function SVGIcons2SVGFontStream(options) {
               1
             ) * glyph.scaleY
           )
-          .ySymetry(glyph.height - options.descent)
+          .ySymmetry(glyph.height - options.descent)
           .round(options.round)
           .encode();
       });

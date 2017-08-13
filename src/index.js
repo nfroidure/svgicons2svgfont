@@ -318,7 +318,7 @@ function SVGIcons2SVGFontStream(options) {
     // Output the SVG file
     // (find a SAX parser that allows modifying SVG on the fly)
     _this.push('\
-<?xml version="1.0" standalone="no"?> \n\
+<?xml version="1.0" standalone="no"?>\n\
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"' +
   ' "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >\n\
 <svg xmlns="http://www.w3.org/2000/svg">\n' + (
@@ -333,10 +333,8 @@ function SVGIcons2SVGFontStream(options) {
       font-style="' + options.fontStyle + '"' : '') + ' />\n\
     <missing-glyph horiz-adv-x="0" />\n');
     glyphs.forEach(function(glyph) {
-      var ratio = fontHeight / glyph.height;
-      var d = '';
-      var bounds;
-      var pathData;
+      const ratio = fontHeight / glyph.height;
+      const glyphPath = new SVGPathData('');
 
       if(options.fixedWidth) {
         glyph.width = fontWidth;
@@ -347,8 +345,8 @@ function SVGIcons2SVGFontStream(options) {
           glyph.width *= ratio;
         }
       }
-      glyph.d.forEach(function(cD) {
-        d += ' ' + new SVGPathData(cD)
+      glyph.d.forEach((cD) => {
+        Array.prototype.push.apply(glyphPath.commands, new SVGPathData(cD)
           .toAbs()
           .translate(-glyph.dX, -glyph.dY)
           .scale(
@@ -363,37 +361,13 @@ function SVGIcons2SVGFontStream(options) {
               1
             ) * glyph.scaleY
           )
-          .ySymmetry(glyph.height - options.descent)
-          .round(options.round)
-          .encode();
+          .ySymmetry(glyph.height - options.descent).commands);
       });
       if(options.centerHorizontally) {
         // Naive bounds calculation (should draw, then calculate bounds...)
-        pathData = new SVGPathData(d);
-        bounds = {
-          x1: Infinity,
-          y1: Infinity,
-          x2: 0,
-          y2: 0,
-        };
-        pathData.toAbs().commands.forEach(function(command) {
-          bounds.x1 = 'undefined' != typeof command.x && command.x < bounds.x1 ?
-            command.x :
-            bounds.x1;
-          bounds.y1 = 'undefined' != typeof command.y && command.y < bounds.y1 ?
-            command.y :
-            bounds.y1;
-          bounds.x2 = 'undefined' != typeof command.x && command.x > bounds.x2 ?
-            command.x :
-            bounds.x2;
-          bounds.y2 = 'undefined' != typeof command.y && command.y > bounds.y2 ?
-            command.y :
-            bounds.y2;
-        });
-        d = pathData
-          .translate(((glyph.width - (bounds.x2 - bounds.x1)) / 2) - bounds.x1)
-          .round(options.round)
-          .encode();
+        const bounds = glyphPath.getBounds();
+
+        glyphPath.translate(((glyph.width - (bounds.maxX - bounds.minX)) / 2) - bounds.minX);
       }
       delete glyph.d;
       delete glyph.running;
@@ -403,7 +377,7 @@ function SVGIcons2SVGFontStream(options) {
       unicode="' + ucs2.decode(unicode).map(function(point) {
         return '&#x' + point.toString(16).toUpperCase() + ';';
       }).join('') + '"\n\
-      horiz-adv-x="' + glyph.width + '" d="' + d + '" />\n');
+      horiz-adv-x="' + glyph.width + '" d="' + glyphPath.round(options.round).encode() + '" />\n');
       });
     });
     _this.push('\

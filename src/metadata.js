@@ -59,9 +59,9 @@ function getMetadataService(options) {
       usedUnicodes.push(metadata.unicode[0]);
       if(options.prependUnicode) {
         metadata.renamed = true;
-        metadata.path = path.dirname(file) + '/' +
+        metadata.path = path.join(path.dirname(file),
           'u' + metadata.unicode[0].codePointAt(0).toString(16).toUpperCase() +
-          '-' + basename;
+          '-' + basename);
         fs.rename(file, metadata.path,
           function(err) {
             if(err) {

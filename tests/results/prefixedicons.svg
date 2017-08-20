@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="no"?> 
+<?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <svg xmlns="http://www.w3.org/2000/svg">
 <defs>
@@ -9,16 +9,16 @@
     <missing-glyph horiz-adv-x="0" />
     <glyph glyph-name="arrow-down"
       unicode="&#xE008;"
-      horiz-adv-x="150" d=" M75 30L120 80L30 80z" />
+      horiz-adv-x="150" d="M75 30L120 80L30 80z" />
     <glyph glyph-name="arrow-left"
       unicode="&#xE00F;"
-      horiz-adv-x="150" d=" M50 75L100 120L100 30z" />
+      horiz-adv-x="150" d="M50 75L100 120L100 30z" />
     <glyph glyph-name="arrow-right"
       unicode="&#xE013;"
-      horiz-adv-x="150" d=" M100 75L50 120L50 30z" />
+      horiz-adv-x="150" d="M100 75L50 120L50 30z" />
     <glyph glyph-name="arrow-up"
       unicode="&#xE014;"
-      horiz-adv-x="150" d=" M75 80L120 30L30 30z" />
+      horiz-adv-x="150" d="M75 80L120 30L30 30z" />
   </font>
 </defs>
 </svg>

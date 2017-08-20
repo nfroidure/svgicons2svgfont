@@ -24,12 +24,12 @@ function generateFontToFile(options, done, fileSuffix, startUnicode, files) {  /
 
   svgFontStream.pipe(fs.createWriteStream(dest)).on('finish', function() {
     assert.equal(
+      fs.readFileSync(dest, { encoding: 'utf8' }),
       fs.readFileSync(
         path.join(__dirname, 'expected',
           options.fontName + (fileSuffix || '') + '.svg'),
           { encoding: 'utf8' }
-        ),
-      fs.readFileSync(dest, { encoding: 'utf8' })
+        )
     );
     done();
   });
@@ -346,6 +346,7 @@ describe('Using options', function() {
       fontHeight: 800,
       fixedWidth: true,
       centerHorizontally: true,
+      round: 1e5,
     }, done, '6');
   });
 
@@ -357,6 +358,7 @@ describe('Using options', function() {
       normalize: true,
       fixedWidth: true,
       centerHorizontally: true,
+      round: 1e5,
     }, done, '7');
   });
 

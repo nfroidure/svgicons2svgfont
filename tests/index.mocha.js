@@ -270,6 +270,12 @@ describe('Generating fonts to files', function() {
     ]);
   });
 
+  it('should work with rotated rectangle icon', function(done) {
+    generateFontToFile({
+      fontName: 'rotatedrectangle',
+    }, done);
+  });
+
 });
 
 describe('Generating fonts to memory', function() {

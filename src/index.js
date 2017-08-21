@@ -21,6 +21,7 @@ function parseTransforms(value) {
   });
 }
 function transformPath(path, transforms) {
+  path.normalizeHVZ(false, true, true);
   transforms.forEach(function(transform) {
     path[transform[0]].apply(path, transform.slice(1).map(function(n) {
       return parseFloat(n, 10);

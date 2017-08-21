@@ -1,9 +1,6 @@
 'use strict';
 
-// http://www.whizkidtech.redprince.net/bezier/circle/
-var KAPPA = ((Math.sqrt(2) - 1) / 3) * 4;
-
-var svgShapesToPath = {
+const svgShapesToPath = {
   rectToPath: svgShapesToPathRectToPath,
   polylineToPath: svgShapesToPathPolylineToPath,
   lineToPath: svgShapesToPathLineToPath,
@@ -15,23 +12,23 @@ module.exports = svgShapesToPath;
 
 // Shapes helpers (should also move elsewhere)
 function svgShapesToPathRectToPath(attributes) {
-  var x = 'undefined' !== typeof attributes.x ?
-    parseFloat(attributes.x, 10) :
+  const x = 'undefined' !== typeof attributes.x ?
+    parseFloat(attributes.x) :
     0;
-  var y = 'undefined' !== typeof attributes.y ?
-    parseFloat(attributes.y, 10) :
+  const y = 'undefined' !== typeof attributes.y ?
+    parseFloat(attributes.y) :
     0;
-  var width = 'undefined' !== typeof attributes.width ?
-    parseFloat(attributes.width, 10) :
+  const width = 'undefined' !== typeof attributes.width ?
+    parseFloat(attributes.width) :
     0;
-  var height = 'undefined' !== typeof attributes.height ?
-    parseFloat(attributes.height, 10) :
+  const height = 'undefined' !== typeof attributes.height ?
+    parseFloat(attributes.height) :
     0;
-  var rx = 'undefined' !== typeof attributes.rx ?
-    parseFloat(attributes.rx, 10) :
+  const rx = 'undefined' !== typeof attributes.rx ?
+    parseFloat(attributes.rx) :
     0;
-  var ry = 'undefined' !== typeof attributes.ry ?
-    parseFloat(attributes.ry, 10) :
+  const ry = 'undefined' !== typeof attributes.ry ?
+    parseFloat(attributes.ry) :
     0;
 
   return '' +
@@ -76,42 +73,34 @@ function svgShapesToPathPolylineToPath(attributes) {
 function svgShapesToPathLineToPath(attributes) {
   // Move to the line start
   return '' +
-  'M' + (parseFloat(attributes.x1, 10) || 0).toString(10) +
-  ' ' + (parseFloat(attributes.y1, 10) || 0).toString(10) +
-  ' ' + ((parseFloat(attributes.x1, 10) || 0) + 1).toString(10) +
-  ' ' + ((parseFloat(attributes.y1, 10) || 0) + 1).toString(10) +
-  ' ' + ((parseFloat(attributes.x2, 10) || 0) + 1).toString(10) +
-  ' ' + ((parseFloat(attributes.y2, 10) || 0) + 1).toString(10) +
-  ' ' + (parseFloat(attributes.x2, 10) || 0).toString(10) +
-  ' ' + (parseFloat(attributes.y2, 10) || 0).toString(10) +
+  'M' + (parseFloat(attributes.x1) || 0).toString(10) +
+  ' ' + (parseFloat(attributes.y1) || 0).toString(10) +
+  ' ' + ((parseFloat(attributes.x1) || 0) + 1).toString(10) +
+  ' ' + ((parseFloat(attributes.y1) || 0) + 1).toString(10) +
+  ' ' + ((parseFloat(attributes.x2) || 0) + 1).toString(10) +
+  ' ' + ((parseFloat(attributes.y2) || 0) + 1).toString(10) +
+  ' ' + (parseFloat(attributes.x2) || 0).toString(10) +
+  ' ' + (parseFloat(attributes.y2) || 0).toString(10) +
   'Z';
 }
 
 function svgShapesToPathCircleToPath(attributes) {
-  var cx = parseFloat(attributes.cx, 10);
-  var cy = parseFloat(attributes.cy, 10);
-  var rx = 'undefined' !== typeof attributes.rx ?
-    parseFloat(attributes.rx, 10) :
-    parseFloat(attributes.r, 10);
-  var ry = 'undefined' !== typeof attributes.ry ?
-    parseFloat(attributes.ry, 10) :
-    parseFloat(attributes.r, 10);
+  const cx = parseFloat(attributes.cx);
+  const cy = parseFloat(attributes.cy);
+  const rx = 'undefined' !== typeof attributes.rx ?
+    parseFloat(attributes.rx) :
+    parseFloat(attributes.r);
+  const ry = 'undefined' !== typeof attributes.ry ?
+    parseFloat(attributes.ry) :
+    parseFloat(attributes.r);
 
+  // use two A commands because one command which returns to origin is invalid
   return '' +
     'M' + (cx - rx) + ',' + cy +
-    'C' + (cx - rx) + ',' + (cy + (ry * KAPPA)) +
-    ' ' + (cx - (rx * KAPPA)) + ',' + (cy + ry) +
-    ' ' + cx + ',' + (cy + ry) +
-    'C' + (cx + (rx * KAPPA)) + ',' + (cy + ry) +
-    ' ' + (cx + rx) + ',' + (cy + (ry * KAPPA)) +
-    ' ' + (cx + rx) + ',' + cy +
-    'C' + (cx + rx) + ',' + (cy - (ry * KAPPA)) +
-    ' ' + (cx + (rx * KAPPA)) + ',' + (cy - ry) +
-    ' ' + cx + ',' + (cy - ry) +
-    'C' + (cx - (rx * KAPPA)) + ',' + (cy - ry) +
-    ' ' + (cx - rx) + ',' + (cy - (ry * KAPPA)) +
-    ' ' + (cx - rx) + ',' + cy +
-    'Z';
+    'A' + rx + ',' + ry +
+    ' 0,0,0 ' + (cx + rx) + ',' + cy +
+    'A' + rx + ',' + ry +
+    ' 0,0,0 ' + (cx - rx) + ',' + cy;
 }
 
 function svgShapesToPathPolygonToPath(attributes) {

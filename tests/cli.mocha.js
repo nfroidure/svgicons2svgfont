@@ -49,7 +49,7 @@ describe('Testing CLI', function() {
      ' ' + path.join(__dirname, 'fixtures', 'shapeicons', '*.svg') +
      ' ' + path.join(__dirname, 'fixtures', 'tocentericons', '*.svg');
 
-    (childProcess.exec)(
+    childProcess.exec(
       command,
       function(err) {
         if(err) {

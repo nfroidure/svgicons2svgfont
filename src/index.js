@@ -7,7 +7,8 @@ var util = require('util');
 var ucs2 = require('punycode').ucs2;
 var Stream = require('readable-stream');
 var Sax = require('sax');
-var SVGPathData = require('svg-pathdata');
+var svgpathdata = require('svg-pathdata');
+var SVGPathData = svgpathdata.SVGPathData;
 var svgShapesToPath = require('./svgshapes2svgpath');
 
 require('string.prototype.codepointat');
@@ -21,7 +22,6 @@ function parseTransforms(value) {
   });
 }
 function transformPath(path, transforms) {
-  path.normalizeHVZ(false, true, true);
   transforms.forEach(function(transform) {
     path[transform[0]].apply(path, transform.slice(1).map(function(n) {
       return parseFloat(n, 10);

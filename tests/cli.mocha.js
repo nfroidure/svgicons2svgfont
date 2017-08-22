@@ -1,22 +1,22 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var assert = require('assert');
-var childProcess = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const assert = require('assert');
+const childProcess = require('child_process');
 
-describe('Testing CLI', function() {
+describe('Testing CLI', () => {
 
-  it('should work for simple SVG', function(done) {
-    var command = 'node' +
-     ' ' + path.join(__dirname, '..', 'bin', 'svgicons2svgfont.js') +
-     ' -o ' + path.join(__dirname, 'results', 'originalicons-cli.svg') +
-     ' -s 0xE001' +
-     ' ' + path.join(__dirname, 'fixtures', 'originalicons', '*.svg');
+  it('should work for simple SVG', (done) => {
+    const command = `${'node' +
+     ' '}${path.join(__dirname, '..', 'bin', 'svgicons2svgfont.js')
+     } -o ${path.join(__dirname, 'results', 'originalicons-cli.svg')
+     } -s 0xE001` +
+     ` ${path.join(__dirname, 'fixtures', 'originalicons', '*.svg')}`;
 
-    (childProcess.exec)(
+    childProcess.exec(
       command,
-      function(err) {
+      (err) => {
         if(err) {
           throw err;
         }
@@ -35,23 +35,23 @@ describe('Testing CLI', function() {
     );
   });
 
-  it('should work for more than 32 SVG icons', function(done) {
-    var command = 'node' +
-     ' ' + path.join(__dirname, '..', 'bin', 'svgicons2svgfont.js') +
-     ' -o ' + path.join(__dirname, 'results', 'lotoficons-cli.svg') +
-     ' -s 0xE001' +
-     ' ' + path.join(__dirname, 'fixtures', 'cleanicons', '*.svg') +
-     ' ' + path.join(__dirname, 'fixtures', 'hiddenpathesicons', '*.svg') +
-     ' ' + path.join(__dirname, 'fixtures', 'multipathicons', 'kikoolol.svg') +
-     ' ' + path.join(__dirname, 'fixtures', 'originalicons', '*.svg') +
-     ' ' + path.join(__dirname, 'fixtures', 'realicons', '*.svg') +
-     ' ' + path.join(__dirname, 'fixtures', 'roundedcorners', '*.svg') +
-     ' ' + path.join(__dirname, 'fixtures', 'shapeicons', '*.svg') +
-     ' ' + path.join(__dirname, 'fixtures', 'tocentericons', '*.svg');
+  it('should work for more than 32 SVG icons', (done) => {
+    const command = `${'node' +
+     ' '}${path.join(__dirname, '..', 'bin', 'svgicons2svgfont.js')
+     } -o ${path.join(__dirname, 'results', 'lotoficons-cli.svg')
+     } -s 0xE001` +
+     ` ${path.join(__dirname, 'fixtures', 'cleanicons', '*.svg')
+     } ${path.join(__dirname, 'fixtures', 'hiddenpathesicons', '*.svg')
+     } ${path.join(__dirname, 'fixtures', 'multipathicons', 'kikoolol.svg')
+     } ${path.join(__dirname, 'fixtures', 'originalicons', '*.svg')
+     } ${path.join(__dirname, 'fixtures', 'realicons', '*.svg')
+     } ${path.join(__dirname, 'fixtures', 'roundedcorners', '*.svg')
+     } ${path.join(__dirname, 'fixtures', 'shapeicons', '*.svg')
+     } ${path.join(__dirname, 'fixtures', 'tocentericons', '*.svg')}`;
 
     childProcess.exec(
       command,
-      function(err) {
+      (err) => {
         if(err) {
           throw err;
         }
@@ -70,17 +70,17 @@ describe('Testing CLI', function() {
     );
   });
 
-  describe('with nested icons', function() {
+  describe('with nested icons', () => {
 
-    it('should work', function(done) {
-      var command = 'node' +
-        ' ' + path.join(__dirname, '..', 'bin', 'svgicons2svgfont.js') +
-        ' -o ' + path.join(__dirname, 'results', 'nestedicons-cli.svg') +
-        ' ' + path.join(__dirname, 'fixtures', 'nestedicons', '*.svg');
+    it('should work', (done) => {
+      const command = `${'node' +
+        ' '}${path.join(__dirname, '..', 'bin', 'svgicons2svgfont.js')
+        } -o ${path.join(__dirname, 'results', 'nestedicons-cli.svg')
+        } ${path.join(__dirname, 'fixtures', 'nestedicons', '*.svg')}`;
 
-      (childProcess.exec)(
+      childProcess.exec(
         command,
-        function(err) {
+        (err) => {
           if(err) {
             throw err;
           }

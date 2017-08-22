@@ -1,59 +1,49 @@
- /* eslint no-multi-str:0 */
+/* eslint-disable complexity,prefer-reflect,max-len,newline-after-var */
+/* eslint no-multi-str:0 */
 
 'use strict';
 
-// Required modules
-var util = require('util');
-var ucs2 = require('punycode').ucs2;
-var Stream = require('readable-stream');
-var Sax = require('sax');
-var SVGPathData = require('svg-pathdata').SVGPathData;
-var svgShapesToPath = require('./svgshapes2svgpath');
+const { ucs2 } = require('punycode');
+const { Transform } = require('stream');
+const Sax = require('sax');
+const { SVGPathData } = require('svg-pathdata');
+const svgShapesToPath = require('./svgshapes2svgpath');
+const { Matrix } = require('transformation-matrix-js');
 
 require('string.prototype.codepointat');
 
 // Transform helpers (will move elsewhere later)
 function parseTransforms(value) {
   return value.match(
-     /(rotate|translate|scale|skewX|skewY|matrix)\s*\(([^\)]*)\)\s*/g
-  ).map(function(transform) {
-    return transform.match(/[\w\.\-]+/g);
-  });
+    /(rotate|translate|scale|skewX|skewY|matrix)\s*\(([^)]*)\)\s*/g
+  ).map(transform => transform.match(/[\w.-]+/g));
 }
-function transformPath(path, transforms) {
-  transforms.forEach(function(transform) {
-    path[transform[0]].apply(path, transform.slice(1).map(function(n) {
-      return parseFloat(n, 10);
-    }));
-  });
-  return path;
-}
-function applyTransforms(d, parents) {
-  var transforms = [];
+function matrixFromTransformAttribute(transformAttributeString) {
+  const result = new Matrix();
 
-  parents.forEach(function(parent) {
-    if('undefined' !== typeof parent.attributes.transform) {
-      transforms = transforms.concat(parseTransforms(parent.attributes.transform));
-    }
-  });
-  return transformPath(new SVGPathData(d), transforms).encode();
+  for(const transform of parseTransforms(transformAttributeString)) {
+    const method = 'matrix' === transform[0] ? 'transform' : transform[0];
+
+    result[method](...transform.slice(1).map(parseFloat));
+  }
+  return result;
 }
 
 // Rendering
 function tagShouldRender(curTag, parents) {
-  var values;
+  let values;
 
-  return !parents.some(function(tag) {
+  return !parents.some((tag) => {
     if('undefined' !== typeof tag.attributes.display &&
       'none' === tag.attributes.display.toLowerCase()) {
       return true;
     }
     if('undefined' !== typeof tag.attributes.width &&
-      0 === parseFloat(tag.attributes.width, 0)) {
+      0 === parseFloat(tag.attributes.width)) {
       return true;
     }
     if('undefined' !== typeof tag.attributes.height &&
-      0 === parseFloat(tag.attributes.height, 0)) {
+      0 === parseFloat(tag.attributes.height)) {
       return true;
     }
     if('undefined' !== typeof tag.attributes.viewBox) {
@@ -70,10 +60,10 @@ function tagShouldRender(curTag, parents) {
 // fill <paint> none|currentColor|inherit|<color>
 //     [<icccolor>]|<funciri> (not support yet)
 function getTagColor(currTag, parents) {
-  var defaultColor = 'black';
-  var fillVal = currTag.attributes.fill;
-  var color;
-  var parentsLength = parents.length;
+  const defaultColor = 'black';
+  const fillVal = currTag.attributes.fill;
+  let color;
+  const parentsLength = parents.length;
 
   if('none' === fillVal) {
     return color;
@@ -99,92 +89,79 @@ function getTagColor(currTag, parents) {
   return fillVal;
 }
 
-// Inherit of duplex stream
-util.inherits(SVGIcons2SVGFontStream, Stream.Transform);
+class SVGIcons2SVGFontStream extends Transform {
 
-// Constructor
-function SVGIcons2SVGFontStream(options) {
-  var _this = this;
-  var glyphs = [];
-  var log;
+  constructor(options) {
+    super({ objectMode: true, writableObjectMode: true, readableObjectMode: false });
+    this.glyphs = [];
 
-  options = options || {};
-  options.fontName = options.fontName || 'iconfont';
-  options.fontId = options.fontId || options.fontName;
-  options.fixedWidth = options.fixedWidth || false;
-  options.descent = options.descent || 0;
-  options.round = options.round || 10e12;
-  options.metadata = options.metadata || '';
+    this._options = options || {};
+    this._options.fontName = this._options.fontName || 'iconfont';
+    this._options.fontId = this._options.fontId || this._options.fontName;
+    this._options.fixedWidth = this._options.fixedWidth || false;
+    this._options.descent = this._options.descent || 0;
+    this._options.round = this._options.round || 10e12;
+    this._options.metadata = this._options.metadata || '';
 
-  log = options.log || console.log.bind(console); // eslint-disable-line
-
-  // Ensure new were used
-  if(!(this instanceof SVGIcons2SVGFontStream)) {
-    return new SVGIcons2SVGFontStream(options);
+    this.log = this._options.log || console.log.bind(console); // eslint-disable-line
   }
 
-  // Parent constructor
-  Stream.Transform.call(this, {
-    objectMode: true,
-  });
-
-  // Setting objectMode separately
-  this._writableState.objectMode = true;
-  this._readableState.objectMode = false;
-
-  // Parse input
-  this._transform = function _svgIcons2SVGFontStreamTransform(
-    svgIconStream, unused, svgIconStreamCallback
-  ) {
+  _transform(svgIconStream, _unused, svgIconStreamCallback) {
     // Parsing each icons asynchronously
-    var saxStream = Sax.createStream(true);
-    var parents = [];
-    var glyph = svgIconStream.metadata || {};
+    const saxStream = Sax.createStream(true);
+    const parents = [];
+    const transformStack = [new Matrix()];
+    function applyTransform(d) {
+      return new SVGPathData(d).matrix(...transformStack[transformStack.length - 1].toArray());
+    }
+    const glyph = svgIconStream.metadata || {};
 
-    glyph.d = [];
-    glyphs.push(glyph);
+    glyph.paths = [];
+    this.glyphs.push(glyph);
 
     if('string' !== typeof glyph.name) {
-      _this.emit('error', new Error('Please provide a name for the glyph at' +
-        ' index ' + (glyphs.length - 1)));
+      this.emit('error', new Error(
+        `Please provide a name for the glyph at index ${this.glyphs.length - 1}`));
     }
-    if(glyphs.some(function(anotherGlyph) {
-      return (anotherGlyph !== glyph && anotherGlyph.name === glyph.name);
-    })) {
-      _this.emit('error', new Error('The glyph name "' + glyph.name +
-        '" must be unique.'));
+    if(this.glyphs.some(
+        anotherGlyph => (anotherGlyph !== glyph && anotherGlyph.name === glyph.name))) {
+      this.emit('error', new Error(`The glyph name "${glyph.name}" must be unique.`));
     }
     if(glyph.unicode && glyph.unicode instanceof Array && glyph.unicode.length) {
-      if(glyph.unicode.some(function(unicodeA, i) {
-        return glyph.unicode.some(function(unicodeB, j) {
-          return i !== j && unicodeA === unicodeB;
-        });
-      })) {
-        _this.emit('error', new Error('Given codepoints for the glyph "' +
-          glyph.name + '" contain duplicates.'));
+      if(glyph.unicode.some(
+          (unicodeA, i) => glyph.unicode.some((unicodeB, j) => i !== j && unicodeA === unicodeB))) {
+        this.emit('error', new Error(
+          `Given codepoints for the glyph "${glyph.name}" contain duplicates.`));
       }
     } else if('string' !== typeof glyph.unicode) {
-      _this.emit('error', new Error('Please provide a codepoint for the glyph "' +
-        glyph.name + '"'));
+      this.emit('error', new Error(`Please provide a codepoint for the glyph "${glyph.name}"`));
     }
 
-    if(glyphs.some(function(anotherGlyph) {
-      return (anotherGlyph !== glyph && anotherGlyph.unicode === glyph.unicode);
-    })) {
-      _this.emit('error', new Error('The glyph "' + glyph.name +
-        '" codepoint seems to be used already elsewhere.'));
+    if(this.glyphs.some(
+        anotherGlyph => (anotherGlyph !== glyph && anotherGlyph.unicode === glyph.unicode))) {
+      this.emit('error', new Error(
+        `The glyph "${glyph.name}" codepoint seems to be used already elsewhere.`));
     }
 
-    saxStream.on('opentag', function(tag) {
-      var values;
-      var color;
+    saxStream.on('opentag', (tag) => {
+      let values;
+      let color;
 
       parents.push(tag);
-      // Checking if any parent rendering is disabled and exit if so
-      if(!tagShouldRender(tag, parents)) {
-        return;
-      }
       try {
+        const currentTransform = transformStack[transformStack.length - 1];
+
+        if('undefined' !== typeof tag.attributes.transform) {
+          const transform = matrixFromTransformAttribute(tag.attributes.transform);
+          transformStack.push(currentTransform.clone().multiply(transform));
+        } else {
+          transformStack.push(currentTransform);
+        }
+        // Checking if any parent rendering is disabled and exit if so
+        if(!tagShouldRender(tag, parents)) {
+          return;
+        }
+
         // Save the view size
         if('svg' === tag.name) {
           glyph.dX = 0;
@@ -193,60 +170,54 @@ function SVGIcons2SVGFontStream(options) {
           glyph.scaleY = 1;
           if('viewBox' in tag.attributes) {
             values = tag.attributes.viewBox.split(/\s*,*\s|\s,*\s*|,/);
-            glyph.dX = parseFloat(values[0], 10);
-            glyph.dY = parseFloat(values[1], 10);
-            glyph.width = parseFloat(values[2], 10);
-            glyph.height = parseFloat(values[3], 10);
+            glyph.dX = parseFloat(values[0]);
+            glyph.dY = parseFloat(values[1]);
+            glyph.width = parseFloat(values[2]);
+            glyph.height = parseFloat(values[3]);
             if('width' in tag.attributes) {
               glyph.scaleX = glyph.width /
-                parseFloat(tag.attributes.width, 10);
-              glyph.width = parseFloat(tag.attributes.width, 10);
+                parseFloat(tag.attributes.width);
+              glyph.width = parseFloat(tag.attributes.width);
             }
             if('height' in tag.attributes) {
               glyph.scaleY = glyph.height /
-                parseFloat(tag.attributes.height, 10);
-              glyph.height = parseFloat(tag.attributes.height, 10);
+                parseFloat(tag.attributes.height);
+              glyph.height = parseFloat(tag.attributes.height);
             }
           } else {
             if('width' in tag.attributes) {
-              glyph.width = parseFloat(tag.attributes.width, 10);
+              glyph.width = parseFloat(tag.attributes.width);
             }
             if('height' in tag.attributes) {
-              glyph.height = parseFloat(tag.attributes.height, 10);
+              glyph.height = parseFloat(tag.attributes.height);
             }
           }
           if((!glyph.width) || !glyph.height) {
-            log('Glyph "' + glyph.name + '" has no size attribute on which to' +
-              ' get the gylph dimensions (heigh and width or viewBox' +
-              ' attributes)');
+            this.log(`Glyph "${glyph.name}" has no size attribute on which to get the gylph dimensions (height and width or viewBox attributes)`);
             glyph.width = 150;
             glyph.height = 150;
           }
-        // Clipping path unsupported
+          // Clipping path unsupported
         } else if('clipPath' === tag.name) {
-          log('Found a clipPath element in the icon "' + glyph.name + '" the' +
-            'result may be different than expected.');
-        // Change rect elements to the corresponding path
+          this.log(`Found a clipPath element in the icon "${glyph.name}" the result may be different than expected.`);
         } else if('rect' === tag.name && 'none' !== tag.attributes.fill) {
-          glyph.d.push(applyTransforms(svgShapesToPath.rectToPath(tag.attributes), parents));
+          glyph.paths.push(applyTransform(svgShapesToPath.rectToPath(tag.attributes)));
         } else if('line' === tag.name && 'none' !== tag.attributes.fill) {
-          log('Found a line element in the icon "' + glyph.name + '" the result' +
-            ' could be different than expected.');
-          glyph.d.push(applyTransforms(svgShapesToPath.lineToPath(tag.attributes), parents));
+          this.log(`Found a line element in the icon "${glyph.name}" the result could be different than expected.`);
+          glyph.paths.push(applyTransform(svgShapesToPath.lineToPath(tag.attributes)));
         } else if('polyline' === tag.name && 'none' !== tag.attributes.fill) {
-          log('Found a polyline element in the icon "' + glyph.name + '" the' +
-            ' result could be different than expected.');
-          glyph.d.push(applyTransforms(svgShapesToPath.polylineToPath(tag.attributes), parents));
+          this.log(`Found a polyline element in the icon "${glyph.name}" the result could be different than expected.`);
+          glyph.paths.push(applyTransform(svgShapesToPath.polylineToPath(tag.attributes)));
         } else if('polygon' === tag.name && 'none' !== tag.attributes.fill) {
-          glyph.d.push(applyTransforms(svgShapesToPath.polygonToPath(tag.attributes), parents));
+          glyph.paths.push(applyTransform(svgShapesToPath.polygonToPath(tag.attributes)));
         } else if(
           ['circle', 'ellipse'].includes(tag.name) &&
           'none' !== tag.attributes.fill
         ) {
-          glyph.d.push(applyTransforms(svgShapesToPath.circleToPath(tag.attributes), parents));
+          glyph.paths.push(applyTransform(svgShapesToPath.circleToPath(tag.attributes)));
         } else if('path' === tag.name && tag.attributes.d &&
           'none' !== tag.attributes.fill) {
-          glyph.d.push(applyTransforms(tag.attributes.d, parents));
+          glyph.paths.push(applyTransform(tag.attributes.d));
         }
 
         // According to http://www.w3.org/TR/SVG/painting.html#SpecifyingPaint
@@ -258,139 +229,126 @@ function SVGIcons2SVGFontStream(options) {
           }
         }
       } catch (err) {
-        _this.emit('error', new Error('Got an error parsing the glyph' +
-          ' "' + glyph.name + '": ' + err.message + '.'));
+        this.emit('error', new Error(
+          `Got an error parsing the glyph "${glyph.name}": ${err.message}.`));
       }
     });
 
-    saxStream.on('error', function svgicons2svgfontSaxErrorCb(err) {
-      _this.emit('error', err);
+    saxStream.on('error', (err) => {
+      this.emit('error', err);
     });
 
-    saxStream.on('closetag', function svgicons2svgfontSaxCloseTagCb() {
+    saxStream.on('closetag', (tagName) => {
+      transformStack.pop();
       parents.pop();
     });
 
-    saxStream.on('end', function svgicons2svgfontSaxEnbCb() {
+    saxStream.on('end', () => {
       svgIconStreamCallback();
     });
 
     svgIconStream.pipe(saxStream);
-  };
+  }
 
-  // Output data
-  this._flush = function _svgIcons2SVGFontStreamFlush(svgFontFlushCallback) {
-    var fontWidth = (
-      1 < glyphs.length ?
-      glyphs.reduce(function(curMax, glyph) {
-        return Math.max(curMax, glyph.width);
-      }, 0) :
-      glyphs[0].width);
-    var fontHeight = options.fontHeight || (
-      1 < glyphs.length ? glyphs.reduce(function(curMax, glyph) {
-        return Math.max(curMax, glyph.height);
-      }, 0) :
-      glyphs[0].height);
+  _flush(svgFontFlushCallback) {
+    const fontWidth = (
+      1 < this.glyphs.length ?
+        this.glyphs.reduce((curMax, glyph) => Math.max(curMax, glyph.width), 0) :
+        this.glyphs[0].width);
+    const fontHeight = this._options.fontHeight || (
+      1 < this.glyphs.length ?
+        this.glyphs.reduce((curMax, glyph) => Math.max(curMax, glyph.height), 0) :
+        this.glyphs[0].height);
 
-    options.ascent = 'undefined' !== typeof options.ascent ?
-      options.ascent :
-      fontHeight - options.descent;
+    this._options.ascent = 'undefined' !== typeof this._options.ascent ?
+      this._options.ascent :
+      fontHeight - this._options.descent;
 
     if(
-      (!options.normalize) &&
-      fontHeight > (1 < glyphs.length ?
-        glyphs.reduce(function(curMin, glyph) {
-          return Math.min(curMin, glyph.height);
-        }, Infinity) :
-        glyphs[0].height
+      (!this._options.normalize) &&
+      fontHeight > (1 < this.glyphs.length ?
+          this.glyphs.reduce((curMin, glyph) => Math.min(curMin, glyph.height), Infinity) :
+          this.glyphs[0].height
       )
     ) {
-      log('The provided icons does not have the same height it could lead' +
+      this.log('The provided icons does not have the same height it could lead' +
         ' to unexpected results. Using the normalize option could' +
         ' solve the problem.');
     }
     if(1000 > fontHeight) {
-      log('The fontHeight should larger than 1000 or it will be converted ' +
-          'into the wrong shape. Using the "normalize" and "fontHeight"' +
-          ' options can solve the problem.');
+      this.log('The fontHeight should larger than 1000 or it will be converted ' +
+        'into the wrong shape. Using the "normalize" and "fontHeight"' +
+        ' options can solve the problem.');
     }
 
     // Output the SVG file
     // (find a SAX parser that allows modifying SVG on the fly)
-    _this.push('\
-<?xml version="1.0" standalone="no"?>\n\
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"' +
-  ' "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >\n\
-<svg xmlns="http://www.w3.org/2000/svg">\n' + (
-  options.metadata ? '<metadata>' + options.metadata + '</metadata>\n' : ''
-) + '\
-<defs>\n\
-  <font id="' + options.fontId + '" horiz-adv-x="' + fontWidth + '">\n\
-    <font-face font-family="' + options.fontName + '"\n\
-      units-per-em="' + fontHeight + '" ascent="' + options.ascent + '"\n\
-      descent="' + options.descent + '"' + (options.fontWeight ? '\n\
-      font-weight="' + options.fontWeight + '"' : '') + (options.fontStyle ? '\n\
-      font-style="' + options.fontStyle + '"' : '') + ' />\n\
-    <missing-glyph horiz-adv-x="0" />\n');
-    glyphs.forEach(function(glyph) {
+    /* eslint-disable prefer-template */
+    this.push(
+      '<?xml version="1.0" standalone="no"?>\n' +
+      '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >\n' +
+      '<svg xmlns="http://www.w3.org/2000/svg">\n' +
+      (this._options.metadata ? '<metadata>' + this._options.metadata + '</metadata>\n' : '') +
+      '<defs>\n' +
+      '  <font id="' + this._options.fontId + '" horiz-adv-x="' + fontWidth + '">\n' +
+      '    <font-face font-family="' + this._options.fontName + '"\n' +
+      '      units-per-em="' + fontHeight + '" ascent="' + this._options.ascent + '"\n' +
+      '      descent="' + this._options.descent + '"' +
+      (this._options.fontWeight ? '\n      font-weight="' + this._options.fontWeight + '"' : '') +
+      (this._options.fontStyle ? '\n      font-style="' + this._options.fontStyle + '"' : '') + ' />\n' +
+      '    <missing-glyph horiz-adv-x="0" />\n');
+
+    this.glyphs.forEach((glyph) => {
       const ratio = fontHeight / glyph.height;
       const glyphPath = new SVGPathData('');
 
-      if(options.fixedWidth) {
+      if(this._options.fixedWidth) {
         glyph.width = fontWidth;
       }
-      if(options.normalize) {
+      if(this._options.normalize) {
         glyph.height = fontHeight;
-        if(!options.fixedWidth) {
+        if(!this._options.fixedWidth) {
           glyph.width *= ratio;
         }
       }
-      glyph.d.forEach((cD) => {
-        Array.prototype.push.apply(glyphPath.commands, new SVGPathData(cD)
+      glyph.paths.forEach((path) => {
+        Array.prototype.push.apply(glyphPath.commands, path
           .toAbs()
           .translate(-glyph.dX, -glyph.dY)
           .scale(
-            (
-              options.normalize ?
-              ratio :
-              1
-            ) * glyph.scaleX,
-            (
-              options.normalize ?
-              ratio :
-              1
-            ) * glyph.scaleY
-          )
-          .ySymmetry(glyph.height - options.descent).commands);
+            (this._options.normalize ? ratio : 1) * glyph.scaleX,
+            (this._options.normalize ? ratio : 1) * glyph.scaleY)
+          .ySymmetry(glyph.height - this._options.descent).commands);
       });
-      if(options.centerHorizontally) {
-        // Naive bounds calculation (should draw, then calculate bounds...)
+      if(this._options.centerHorizontally) {
         const bounds = glyphPath.getBounds();
 
         glyphPath.translate(((glyph.width - (bounds.maxX - bounds.minX)) / 2) - bounds.minX);
       }
-      delete glyph.d;
+      delete glyph.paths;
       delete glyph.running;
-      glyph.unicode.forEach(function(unicode, i) {
-        _this.push('\
-    <glyph glyph-name="' + glyph.name + (0 === i ? '' : '-' + i) + '"\n\
-      unicode="' + ucs2.decode(unicode).map(function(point) {
-        return '&#x' + point.toString(16).toUpperCase() + ';';
-      }).join('') + '"\n\
-      horiz-adv-x="' + glyph.width + '" d="' + glyphPath.round(options.round).encode() + '" />\n');
+      glyph.unicode.forEach((unicode, i) => {
+        const unicodeStr = ucs2.decode(unicode)
+          .map(point => '&#x' + point.toString(16).toUpperCase() + ';')
+          .join('');
+        const d = glyphPath.round(this._options.round).encode();
+
+        this.push(
+          '    <glyph glyph-name="' + glyph.name + (0 === i ? '' : '-' + i) + '"\n' +
+          '      unicode="' + unicodeStr + '"\n' +
+          '      horiz-adv-x="' + glyph.width + '" d="' + d + '" />\n');
       });
     });
-    _this.push('\
-  </font>\n\
-</defs>\n\
-</svg>\n');
-    log('Font created');
-    if('function' === (typeof options.callback)) {
-      (options.callback)(glyphs);
+    this.push(
+      '  </font>\n' +
+      '</defs>\n' +
+      '</svg>\n');
+    this.log('Font created');
+    if('function' === (typeof this._options.callback)) {
+      this._options.callback(this.glyphs);
     }
     svgFontFlushCallback();
-  };
-
+  }
 }
 
 module.exports = SVGIcons2SVGFontStream;

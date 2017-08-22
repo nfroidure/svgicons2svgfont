@@ -1,4 +1,5 @@
 #! /usr/bin/env node
+/* eslint-disable prefer-reflect */
 
 'use strict';
 
@@ -6,8 +7,8 @@ const program = require('commander');
 const fs = require('fs');
 const glob = require('glob');
 
-const svgicons2svgfont = require('../src/index.js');
-const svgiconsdir = require('../src/iconsdir.js');
+const SVGIcons2SVGFont = require('../src/index.js');
+const SVGIconsDirStream = require('../src/iconsdir.js');
 
 program
   .version('2.0.0')
@@ -37,14 +38,14 @@ if(!program.args.length) {
   process.exit(1);
 }
 
-const files = [].concat.apply([], program.args.map(file => glob.sync(file)));
+const files = [].concat(...program.args.map(file => glob.sync(file)));
 
-svgiconsdir(files, {
+new SVGIconsDirStream(files, {
   startUnicode: program.startunicode,
   prependUnicode: program.prependUnicode,
   log: program.v ? console.log : function() {}, // eslint-disable-line
 })
-  .pipe(svgicons2svgfont({
+  .pipe(new SVGIcons2SVGFont({
     fontName: program.fontname,
     fontId: program.fontId,
     fixedwidth: program.fixedwidth,

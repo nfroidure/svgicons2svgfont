@@ -1,7 +1,7 @@
+/* eslint-disable prefer-template,no-confusing-arrow */
 'use strict';
 
 const fs = require('fs');
-const util = require('util');
 const fileSorter = require('./filesorter');
 const initMetadataService = require('../src/metadata');
 
@@ -9,101 +9,88 @@ const Readable = require('stream').Readable;
 
 require('string.prototype.codepointat');
 
-// Inherit of duplex stream
-util.inherits(SVGIconsDirStream, Readable);
-
 // Constructor
-function SVGIconsDirStream(dir, options) {
-  const _this = this;
-  const getMetadata = initMetadataService(options);
-  let filesInfos;
-  let gotFilesInfos = false;
-  let dirCopy;
+class SVGIconsDirStream extends Readable {
+  constructor(dir, options) {
+    super({ objectMode: true });
+    this.getMetadata = initMetadataService(options);
+    this.gotFilesInfos = false;
+    this.dir = dir;
 
-  // Ensure new were used
-  if(!(this instanceof SVGIconsDirStream)) {
-    return new SVGIconsDirStream(dir, options);
+    if(dir instanceof Array) {
+      const dirCopy = this.dir;
+
+      this.dir = '';
+      this._getFilesInfos(dirCopy);
+    }
+
   }
-
-  if(dir instanceof Array) {
-    dirCopy = dir;
-    dir = '';
-    _getFilesInfos(dirCopy);
-  }
-
-  function _getFilesInfos(files) {
+  _getFilesInfos(files) {
     let filesProcessed = 0;
 
-    filesInfos = [];
+    this.fileInfos = [];
     // Ensure prefixed files come first
     files = files.slice(0).sort(fileSorter);
     files.forEach((file) => {
-      getMetadata((dir ? dir + '/' : '') + file, function(err, metadata) {
+      this.getMetadata((this.dir ? this.dir + '/' : '') + file, (err, metadata) => {
         filesProcessed++;
         if(err) {
-          _this.emit('error', err);
+          this.emit('error', err);
         } else {
           if(metadata.renamed) {
-            options.log('Saved codepoint: ' +
-              'u' + metadata.unicode[0].codePointAt(0).toString(16).toUpperCase() +
+            this.options.log('Saved codepoint: ' +
+              'u' + metadata.unicode[0].codePointAt(0).toString(16)
+                .toUpperCase() +
               ' for the glyph "' + metadata.name + '"');
           }
-          filesInfos.push(metadata);
+          this.fileInfos.push(metadata);
         }
         if(files.length === filesProcessed) {
           // Reorder files
-          filesInfos = filesInfos.sort(function(infosA, infosB) {
-            return infosA.unicode[0] > infosB.unicode[0] ? 1 : -1;
-          });
+          this.fileInfos.sort((infosA, infosB) => infosA.unicode[0] > infosB.unicode[0] ? 1 : -1);
           // Mark directory as processed
-          gotFilesInfos = true;
+          this.gotFilesInfos = true;
           // Start processing
-          _pushSVGIcons();
+          this._pushSVGIcons();
         }
       });
     });
   }
 
-  function _pushSVGIcons() {
+  _pushSVGIcons() {
     let fileInfo;
     let svgIconStream;
 
-    while(filesInfos.length) {
-      fileInfo = filesInfos.shift();
+    while(this.fileInfos.length) {
+      fileInfo = this.fileInfos.shift();
       svgIconStream = fs.createReadStream(fileInfo.path);
       svgIconStream.metadata = {
         name: fileInfo.name,
         unicode: fileInfo.unicode,
       };
-      if(!_this.push(svgIconStream)) {
+      if(!this.push(svgIconStream)) {
         return;
       }
     }
-    _this.push(null);
+    this.push(null);
   }
-
-  // Parent constructor
-  Readable.call(this, {
-    objectMode: true,
-  });
-
-  this._read = function() {
-    if(!filesInfos) {
+  _read() {
+    if(!this.fileInfos) {
       fs.readdir(
-        dir,
+        this.dir,
         (err, files) => {
           if(err) {
-            _this.emit('error', err);
+            this.emit('error', err);
           }
-          _getFilesInfos(files);
+          this._getFilesInfos(files);
         }
       );
       return;
     }
-    if(gotFilesInfos) {
-      _pushSVGIcons();
+    if(this.gotFilesInfos) {
+      this._pushSVGIcons();
     }
-  };
+  }
 
 }
 

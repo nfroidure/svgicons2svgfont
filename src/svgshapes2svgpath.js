@@ -1,3 +1,4 @@
+/* eslint-disable prefer-template,complexity */
 'use strict';
 
 const svgShapesToPath = {

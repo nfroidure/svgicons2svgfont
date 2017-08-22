@@ -1,27 +1,27 @@
- /* eslint max-nested-callbacks:0 */
+/* eslint max-nested-callbacks:0 */
 
 'use strict';
 
-var metadata = require('../src/metadata.js');
-var fs = require('fs');
-var path = require('path');
-var assert = require('assert');
+const metadata = require('../src/metadata.js');
+const fs = require('fs');
+const path = require('path');
+const assert = require('assert');
 
 require('string.fromcodepoint');
 
-describe('Metadata service', function() {
-  it('should throw error when using old options', function() {
+describe('Metadata service', () => {
+  it('should throw error when using old options', () => {
     assert.throws(metadata.bind(metadata, {
       appendUnicode: true,
     }));
   });
 
-  describe('for code generation', function() {
+  describe('for code generation', () => {
 
-    it('should extract right unicodes from files', function(done) {
-      var metadataService = metadata();
+    it('should extract right unicodes from files', (done) => {
+      const metadataService = metadata();
 
-      metadataService('/var/plop/hello.svg', function(err, infos) {
+      metadataService('/var/plop/hello.svg', (err, infos) => {
         if(err) {
           done(err);
           return;
@@ -38,17 +38,18 @@ describe('Metadata service', function() {
       });
     });
 
-    it('should append unicodes to files when the option is set', function(done) {
-      var metadataService = metadata({
+    it('should append unicodes to files when the option is set', (done) => {
+      const metadataService = metadata({
         prependUnicode: true,
-        log: function() {},
-        error: function() {
+        log: () => {
+        },
+        error: () => {
           done(new Error('Not supposed to be here'));
         },
       });
 
       fs.writeFileSync(path.join(__dirname, 'results', 'plop.svg'), 'plop', 'utf-8');
-      metadataService(path.join(__dirname, 'results', 'plop.svg'), function(err, infos) {
+      metadataService(path.join(__dirname, 'results', 'plop.svg'), (err, infos) => {
         if(err) {
           done(err);
           return;
@@ -68,17 +69,18 @@ describe('Metadata service', function() {
       });
     });
 
-    it('should log file rename errors', function(done) {
-      var metadataService = metadata({
+    it('should log file rename errors', (done) => {
+      const metadataService = metadata({
         prependUnicode: true,
         startUnicode: 0xEA02,
-        error: function() {},
-        log: function() {
+        error: () => {
+        },
+        log: () => {
           done(new Error('Not supposed to be here'));
         },
       });
 
-      metadataService(path.join(__dirname, 'results', 'plop.svg'), function(err, infos) {
+      metadataService(path.join(__dirname, 'results', 'plop.svg'), (err, infos) => {
         assert(!infos);
         assert(err);
         assert(!fs.existsSync(path.join(__dirname, 'results', 'uEA02-plop.svg')));
@@ -88,12 +90,12 @@ describe('Metadata service', function() {
 
   });
 
-  describe('for code extraction', function() {
+  describe('for code extraction', () => {
 
-    it('should work for simple codes', function(done) {
-      var metadataService = metadata();
+    it('should work for simple codes', (done) => {
+      const metadataService = metadata();
 
-      metadataService('/var/plop/u0001-hello.svg', function(err, infos) {
+      metadataService('/var/plop/u0001-hello.svg', (err, infos) => {
         assert(!err);
         assert.deepEqual(infos, {
           path: '/var/plop/u0001-hello.svg',
@@ -105,10 +107,10 @@ describe('Metadata service', function() {
       });
     });
 
-    it('should work for several codes', function(done) {
-      var metadataService = metadata();
+    it('should work for several codes', (done) => {
+      const metadataService = metadata();
 
-      metadataService('/var/plop/u0001,u0002-hello.svg', function(err, infos) {
+      metadataService('/var/plop/u0001,u0002-hello.svg', (err, infos) => {
         assert(!err);
         assert.deepEqual(infos, {
           path: '/var/plop/u0001,u0002-hello.svg',
@@ -120,10 +122,10 @@ describe('Metadata service', function() {
       });
     });
 
-    it('should work for higher codepoint codes', function(done) {
-      var metadataService = metadata();
+    it('should work for higher codepoint codes', (done) => {
+      const metadataService = metadata();
 
-      metadataService('/var/plop/u1F63A-hello.svg', function(err, infos) {
+      metadataService('/var/plop/u1F63A-hello.svg', (err, infos) => {
         assert(!err);
         assert.deepEqual(infos, {
           path: '/var/plop/u1F63A-hello.svg',
@@ -135,10 +137,10 @@ describe('Metadata service', function() {
       });
     });
 
-    it('should work for ligature codes', function(done) {
-      var metadataService = metadata();
+    it('should work for ligature codes', (done) => {
+      const metadataService = metadata();
 
-      metadataService('/var/plop/u0001u0002-hello.svg', function(err, infos) {
+      metadataService('/var/plop/u0001u0002-hello.svg', (err, infos) => {
         assert(!err);
         assert.deepEqual(infos, {
           path: '/var/plop/u0001u0002-hello.svg',
@@ -150,10 +152,10 @@ describe('Metadata service', function() {
       });
     });
 
-    it('should work for nested codes', function(done) {
-      var metadataService = metadata();
+    it('should work for nested codes', (done) => {
+      const metadataService = metadata();
 
-      metadataService('/var/plop/u0001u0002,u0001-hello.svg', function(err, infos) {
+      metadataService('/var/plop/u0001u0002,u0001-hello.svg', (err, infos) => {
         assert(!err);
         assert.deepEqual(infos, {
           path: '/var/plop/u0001u0002,u0001-hello.svg',
@@ -168,10 +170,10 @@ describe('Metadata service', function() {
       });
     });
 
-    it('should not set the same codepoint twice', function(done) {
-      var metadataService = metadata();
+    it('should not set the same codepoint twice', (done) => {
+      const metadataService = metadata();
 
-      metadataService('/var/plop/uEA01-hello.svg', function(err, infos) {
+      metadataService('/var/plop/uEA01-hello.svg', (err, infos) => {
         assert(!err);
         assert.deepEqual(infos, {
           path: '/var/plop/uEA01-hello.svg',
@@ -179,7 +181,7 @@ describe('Metadata service', function() {
           unicode: [String.fromCharCode(0xEA01)],
           renamed: false,
         });
-        metadataService('/var/plop/plop.svg', function(err2, infos2) {
+        metadataService('/var/plop/plop.svg', (err2, infos2) => {
           assert(!err2);
           assert.deepEqual(infos2, {
             path: '/var/plop/plop.svg',
@@ -192,10 +194,10 @@ describe('Metadata service', function() {
       });
     });
 
-    it('should not set the same codepoint twice with different cases', function(done) {
-      var metadataService = metadata();
+    it('should not set the same codepoint twice with different cases', (done) => {
+      const metadataService = metadata();
 
-      metadataService('/var/plop/UEA01-hello.svg', function(err, infos) {
+      metadataService('/var/plop/UEA01-hello.svg', (err, infos) => {
         assert(!err);
         assert.deepEqual(infos, {
           path: '/var/plop/UEA01-hello.svg',
@@ -203,7 +205,7 @@ describe('Metadata service', function() {
           unicode: [String.fromCharCode(0xEA01)],
           renamed: false,
         });
-        metadataService('/var/plop/uEA02-hello.svg', function(err2, infos2) {
+        metadataService('/var/plop/uEA02-hello.svg', (err2, infos2) => {
           assert(!err2);
           assert.deepEqual(infos2, {
             path: '/var/plop/uEA02-hello.svg',
@@ -211,7 +213,7 @@ describe('Metadata service', function() {
             unicode: [String.fromCharCode(0xEA02)],
             renamed: false,
           });
-          metadataService('/var/plop/bell-o.svg', function(err3, infos3) {
+          metadataService('/var/plop/bell-o.svg', (err3, infos3) => {
             assert(!err3);
             assert.deepEqual(infos3, {
               path: '/var/plop/bell-o.svg',

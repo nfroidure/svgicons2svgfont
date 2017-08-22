@@ -29,13 +29,13 @@ You can test this library with the
 You may want to convert fonts to icons, if so use
  [svgfont2svgicons](https://github.com/nfroidure/svgfont2svgicons).
 
-## Usage
+## Usage
 
-### In your scripts
+### In your scripts
 ```js
-var svgicons2svgfont = require('svgicons2svgfont');
-var fs = require('fs');
-var fontStream = svgicons2svgfont({
+const SVGIcons2SVGFontStream = require('svgicons2svgfont');
+const fs = require('fs');
+const fontStream = new SVGIcons2SVGFontStream({
   fontName: 'hello'
 });
 
@@ -49,21 +49,21 @@ fontStream.pipe(fs.createWriteStream('fonts/hello.svg'))
   });
 
 // Writing glyphs
-var glyph1 = fs.createReadStream('icons/icon1.svg');
+const glyph1 = fs.createReadStream('icons/icon1.svg');
 glyph1.metadata = {
   unicode: ['\uE001\uE002'],
   name: 'icon1'
 };
 fontStream.write(glyph1);
 // Multiple unicode values are possible
-var glyph2 = fs.createReadStream('icons/icon1.svg');
+const glyph2 = fs.createReadStream('icons/icon1.svg');
 glyph2.metadata = {
   unicode: ['\uE002', '\uEA02'],
   name: 'icon2'
 };
 fontStream.write(glyph2);
 // Either ligatures are available
-var glyph3 = fs.createReadStream('icons/icon1.svg');
+const glyph3 = fs.createReadStream('icons/icon1.svg');
 glyph3.metadata = {
   unicode: ['\uE001\uE002'],
   name: 'icon1-icon2'
@@ -87,7 +87,7 @@ Note that you won't be able to customize icon names or icons unicodes by
  string is in fact a ligature).
 
 There is a few more options for the CLI interface, you can list all of them:
-```js
+```txt
 svgicons2svgfont --help
 #  Usage: svgicons2svgfont [options] <icons ...>
 #
@@ -115,7 +115,7 @@ svgicons2svgfont --help
 
 ## API
 
-### svgicons2svgfont(options)
+### new SVGIcons2SVGFontStream(options)
 
 #### options.fontName
 Type: `String`
@@ -216,15 +216,15 @@ Allows you to provide your own logging function. Set to `function(){}` to
 Try [gulp-iconfont](https://github.com/nfroidure/gulp-iconfont) and
   [gulp-svgicons2svgfont](https://github.com/nfroidure/gulp-svgicons2svgfont).
 
-### Stylus plugin
+### Stylus plugin
 
 Use [stylus-iconfont](https://www.npmjs.org/package/stylus-iconfont).
 
-### Mimosa plugin
+### Mimosa plugin
 
 Use [mimosa-svgs-to-iconfonts](https://www.npmjs.org/package/mimosa-svgs-to-iconfonts).
 
-## CLI alternatives
+## CLI alternatives
 
 You can combine this plugin's CLI interface with
  [svg2ttf](https://www.npmjs.com/package/svg2ttf),

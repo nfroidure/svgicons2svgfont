@@ -1,11 +1,11 @@
 'use strict';
 
-var fileSorter = require('../src/filesorter.js');
-var assert = require('assert');
+const fileSorter = require('../src/filesorter.js');
+const assert = require('assert');
 
-describe('fileSorter', function() {
+describe('fileSorter', () => {
 
-  it('should sort files per filename', function() {
+  it('should sort files per filename', () => {
     assert.deepEqual([
       '/var/plop/c.svg',
       '/var/plop/a.svg',
@@ -23,7 +23,7 @@ describe('fileSorter', function() {
     ]);
   });
 
-  it('should sort files per codepoints', function() {
+  it('should sort files per codepoints', () => {
     assert.deepEqual([
       '/var/plop/uAE01-c.svg',
       '/var/plop/uAE03-a.svg',
@@ -41,7 +41,7 @@ describe('fileSorter', function() {
     ]);
   });
 
-  it('should put codepoints first', function() {
+  it('should put codepoints first', () => {
     assert.deepEqual([
       '/var/plop/uAE01-c.svg',
       '/var/plop/uAE03-a.svg',
@@ -59,7 +59,7 @@ describe('fileSorter', function() {
     ]);
   });
 
-  it('should work with the @pinin files', function() {
+  it('should work with the @pinin files', () => {
     assert.deepEqual([
       'bell-disabled.svg',
       'bell-disabled-o.svg',

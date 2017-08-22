@@ -1,13 +1,14 @@
+/* eslint-disable prefer-template,newline-per-chained-call,complexity */
 'use strict';
 
-var path = require('path');
-var fs = require('fs');
+const path = require('path');
+const fs = require('fs');
 
 require('string.fromcodepoint');
 require('string.prototype.codepointat');
 
 function getMetadataService(options) {
-  var usedUnicodes = [];
+  let usedUnicodes = [];
 
   // Default options
   options = options || {};
@@ -27,24 +28,22 @@ function getMetadataService(options) {
   }
 
   return function getMetadataFromFile(file, cb) {
-    var basename = path.basename(file);
-    var metadata = {
+    const basename = path.basename(file);
+    const metadata = {
       path: file,
       name: '',
       unicode: [],
       renamed: false,
     };
-    var matches = basename.match(/^(?:((?:u[0-9a-f]{4,6},?)+)\-)?(.+)\.svg$/i);
+    const matches = basename.match(/^(?:((?:u[0-9a-f]{4,6},?)+)-)?(.+)\.svg$/i);
 
     metadata.name = matches && matches[2] ?
       matches[2] :
       'icon' + options.startUnicode;
     if(matches && matches[1]) {
-      metadata.unicode = matches[1].split(',').map(function(match) {
+      metadata.unicode = matches[1].split(',').map((match) => {
         match = match.substr(1);
-        return match.split('u').map(function(code) {
-          return String.fromCodePoint(parseInt(code, 16));
-        }).join('');
+        return match.split('u').map(code => String.fromCodePoint(parseInt(code, 16))).join('');
       });
       if(-1 !== usedUnicodes.indexOf(metadata.unicode[0])) {
         cb(new Error('The unicode codepoint of the glyph ' + metadata.name +
@@ -62,23 +61,19 @@ function getMetadataService(options) {
         metadata.path = path.join(path.dirname(file),
           'u' + metadata.unicode[0].codePointAt(0).toString(16).toUpperCase() +
           '-' + basename);
-        fs.rename(file, metadata.path,
-          function(err) {
-            if(err) {
-              cb(new Error('Could not save codepoint: ' +
-                'u' + metadata.unicode[0].codePointAt(0).toString(16).toUpperCase() +
-                ' for ' + basename));
-              return;
-            }
-            cb(null, metadata);
+        fs.rename(file, metadata.path, (err) => {
+          if(err) {
+            cb(new Error('Could not save codepoint: ' +
+              'u' + metadata.unicode[0].codePointAt(0).toString(16).toUpperCase() +
+              ' for ' + basename));
+            return;
           }
-        );
+          cb(null, metadata);
+        });
       }
     }
     if(!metadata.renamed) {
-      setImmediate(function() {
-        cb(null, metadata);
-      });
+      setImmediate(() => cb(null, metadata));
     }
   };
 

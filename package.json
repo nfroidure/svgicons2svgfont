@@ -43,13 +43,14 @@
   "dependencies": {
     "commander": "^2.9.0",
     "debug": "2.6.1",
+    "glob": "^7.1.2",
     "neatequal": "^1.0.0",
     "readable-stream": "^2.0.4",
     "sax": "^1.1.5",
     "string.fromcodepoint": "^0.2.1",
     "string.prototype.codepointat": "^0.2.0",
     "svg-pathdata": "^4.0.1",
-    "glob": "^7.1.2"
+    "transformation-matrix-js": "^2.7.1"
   },
   "devDependencies": {
     "commitizen": "^2.9.6",

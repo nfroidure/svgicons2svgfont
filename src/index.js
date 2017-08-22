@@ -7,8 +7,7 @@ var util = require('util');
 var ucs2 = require('punycode').ucs2;
 var Stream = require('readable-stream');
 var Sax = require('sax');
-var svgpathdata = require('svg-pathdata');
-var SVGPathData = svgpathdata.SVGPathData;
+var SVGPathData = require('svg-pathdata').SVGPathData;
 var svgShapesToPath = require('./svgshapes2svgpath');
 
 require('string.prototype.codepointat');

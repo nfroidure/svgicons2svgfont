@@ -48,7 +48,8 @@
     "sax": "^1.1.5",
     "string.fromcodepoint": "^0.2.1",
     "string.prototype.codepointat": "^0.2.0",
-    "svg-pathdata": "^4.0.1"
+    "svg-pathdata": "^4.0.1",
+    "glob": "^7.1.2"
   },
   "devDependencies": {
     "commitizen": "^2.9.6",

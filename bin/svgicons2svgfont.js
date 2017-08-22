@@ -4,6 +4,7 @@
 
 const program = require('commander');
 const fs = require('fs');
+const glob = require('glob');
 
 const svgicons2svgfont = require('../src/index.js');
 const svgiconsdir = require('../src/iconsdir.js');
@@ -36,7 +37,9 @@ if(!program.args.length) {
   process.exit(1);
 }
 
-svgiconsdir(program.args, {
+const files = [].concat.apply([], program.args.map(file => glob.sync(file)));
+
+svgiconsdir(files, {
   startUnicode: program.startunicode,
   prependUnicode: program.prependUnicode,
   log: program.v ? console.log : function() {}, // eslint-disable-line

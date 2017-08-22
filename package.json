@@ -66,6 +66,9 @@
     "streamtest": "^1.2.1"
   },
   "author": "Nicolas Froidure",
+  "contributors": [
+    "Adrian Leonhard <adrianleonhard@gmail.com> (https://github.com/NaridaL)"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/nfroidure/svgicons2svgfont/issues"

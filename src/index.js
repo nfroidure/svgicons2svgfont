@@ -311,14 +311,17 @@ class SVGIcons2SVGFontStream extends Transform {
           glyph.width *= ratio;
         }
       }
+      const yOffset = glyph.height - this._options.descent;
+      const glyphPathTransform = new Matrix()
+        .transform(1, 0, 0, -1, 0, yOffset) // ySymmetry
+        .scale(
+          (this._options.normalize ? ratio : 1) * glyph.scaleX,
+          (this._options.normalize ? ratio : 1) * glyph.scaleY)
+        .translate(-glyph.dX, -glyph.dY);
       glyph.paths.forEach((path) => {
         Array.prototype.push.apply(glyphPath.commands, path
           .toAbs()
-          .translate(-glyph.dX, -glyph.dY)
-          .scale(
-            (this._options.normalize ? ratio : 1) * glyph.scaleX,
-            (this._options.normalize ? ratio : 1) * glyph.scaleY)
-          .ySymmetry(glyph.height - this._options.descent).commands);
+          .matrix(...glyphPathTransform.toArray()).commands);
       });
       if(this._options.centerHorizontally) {
         const bounds = glyphPath.getBounds();
@@ -326,7 +329,6 @@ class SVGIcons2SVGFontStream extends Transform {
         glyphPath.translate(((glyph.width - (bounds.maxX - bounds.minX)) / 2) - bounds.minX);
       }
       delete glyph.paths;
-      delete glyph.running;
       glyph.unicode.forEach((unicode, i) => {
         const unicodeStr = ucs2.decode(unicode)
           .map(point => '&#x' + point.toString(16).toUpperCase() + ';')

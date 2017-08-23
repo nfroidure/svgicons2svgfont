@@ -23,7 +23,7 @@ program
   .option('-c, --centerhorizontally', 'calculate the bounds of a glyph and center it horizontally.')
   .option('-n, --normalize', 'normalize icons by scaling them to the height of the highest icon.')
   .option('-h, --height [value]', 'the outputted font height [MAX(icons.height)].', parseInt)
-  .option('-r, --round [value]', 'setup the SVG path rounding [10e12].', parseInt)
+  .option('-r, --round [value]', 'setup the SVG path rounding [10e12].', parseFloat)
   .option('-d, --descent [value]', 'the font descent [0].', parseInt)
   .option('-a, --ascent [value]', 'the font ascent [height - ascent].', parseInt)
   .option('-s, --startunicode [value]', 'the start unicode codepoint for' +

@@ -20,9 +20,13 @@ function parseTransforms(value) {
 }
 function matrixFromTransformAttribute(transformAttributeString) {
   const result = new Matrix();
+  const map = {
+    matrix: 'transform',
+    rotate: 'rotateDeg',
+  };
 
   for(const transform of parseTransforms(transformAttributeString)) {
-    const method = 'matrix' === transform[0] ? 'transform' : transform[0];
+    const method = map[transform[0]] || transform[0];
 
     result[method](...transform.slice(1).map(parseFloat));
   }
@@ -319,7 +323,7 @@ class SVGIcons2SVGFontStream extends Transform {
           (this._options.normalize ? ratio : 1) * glyph.scaleY)
         .translate(-glyph.dX, -glyph.dY);
       glyph.paths.forEach((path) => {
-        Array.prototype.push.apply(glyphPath.commands, path
+        glyphPath.commands.push(...path
           .toAbs()
           .matrix(...glyphPathTransform.toArray()).commands);
       });

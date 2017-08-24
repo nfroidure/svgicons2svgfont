@@ -276,6 +276,17 @@ describe('Generating fonts to files', () => {
     }, done);
   });
 
+  /**
+   * Issue #6
+   * icon by @paesku
+   * https://github.com/nfroidure/svgicons2svgfont/issues/6#issuecomment-125545925
+   */
+  it('should work with complicated nested transforms', (done) => {
+    generateFontToFile({
+      fontName: 'paesku',
+      round: 1e3,
+    }, done);
+  });
 });
 
 describe('Generating fonts to memory', () => {

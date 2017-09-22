@@ -107,7 +107,12 @@ function getTagColor(currTag, parents) {
 class SVGIcons2SVGFontStream extends Transform {
 
   constructor(options) {
-    super({ objectMode: true, writableObjectMode: true, readableObjectMode: false });
+    super({ objectMode: true });
+
+    // Setting objectMode separately
+    this._writableState.objectMode = true;
+    this._readableState.objectMode = false;
+
     this.glyphs = [];
 
     this._options = options || {};

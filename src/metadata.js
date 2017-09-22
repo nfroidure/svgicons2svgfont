@@ -22,7 +22,7 @@ function getMetadataService(options) {
   // Throw on old options usage
   if('undefined' !== typeof options.appendUnicode) {
     throw new Error(
-      'The "appendUnicode" option were renamed "prependUnicode".' +
+      'The "appendUnicode" option was renamed "prependUnicode".' +
       ' See https://github.com/nfroidure/gulp-svgicons2svgfont/issues/33'
     );
   }

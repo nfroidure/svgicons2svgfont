@@ -287,6 +287,17 @@ describe('Generating fonts to files', () => {
       round: 1e3,
     }, done);
   });
+
+  /**
+   * Issue #76
+   * https://github.com/nfroidure/svgicons2svgfont/issues/76#issue-259831969
+   */
+  it('should work with transform=translate(x) without y', (done) => {
+    generateFontToFile({
+      fontName: 'translatex',
+      round: 1e3,
+    }, done);
+  });
 });
 
 describe('Generating fonts to memory', () => {

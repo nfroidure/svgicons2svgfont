@@ -43,6 +43,7 @@
   "dependencies": {
     "commander": "^2.9.0",
     "debug": "2.6.1",
+    "geometry-interfaces": "^1.1.4",
     "glob": "^7.1.2",
     "neatequal": "^1.0.0",
     "readable-stream": "^2.0.4",

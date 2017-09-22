@@ -19,16 +19,27 @@ function parseTransforms(value) {
   ).map(transform => transform.match(/[\w.-]+/g));
 }
 function matrixFromTransformAttribute(transformAttributeString) {
-  const result = new Matrix();
-  const map = {
-    matrix: 'transform',
-    rotate: 'rotateDeg',
+  const transformations = {
+    matrix: (result, ...args) => result.transform(...args),
+    translate: (result, x, y = 0) => result.translate(x, y),
+    scale: (result, x, y = x) => result.scale(x, y),
+    rotate: (result, a, x = 0, y = 0) => {
+      if(0 === x && 0 === y) {
+        result.rotateDeg(a);
+      } else {
+        result
+          .translate(x, y)
+          .rotateDeg(a)
+          .translate(-x, -y);
+      }
+    },
+    skewX: (result, a) => result.skewX((a * Math.PI) / 180),
+    skewY: (result, a) => result.skewY((a * Math.PI) / 180),
   };
 
+  const result = new Matrix();
   for(const transform of parseTransforms(transformAttributeString)) {
-    const method = map[transform[0]] || transform[0];
-
-    result[method](...transform.slice(1).map(parseFloat));
+    transformations[transform[0]](result, ...transform.slice(1).map(parseFloat));
   }
   return result;
 }
@@ -270,7 +281,7 @@ class SVGIcons2SVGFontStream extends Transform {
 
     if(
       (!this._options.normalize) &&
-      fontHeight > (1 < this.glyphs.length ?
+        fontHeight > (1 < this.glyphs.length ?
           this.glyphs.reduce((curMin, glyph) => Math.min(curMin, glyph.height), Infinity) :
           this.glyphs[0].height
       )

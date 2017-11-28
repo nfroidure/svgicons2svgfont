@@ -296,7 +296,7 @@ class SVGIcons2SVGFontStream extends Transform {
         ' solve the problem.');
     }
     if(1000 > fontHeight) {
-      this.log('The fontHeight should larger than 1000 or it will be converted ' +
+      this.log('The fontHeight should be larger than 1000 or it will be converted ' +
         'into the wrong shape. Using the "normalize" and "fontHeight"' +
         ' options can solve the problem.');
     }

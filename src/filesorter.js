@@ -9,7 +9,8 @@ function fileSorter(fileA, fileB) {
 
   if(testExpression.test(fileA)) {
     if(testExpression.test(fileB)) {
-      if(fileA < fileB) {
+      // Compare filenames without their .svg extension
+      if(fileA.substring(0, fileA.length - 4) < fileB.substring(0, fileB.length - 4)) {
         result = -1;
       } else {
         result = 1;
@@ -19,7 +20,7 @@ function fileSorter(fileA, fileB) {
     }
   } else if(testExpression.test(fileB)) {
     result = 1;
-  } else if(fileA < fileB) {
+  } else if(fileA.substring(0, fileA.length - 4) < fileB.substring(0, fileB.length - 4)) {
     result = -1;
   } else {
     result = 1;

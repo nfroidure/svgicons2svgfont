@@ -77,8 +77,8 @@ describe('fileSorter', () => {
       'uEA04-bookmark-favorite.svg',
       'uEA05-bookmark-o.svg',
       'uEA06-bookmark.svg',
-      'bell-disabled-o.svg',
       'bell-disabled.svg',
+      'bell-disabled-o.svg',
       'bell-o.svg',
     ]);
   });

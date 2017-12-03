@@ -1,0 +1,15 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <font id="rotatedrectangle" horiz-adv-x="1000">
+    <font-face font-family="rotatedrectangle"
+      units-per-em="1000" ascent="1000"
+      descent="0" />
+    <missing-glyph horiz-adv-x="0" />
+    <glyph glyph-name="rotatedrectangle"
+      unicode="&#xE001;"
+      horiz-adv-x="1000" d="M174.176 879.765H753V835.059H174.1760000000001V879.765zM253.6012889000001 198.1004662999999L598.9849730000001 662.5480414999998L634.8570674000001 635.8719712999998L289.4733833000002 171.4243960999999L253.6012889000002 198.1004662999999z" />
+  </font>
+</defs>
+</svg>

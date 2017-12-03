@@ -17,13 +17,12 @@ class SVGIconsDirStream extends Readable {
     this.gotFilesInfos = false;
     this.dir = dir;
 
-    if(dir instanceof Array) {
+    if (dir instanceof Array) {
       const dirCopy = this.dir;
 
       this.dir = '';
       this._getFilesInfos(dirCopy);
     }
-
   }
   _getFilesInfos(files) {
     let filesProcessed = 0;
@@ -31,29 +30,42 @@ class SVGIconsDirStream extends Readable {
     this.fileInfos = [];
     // Ensure prefixed files come first
     files = files.slice(0).sort(fileSorter);
-    files.forEach((file) => {
-      this.getMetadata((this.dir ? this.dir + '/' : '') + file, (err, metadata) => {
-        filesProcessed++;
-        if(err) {
-          this.emit('error', err);
-        } else {
-          if(metadata.renamed) {
-            this.options.log('Saved codepoint: ' +
-              'u' + metadata.unicode[0].codePointAt(0).toString(16)
-                .toUpperCase() +
-              ' for the glyph "' + metadata.name + '"');
+    files.forEach(file => {
+      this.getMetadata(
+        (this.dir ? this.dir + '/' : '') + file,
+        (err, metadata) => {
+          filesProcessed++;
+          if (err) {
+            this.emit('error', err);
+          } else {
+            if (metadata.renamed) {
+              this.options.log(
+                'Saved codepoint: ' +
+                  'u' +
+                  metadata.unicode[0]
+                    .codePointAt(0)
+                    .toString(16)
+                    .toUpperCase() +
+                  ' for the glyph "' +
+                  metadata.name +
+                  '"'
+              );
+            }
+            this.fileInfos.push(metadata);
           }
-          this.fileInfos.push(metadata);
+          if (files.length === filesProcessed) {
+            // Reorder files
+            this.fileInfos.sort(
+              (infosA, infosB) =>
+                infosA.unicode[0] > infosB.unicode[0] ? 1 : -1
+            );
+            // Mark directory as processed
+            this.gotFilesInfos = true;
+            // Start processing
+            this._pushSVGIcons();
+          }
         }
-        if(files.length === filesProcessed) {
-          // Reorder files
-          this.fileInfos.sort((infosA, infosB) => infosA.unicode[0] > infosB.unicode[0] ? 1 : -1);
-          // Mark directory as processed
-          this.gotFilesInfos = true;
-          // Start processing
-          this._pushSVGIcons();
-        }
-      });
+      );
     });
   }
 
@@ -61,37 +73,33 @@ class SVGIconsDirStream extends Readable {
     let fileInfo;
     let svgIconStream;
 
-    while(this.fileInfos.length) {
+    while (this.fileInfos.length) {
       fileInfo = this.fileInfos.shift();
       svgIconStream = fs.createReadStream(fileInfo.path);
       svgIconStream.metadata = {
         name: fileInfo.name,
         unicode: fileInfo.unicode,
       };
-      if(!this.push(svgIconStream)) {
+      if (!this.push(svgIconStream)) {
         return;
       }
     }
     this.push(null);
   }
   _read() {
-    if(!this.fileInfos) {
-      fs.readdir(
-        this.dir,
-        (err, files) => {
-          if(err) {
-            this.emit('error', err);
-          }
-          this._getFilesInfos(files);
+    if (!this.fileInfos) {
+      fs.readdir(this.dir, (err, files) => {
+        if (err) {
+          this.emit('error', err);
         }
-      );
+        this._getFilesInfos(files);
+      });
       return;
     }
-    if(this.gotFilesInfos) {
+    if (this.gotFilesInfos) {
       this._pushSVGIcons();
     }
   }
-
 }
 
 module.exports = SVGIconsDirStream;

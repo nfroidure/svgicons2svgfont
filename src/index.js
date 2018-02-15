@@ -204,7 +204,7 @@ class SVGIcons2SVGFontStream extends Transform {
         new Error(
           `The glyph "${
             glyph.name
-          }" codepoint seems to be used already elsewhere.`
+            }" codepoint seems to be used already elsewhere.`
         )
       );
     }
@@ -282,7 +282,7 @@ class SVGIcons2SVGFontStream extends Transform {
           this.log(
             `Found a line element in the icon "${
               glyph.name
-            }" the result could be different than expected.`
+              }" the result could be different than expected.`
           );
           glyph.paths.push(
             applyTransform(svgShapesToPath.lineToPath(tag.attributes))
@@ -291,7 +291,7 @@ class SVGIcons2SVGFontStream extends Transform {
           this.log(
             `Found a polyline element in the icon "${
               glyph.name
-            }" the result could be different than expected.`
+              }" the result could be different than expected.`
           );
           glyph.paths.push(
             applyTransform(svgShapesToPath.polylineToPath(tag.attributes))
@@ -390,8 +390,8 @@ class SVGIcons2SVGFontStream extends Transform {
     if (1000 > fontHeight) {
       this.log(
         'The fontHeight should be larger than 1000 or it will be converted ' +
-          'into the wrong shape. Using the "normalize" and "fontHeight"' +
-          ' options can solve the problem.'
+        'into the wrong shape. Using the "normalize" and "fontHeight"' +
+        ' options can solve the problem.'
       );
     }
 
@@ -400,36 +400,36 @@ class SVGIcons2SVGFontStream extends Transform {
     /* eslint-disable prefer-template */
     this.push(
       '<?xml version="1.0" standalone="no"?>\n' +
-        '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >\n' +
-        '<svg xmlns="http://www.w3.org/2000/svg">\n' +
-        (this._options.metadata
-          ? '<metadata>' + this._options.metadata + '</metadata>\n'
-          : '') +
-        '<defs>\n' +
-        '  <font id="' +
-        this._options.fontId +
-        '" horiz-adv-x="' +
-        fontWidth +
-        '">\n' +
-        '    <font-face font-family="' +
-        this._options.fontName +
-        '"\n' +
-        '      units-per-em="' +
-        fontHeight +
-        '" ascent="' +
-        this._options.ascent +
-        '"\n' +
-        '      descent="' +
-        this._options.descent +
-        '"' +
-        (this._options.fontWeight
-          ? '\n      font-weight="' + this._options.fontWeight + '"'
-          : '') +
-        (this._options.fontStyle
-          ? '\n      font-style="' + this._options.fontStyle + '"'
-          : '') +
-        ' />\n' +
-        '    <missing-glyph horiz-adv-x="0" />\n'
+      '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >\n' +
+      '<svg xmlns="http://www.w3.org/2000/svg">\n' +
+      (this._options.metadata
+        ? '<metadata>' + this._options.metadata + '</metadata>\n'
+        : '') +
+      '<defs>\n' +
+      '  <font id="' +
+      this._options.fontId +
+      '" horiz-adv-x="' +
+      fontWidth +
+      '">\n' +
+      '    <font-face font-family="' +
+      this._options.fontName +
+      '"\n' +
+      '      units-per-em="' +
+      fontHeight +
+      '" ascent="' +
+      this._options.ascent +
+      '"\n' +
+      '      descent="' +
+      this._options.descent +
+      '"' +
+      (this._options.fontWeight
+        ? '\n      font-weight="' + this._options.fontWeight + '"'
+        : '') +
+      (this._options.fontStyle
+        ? '\n      font-style="' + this._options.fontStyle + '"'
+        : '') +
+      ' />\n' +
+      '    <missing-glyph horiz-adv-x="0" />\n'
     );
 
     this.glyphs.forEach(glyph => {

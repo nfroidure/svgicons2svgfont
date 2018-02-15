@@ -24,6 +24,7 @@ function generateFontToFile(options, done, fileSuffix, startUnicode, files) {
   );
 
   options.log = () => {};
+  options.round = options.round || 1e3
   const svgFontStream = new SVGIcons2SVGFontStream(options);
 
   svgFontStream.pipe(fs.createWriteStream(dest)).on('finish', () => {
@@ -54,6 +55,7 @@ function generateFontToMemory(options, done, files, startUnicode) {
   const decoder = new StringDecoder('utf8');
 
   options.log = () => {};
+  options.round = options.round || 1e3
 
   options.callback = glyphs => {
     const fontName = options.fontName;
@@ -561,7 +563,7 @@ describe('Passing code points', () => {
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
 
-    const svgFontStream = new SVGIcons2SVGFontStream();
+    const svgFontStream = new SVGIcons2SVGFontStream({round: 1e3})
     let content = '';
     const decoder = new StringDecoder('utf8');
 
@@ -592,7 +594,7 @@ describe('Passing code points', () => {
     const svgIconStream = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
-    const svgFontStream = new SVGIcons2SVGFontStream();
+    const svgFontStream = new SVGIcons2SVGFontStream({round: 1e3});
     let content = '';
     const decoder = new StringDecoder('utf8');
 
@@ -623,7 +625,7 @@ describe('Passing code points', () => {
     const svgIconStream = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
-    const svgFontStream = new SVGIcons2SVGFontStream();
+    const svgFontStream = new SVGIcons2SVGFontStream({round: 1e3});
     let content = '';
     const decoder = new StringDecoder('utf8');
 
@@ -660,7 +662,7 @@ describe('Providing bad glyphs', () => {
     svgIconStream.metadata = {
       unicode: '\uE001',
     };
-    new SVGIcons2SVGFontStream()
+    new SVGIcons2SVGFontStream({round: 1e3})
       .on('error', err => {
         assert.equal(err instanceof Error, true);
         assert.equal(
@@ -680,7 +682,7 @@ describe('Providing bad glyphs', () => {
     svgIconStream.metadata = {
       name: 'test',
     };
-    new SVGIcons2SVGFontStream()
+    new SVGIcons2SVGFontStream({round: 1e3})
       .on('error', err => {
         assert.equal(err instanceof Error, true);
         assert.equal(
@@ -701,7 +703,7 @@ describe('Providing bad glyphs', () => {
       name: 'test',
       unicode: ['\uE002', '\uE002'],
     };
-    new SVGIcons2SVGFontStream()
+    new SVGIcons2SVGFontStream({round: 1e3})
       .on('error', err => {
         assert.equal(err instanceof Error, true);
         assert.equal(
@@ -720,7 +722,7 @@ describe('Providing bad glyphs', () => {
     const svgIconStream2 = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
-    const svgFontStream = new SVGIcons2SVGFontStream();
+    const svgFontStream = new SVGIcons2SVGFontStream({round: 1e3});
 
     svgIconStream.metadata = {
       name: 'test',
@@ -749,7 +751,7 @@ describe('Providing bad glyphs', () => {
     const svgIconStream2 = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
-    const svgFontStream = new SVGIcons2SVGFontStream();
+    const svgFontStream = new SVGIcons2SVGFontStream({round: 1e3});
 
     svgIconStream.metadata = {
       name: 'test',
@@ -777,7 +779,7 @@ describe('Providing bad glyphs', () => {
       name: 'test',
       unicode: ['\uE002'],
     };
-    new SVGIcons2SVGFontStream()
+    new SVGIcons2SVGFontStream({round: 1e3})
       .on('error', err => {
         assert.equal(err instanceof Error, true);
         assert.equal(
@@ -800,7 +802,7 @@ describe('Providing bad glyphs', () => {
       name: 'test',
       unicode: ['\uE002'],
     };
-    new SVGIcons2SVGFontStream()
+    new SVGIcons2SVGFontStream({round: 1e3})
       .on('error', err => {
         assert.equal(err instanceof Error, true);
         assert.equal(

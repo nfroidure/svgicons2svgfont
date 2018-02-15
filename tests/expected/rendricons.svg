@@ -2,9 +2,9 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <svg xmlns="http://www.w3.org/2000/svg">
 <defs>
-  <font id="rendricons" horiz-adv-x="NaN">
+  <font id="rendricons" horiz-adv-x="150">
     <font-face font-family="rendricons"
-      units-per-em="NaN" ascent="NaN"
+      units-per-em="150" ascent="150"
       descent="0" />
     <missing-glyph horiz-adv-x="0" />
     <glyph glyph-name="account"
@@ -18,10 +18,10 @@
       horiz-adv-x="150" d="M111.781 140L74.989 103.208L38.219 139.977L10 111.758L46.77 74.989L10 38.219L38.219 10L74.989 46.77L111.758 10L139.977 38.219L103.208 74.989L140 111.781L111.781 140z" />
     <glyph glyph-name="minus"
       unicode="&#xE004;"
-      horiz-adv-x="undefined" d="" />
+      horiz-adv-x="0" d="" />
     <glyph glyph-name="plus"
       unicode="&#xE005;"
-      horiz-adv-x="undefined" d="" />
+      horiz-adv-x="0" d="" />
     <glyph glyph-name="search"
       unicode="&#xE006;"
       horiz-adv-x="150" d="M79.415 140C51.476 140 28.83 116.787 28.83 88.148C28.83 73.56 34.72 60.395 44.179 50.973L20 21.237C24.884 17.491 29.768 13.746 34.652 10L60.641 40.009C66.449 37.627 72.777 36.297 79.415 36.297C107.354 36.297 130 59.51 130 88.148C130 116.787 107.354 140 79.415 140zM79.415 127.037C100.369 127.037 117.354 109.627 117.354 88.148C117.354 66.67 100.369 49.26 79.415 49.26C58.461 49.26 41.477 66.67 41.477 88.148C41.477 109.627 58.461 127.037 79.415 127.037z" />

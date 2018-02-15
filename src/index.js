@@ -146,6 +146,10 @@ class SVGIcons2SVGFontStream extends Transform {
     }
     const glyph = svgIconStream.metadata || {};
 
+    // init width and height os they aren't undefined if <svg> isn't renderable
+    glyph.width = 0;
+    glyph.height = 1;
+
     glyph.paths = [];
     this.glyphs.push(glyph);
 
@@ -204,7 +208,7 @@ class SVGIcons2SVGFontStream extends Transform {
         new Error(
           `The glyph "${
             glyph.name
-            }" codepoint seems to be used already elsewhere.`
+          }" codepoint seems to be used already elsewhere.`
         )
       );
     }
@@ -232,43 +236,50 @@ class SVGIcons2SVGFontStream extends Transform {
 
         // Save the view size
         if ('svg' === tag.name) {
-          glyph.dX = 0;
-          glyph.dY = 0;
-          glyph.scaleX = 1;
-          glyph.scaleY = 1;
           if ('viewBox' in tag.attributes) {
             values = tag.attributes.viewBox.split(/\s*,*\s|\s,*\s*|,/);
-            glyph.dX = parseFloat(values[0]);
-            glyph.dY = parseFloat(values[1]);
-            glyph.width = parseFloat(values[2]);
-            glyph.height = parseFloat(values[3]);
-            if ('width' in tag.attributes) {
-              glyph.scaleX = glyph.width / parseFloat(tag.attributes.width);
-              glyph.width = parseFloat(tag.attributes.width);
-            }
-            if ('height' in tag.attributes) {
-              glyph.scaleY = glyph.height / parseFloat(tag.attributes.height);
-              glyph.height = parseFloat(tag.attributes.height);
-            }
+            const dX = parseFloat(values[0]);
+            const dY = parseFloat(values[1]);
+            const width = parseFloat(values[2]);
+            const height = parseFloat(values[3]);
+
+            // use the viewBox width/height if not specified explictly
+            glyph.width =
+              'width' in tag.attributes
+                ? parseFloat(tag.attributes.width)
+                : width;
+            glyph.height =
+              'height' in tag.attributes
+                ? parseFloat(tag.attributes.height)
+                : height;
+
+            transformStack[transformStack.length - 1]
+              .translate(-dX, -dY)
+              .scale(glyph.width / width, glyph.height / height);
           } else {
             if ('width' in tag.attributes) {
               glyph.width = parseFloat(tag.attributes.width);
+            } else {
+              this.log(
+                `Glyph "${
+                  glyph.name
+                }" has no width attribute, defaulting to 150.`
+              );
+              glyph.width = 150;
             }
             if ('height' in tag.attributes) {
               glyph.height = parseFloat(tag.attributes.height);
+            } else {
+              this.log(
+                `Glyph "${
+                  glyph.name
+                }" has no height attribute, defaulting to 150.`
+              );
+              glyph.height = 150;
             }
           }
-          if (!glyph.width || !glyph.height) {
-            this.log(
-              `Glyph "${
-                glyph.name
-              }" has no size attribute on which to get the gylph dimensions (height and width or viewBox attributes)`
-            );
-            glyph.width = 150;
-            glyph.height = 150;
-          }
-          // Clipping path unsupported
         } else if ('clipPath' === tag.name) {
+          // Clipping path unsupported
           this.log(
             `Found a clipPath element in the icon "${
               glyph.name
@@ -282,7 +293,7 @@ class SVGIcons2SVGFontStream extends Transform {
           this.log(
             `Found a line element in the icon "${
               glyph.name
-              }" the result could be different than expected.`
+            }" the result could be different than expected.`
           );
           glyph.paths.push(
             applyTransform(svgShapesToPath.lineToPath(tag.attributes))
@@ -291,7 +302,7 @@ class SVGIcons2SVGFontStream extends Transform {
           this.log(
             `Found a polyline element in the icon "${
               glyph.name
-              }" the result could be different than expected.`
+            }" the result could be different than expected.`
           );
           glyph.paths.push(
             applyTransform(svgShapesToPath.polylineToPath(tag.attributes))
@@ -350,21 +361,26 @@ class SVGIcons2SVGFontStream extends Transform {
   }
 
   _flush(svgFontFlushCallback) {
-    const fontWidth =
-      1 < this.glyphs.length
-        ? this.glyphs.reduce(
-            (curMax, glyph) => Math.max(curMax, glyph.width),
-            0
-          )
-        : this.glyphs[0].width;
-    const fontHeight =
-      this._options.fontHeight ||
-      (1 < this.glyphs.length
-        ? this.glyphs.reduce(
-            (curMax, glyph) => Math.max(curMax, glyph.height),
-            0
-          )
-        : this.glyphs[0].height);
+    const maxGlyphHeight = this.glyphs.reduce(
+      (curMax, glyph) => Math.max(curMax, glyph.height),
+      0
+    );
+    const maxGlyphWidth = this.glyphs.reduce(
+      (curMax, glyph) => Math.max(curMax, glyph.width),
+      0
+    );
+    const fontHeight = this._options.fontHeight || maxGlyphHeight;
+    let fontWidth = maxGlyphWidth;
+    if (this._options.normalize) {
+      fontWidth = this.glyphs.reduce(
+        (curMax, glyph) =>
+          Math.max(curMax, fontHeight / glyph.height * glyph.width),
+        0
+      );
+    } else if (this._options.fontHeight) {
+      // even if normalize is off, we need to scale the fontWidth if we have a custom fontHeight
+      fontWidth *= fontHeight / maxGlyphHeight;
+    }
 
     this._options.ascent =
       'undefined' !== typeof this._options.ascent
@@ -382,16 +398,15 @@ class SVGIcons2SVGFontStream extends Transform {
           : this.glyphs[0].height)
     ) {
       this.log(
-        'The provided icons does not have the same height it could lead' +
-          ' to unexpected results. Using the normalize option could' +
-          ' solve the problem.'
+        'The provided icons do not have the same heights. This could lead' +
+          ' to unexpected results. Using the normalize option may help.'
       );
     }
     if (1000 > fontHeight) {
       this.log(
-        'The fontHeight should be larger than 1000 or it will be converted ' +
-        'into the wrong shape. Using the "normalize" and "fontHeight"' +
-        ' options can solve the problem.'
+        'A fontHeight of at least than 1000 is recommended, otherwise ' +
+          'further steps (rounding in svg2ttf) could lead to ugly results.' +
+          ' Use the fontHeight option to scale icons.'
       );
     }
 
@@ -400,59 +415,62 @@ class SVGIcons2SVGFontStream extends Transform {
     /* eslint-disable prefer-template */
     this.push(
       '<?xml version="1.0" standalone="no"?>\n' +
-      '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >\n' +
-      '<svg xmlns="http://www.w3.org/2000/svg">\n' +
-      (this._options.metadata
-        ? '<metadata>' + this._options.metadata + '</metadata>\n'
-        : '') +
-      '<defs>\n' +
-      '  <font id="' +
-      this._options.fontId +
-      '" horiz-adv-x="' +
-      fontWidth +
-      '">\n' +
-      '    <font-face font-family="' +
-      this._options.fontName +
-      '"\n' +
-      '      units-per-em="' +
-      fontHeight +
-      '" ascent="' +
-      this._options.ascent +
-      '"\n' +
-      '      descent="' +
-      this._options.descent +
-      '"' +
-      (this._options.fontWeight
-        ? '\n      font-weight="' + this._options.fontWeight + '"'
-        : '') +
-      (this._options.fontStyle
-        ? '\n      font-style="' + this._options.fontStyle + '"'
-        : '') +
-      ' />\n' +
-      '    <missing-glyph horiz-adv-x="0" />\n'
+        '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >\n' +
+        '<svg xmlns="http://www.w3.org/2000/svg">\n' +
+        (this._options.metadata
+          ? '<metadata>' + this._options.metadata + '</metadata>\n'
+          : '') +
+        '<defs>\n' +
+        '  <font id="' +
+        this._options.fontId +
+        '" horiz-adv-x="' +
+        fontWidth +
+        '">\n' +
+        '    <font-face font-family="' +
+        this._options.fontName +
+        '"\n' +
+        '      units-per-em="' +
+        fontHeight +
+        '" ascent="' +
+        this._options.ascent +
+        '"\n' +
+        '      descent="' +
+        this._options.descent +
+        '"' +
+        (this._options.fontWeight
+          ? '\n      font-weight="' + this._options.fontWeight + '"'
+          : '') +
+        (this._options.fontStyle
+          ? '\n      font-style="' + this._options.fontStyle + '"'
+          : '') +
+        ' />\n' +
+        '    <missing-glyph horiz-adv-x="0" />\n'
     );
 
     this.glyphs.forEach(glyph => {
-      const ratio = fontHeight / glyph.height;
+      const ratio = this._options.normalize
+        ? fontHeight / glyph.height
+        : fontHeight / maxGlyphHeight;
+      if (!isFinite(ratio)) throw new Error('foo');
+      glyph.width *= ratio;
+      glyph.height *= ratio;
       const glyphPath = new SVGPathData('');
 
       if (this._options.fixedWidth) {
         glyph.width = fontWidth;
       }
-      if (this._options.normalize) {
-        glyph.height = fontHeight;
-        if (!this._options.fixedWidth) {
-          glyph.width *= ratio;
-        }
-      }
       const yOffset = glyph.height - this._options.descent;
-      const glyphPathTransform = new Matrix()
-        .transform(1, 0, 0, -1, 0, yOffset) // ySymmetry
-        .scale(
-          (this._options.normalize ? ratio : 1) * glyph.scaleX,
-          (this._options.normalize ? ratio : 1) * glyph.scaleY
-        )
-        .translate(-glyph.dX, -glyph.dY);
+      const glyphPathTransform = new Matrix().transform(
+        1,
+        0,
+        0,
+        -1,
+        0,
+        yOffset
+      ); // ySymmetry
+      if (1 !== ratio) {
+        glyphPathTransform.scale(ratio, ratio);
+      }
       glyph.paths.forEach(path => {
         glyphPath.commands.push(
           ...path.toAbs().matrix(...glyphPathTransform.toArray()).commands

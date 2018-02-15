@@ -92,25 +92,25 @@ svgicons2svgfont --help
 #  Usage: svgicons2svgfont [options] <icons ...>
 #
 #  Options:
-#
-#    -h, --help                  output usage information
-#    -V, --version               output the version number
-#    -v, --verbose               tell me everything!
-#    -o, --output [/dev/stdout]  Output file.
-#    -f, --fontname [value]      the font family name you want [iconfont].
-#    -i, --fontId [value]        The font id you want [fontname]
-#    -st, --style [value]        the font style you want [iconfont].
-#    -we, --weight [value]       the font weight you want [iconfont].
-#    -w, --fixedWidth            creates a monospace font of the width of the largest input icon.
-#    -c, --centerhorizontally    calculate the bounds of a glyph and center it horizontally.
-#    -n, --normalize             normalize icons by scaling them to the height of the highest icon.
-#    -h, --height [value]        the outputted font height [MAX(icons.height)].
-#    -r, --round [value]         setup the SVG path rounding [10e12].
-#    -d, --descent [value]       the font descent [0].
-#    -a, --ascent [value]        the font ascent [height - descent].
-#    -s, --startunicode [value]  the start unicode codepoint for unprefixed files [0xEA01].
-#    -a, --prependUnicode         prefix files with their automatically allocated unicode codepoint.
-#    -m, --metadata              content of the metadata tag.
+#   -V, --version               output the version number
+#   -v, --verbose               tell me everything!
+#   -o, --output [/dev/stdout]  Output file.
+#   -f, --fontname [value]      the font family name you want [iconfont].
+#   -i, --fontId [value]        the font id you want [fontname].
+#   -st, --style [value]        the font style you want.
+#   -we, --weight [value]       the font weight you want.
+#   -w, --fixedWidth            creates a monospace font of the width of the largest input icon.
+#   -c, --centerhorizontally    calculate the bounds of a glyph and center it horizontally.
+#   -n, --normalize             normalize icons by scaling them to the height of the highest icon.
+#   -h, --height [value]        the output font height [MAX(icons.height)]. 
+#                               Icons will be scaled so the highest has this height.
+#   -r, --round [value]         setup the SVG path rounding [10e12].
+#   -d, --descent [value]       the font descent [0].
+#   -a, --ascent [value]        the font ascent [height - ascent].
+#   -s, --startunicode [value]  the start unicode codepoint for unprefixed files [0xEA01].
+#   -a, --prependUnicode        prefix files with their automatically allocated unicode codepoint.
+#   -m, --metadata              content of the metadata tag.
+#   -h, --help                  output usage information
 ```
 
 ## API

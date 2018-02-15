@@ -33,7 +33,7 @@ program
   )
   .option(
     '-h, --height [value]',
-    'the outputted font height [MAX(icons.height)].',
+    'the output font height [MAX(icons.height)]. Icons will be scaled so the highest has this height.',
     parseInt
   )
   .option(

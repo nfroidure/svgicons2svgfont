@@ -69,11 +69,11 @@ function generateFontToMemory(options, done, files, startUnicode) {
 
   svgFontStream.on('finish', () => {
     assert.equal(
+      content,
       fs.readFileSync(
         path.join(__dirname, 'expected', `${options.fontName}.svg`),
         { encoding: 'utf8' }
-      ),
-      content
+      )
     );
     done();
   });
@@ -235,7 +235,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should not display hidden pathes', done => {
+  it('should not display hidden paths', done => {
     generateFontToFile(
       {
         fontName: 'hiddenpathesicons',
@@ -507,7 +507,7 @@ describe('Using options', () => {
 
   it(
     'should work with fixedWidth, normalize and centerHorizontally set to' +
-      ' true and with custom fontHeight option',
+    ' true and with custom fontHeight option',
     done => {
       generateFontToFile(
         {
@@ -520,6 +520,25 @@ describe('Using options', () => {
         },
         done,
         '7'
+      );
+    }
+  );
+
+  it(
+    'should work with fixedWidth, normalize and centerHorizontally set to' +
+    ' true and with a large custom fontHeight option',
+    done => {
+      generateFontToFile(
+        {
+          fontName: 'originalicons',
+          fontHeight: 5000,
+          normalize: true,
+          fixedWidth: true,
+          centerHorizontally: true,
+          round: 1e5,
+        },
+        done,
+        '8'
       );
     }
   );
@@ -557,11 +576,11 @@ describe('Passing code points', () => {
 
     svgFontStream.on('finish', () => {
       assert.equal(
+        content,
         fs.readFileSync(
           path.join(__dirname, 'expected', 'cleanicons-multi.svg'),
           { encoding: 'utf8' }
         ),
-        content
       );
       done();
     });
@@ -588,11 +607,11 @@ describe('Passing code points', () => {
 
     svgFontStream.on('finish', () => {
       assert.equal(
+        content,
         fs.readFileSync(
           path.join(__dirname, 'expected', 'cleanicons-lig.svg'),
           { encoding: 'utf8' }
-        ),
-        content
+        )
       );
       done();
     });
@@ -619,11 +638,11 @@ describe('Passing code points', () => {
 
     svgFontStream.on('finish', () => {
       assert.equal(
+        content,
         fs.readFileSync(
           path.join(__dirname, 'expected', 'cleanicons-high.svg'),
           { encoding: 'utf8' }
-        ),
-        content
+        )
       );
       done();
     });

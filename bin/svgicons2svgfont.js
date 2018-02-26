@@ -11,7 +11,7 @@ const SVGIcons2SVGFont = require('../src/index.js');
 const SVGIconsDirStream = require('../src/iconsdir.js');
 
 program
-  .version('2.0.0')
+  .version('9.0.1')
   .usage('[options] <icons ...>')
   .option('-v, --verbose', 'tell me everything!')
   .option('-o, --output [/dev/stdout]', 'Output file.')

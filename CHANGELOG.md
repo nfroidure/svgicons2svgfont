@@ -1,3 +1,8 @@
+<a name="9.0.2"></a>
+## [9.0.2](https://github.com/nfroidure/svgicons2svgfont/compare/v9.0.1...v9.0.2) (2018-02-26)
+
+
+
 <a name="9.0.1"></a>
 ## [9.0.1](https://github.com/nfroidure/svgicons2svgfont/compare/v9.0.0...v9.0.1) (2018-02-26)
 

@@ -76,10 +76,10 @@ new SVGIconsDirStream(files, {
     new SVGIcons2SVGFont({
       fontName: program.fontname,
       fontId: program.fontId,
-      fixedwidth: program.fixedwidth,
-      centerhorizontally: program.centerHorizontally,
+      fixedWidth: program.fixedwidth,
+      centerHorizontally: program.centerHorizontally,
       normalize: program.normalize,
-      height: program.height,
+      fontHeight: program.height,
       round: program.round,
       descent: program.descent,
       ascent: program.ascent,

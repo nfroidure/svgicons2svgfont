@@ -394,6 +394,15 @@ describe('Generating fonts to files', () => {
       done
     );
   });
+
+  it('should work when only rx is present', done => {
+    generateFontToFile(
+      {
+        fontName: 'onlywithrx',
+      },
+      done
+    );
+  });
 });
 
 describe('Generating fonts to memory', () => {

@@ -24,7 +24,7 @@ function svgShapesToPathRectToPath(attributes) {
   const rx =
     'undefined' !== typeof attributes.rx ? parseFloat(attributes.rx) : 0;
   const ry =
-    'undefined' !== typeof attributes.ry ? parseFloat(attributes.ry) : 0;
+    'undefined' !== typeof attributes.ry ? parseFloat(attributes.ry) : rx;
 
   return (
     '' +

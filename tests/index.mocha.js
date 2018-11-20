@@ -403,6 +403,15 @@ describe('Generating fonts to files', () => {
       done
     );
   });
+
+  it('should work when only ry is present', done => {
+    generateFontToFile(
+      {
+        fontName: 'onlywithry',
+      },
+      done
+    );
+  });
 });
 
 describe('Generating fonts to memory', () => {

@@ -229,8 +229,8 @@ You can also use [webfonts-generator](https://www.npmjs.com/package/webfonts-gen
 
 ## Stats
 
-[![NPM](https://nodei.co/npm/svgicons2svgfont.png?downloads=true&stars=true)](https://nodei.co/npm/svgicon2svgfont/)
-[![NPM](https://nodei.co/npm-dl/svgicons2svgfont.png)](https://nodei.co/npm/svgicon2svgfont/)
+[![NPM](https://nodei.co/npm/svgicons2svgfont.png?downloads=true&stars=true)](https://nodei.co/npm/svgicons2svgfont/)
+[![NPM](https://nodei.co/npm-dl/svgicons2svgfont.png)](https://nodei.co/npm/svgicons2svgfont/)
 
 ## Contributing
 Feel free to push your code if you agree with publishing under the MIT license.

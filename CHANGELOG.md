@@ -1,3 +1,18 @@
+<a name="9.1.0"></a>
+# [9.1.0](https://github.com/nfroidure/svgicons2svgfont/compare/v9.0.3...v9.1.0) (2019-06-01)
+
+
+### Bug Fixes
+
+* NaN in d attribute when shape has rx, but ry attribute doesn't present ([72c5520](https://github.com/nfroidure/svgicons2svgfont/commit/72c5520))
+
+
+### Features
+
+* Add options.metadataProvider option + API doc ([3343d33](https://github.com/nfroidure/svgicons2svgfont/commit/3343d33))
+
+
+
 <a name="9.0.3"></a>
 ## [9.0.3](https://github.com/nfroidure/svgicons2svgfont/compare/v9.0.2...v9.0.3) (2018-06-02)
 

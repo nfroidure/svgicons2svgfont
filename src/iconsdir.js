@@ -13,7 +13,7 @@ require('string.prototype.codepointat');
 class SVGIconsDirStream extends Readable {
   constructor(dir, options) {
     super({ objectMode: true });
-    this.getMetadata = initMetadataService(options);
+    this.getMetadata = options.metadataProvider || initMetadataService(options);
     this.gotFilesInfos = false;
     this.dir = dir;
 

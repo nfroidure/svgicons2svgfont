@@ -7,11 +7,10 @@ const fs = require('fs');
 require('string.fromcodepoint');
 require('string.prototype.codepointat');
 
-function getMetadataService(options) {
+function getMetadataService(options = {}) {
   let usedUnicodes = [];
 
   // Default options
-  options = options || {};
   options.prependUnicode = !!options.prependUnicode;
   options.startUnicode =
     'number' === typeof options.startUnicode ? options.startUnicode : 0xea01;
@@ -56,11 +55,11 @@ function getMetadataService(options) {
         );
         return;
       }
-      usedUnicodes = usedUnicodes.concat(metadata.unicode);
+      usedUnicodes.push(...metadata.unicode);
     } else {
       do {
         metadata.unicode[0] = String.fromCodePoint(options.startUnicode++);
-      } while (-1 !== usedUnicodes.indexOf(metadata.unicode[0]));
+      } while (usedUnicodes.includes(metadata.unicode[0]));
       usedUnicodes.push(metadata.unicode[0]);
       if (options.prependUnicode) {
         metadata.renamed = true;

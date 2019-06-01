@@ -175,6 +175,22 @@ Default value: `undefined`
 The font [metadata](http://www.w3.org/TR/SVG/metadata.html). You can set any
  character data in but it is the be suited place for a copyright mention.
 
+#### options.metadataProvider
+Type: `(file: string, cb: (err: any, metadata: {file: string, name: string, unicode: string[], renamed: boolean}) => void`
+
+Default value: `require('svgicons2svgfont/src/metadata')(options)`
+
+A function which determines the metadata for an icon. It takes a parameter `file` with an icon svg and should return
+icon metadata (asynchronously) via the callback function. You can use this function to provide custom logic for svg to
+codepoint mapping.
+
+|                    |                                                                                          |
+| ------------------ | ---------------------------------------------------------------------------------------- |
+| `metadata.path`    | The path to the icon file. (The original `file` param is the file was not moved.)        |
+| `metadata.name`    | The name of the icon                                                                     |
+| `metadata.unicode` | The unicode codepoints corresponding to this glyph. Each should be a 1-codepoint string. |
+| `metadata.renamed` | Wether the original file was moved (e.g. to prefix it with its unicode codepoint)        |
+
 #### options.log
 Type: `Function`
 Default value: `console.log`

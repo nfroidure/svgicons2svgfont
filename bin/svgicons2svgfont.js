@@ -7,7 +7,7 @@ const program = require('commander');
 const fs = require('fs');
 const glob = require('glob');
 
-const SVGIcons2SVGFont = require('../src/index.js');
+const SVGIcons2SVGFontStream = require('../src/index.js');
 const SVGIconsDirStream = require('../src/iconsdir.js');
 
 program
@@ -65,7 +65,7 @@ if (!program.args.length) {
   process.exit(1);
 }
 
-const files = [].concat(...program.args.map(file => glob.sync(file)));
+const files = program.args.flatMap(file => glob.sync(file));
 
 new SVGIconsDirStream(files, {
   startUnicode: program.startunicode,
@@ -73,7 +73,7 @@ new SVGIconsDirStream(files, {
   log: program.v ? console.log : function() {}, // eslint-disable-line
 })
   .pipe(
-    new SVGIcons2SVGFont({
+    new SVGIcons2SVGFontStream({
       fontName: program.fontname,
       fontId: program.fontId,
       fixedWidth: program.fixedwidth,

@@ -485,7 +485,7 @@ class SVGIcons2SVGFontStream extends Transform {
       }
       delete glyph.paths;
       glyph.unicode.forEach((unicode, i) => {
-        const unicodeStr = ucs2
+        const unicodeStr = ('function' === typeof this._options.getUniCodeStr) ? this._options.getUniCodeStr(glyph) : ucs2
           .decode(unicode)
           .map(point => '&#x' + point.toString(16).toUpperCase() + ';')
           .join('');

@@ -820,14 +820,22 @@ describe('Providing bad glyphs', () => {
       name: 'test',
       unicode: ['\uE002'],
     };
+
+    let firstError = true
+
     new SVGIcons2SVGFontStream({ round: 1e3 })
       .on('error', err => {
         assert.equal(err instanceof Error, true);
-        assert.equal(
-          err.message,
-          'Non-whitespace before first tag.\nLine: 0\nColumn: 1\nChar: b'
-        );
-        done();
+
+        if (firstError) {
+          firstError = false
+          assert.equal(
+            err.message,
+            'Non-whitespace before first tag.\nLine: 0\nColumn: 1\nChar: b'
+          );
+
+          done();
+        }
       })
       .write(svgIconStream);
   });

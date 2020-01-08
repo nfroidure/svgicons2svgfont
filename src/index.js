@@ -8,7 +8,7 @@ const { Transform } = require('stream');
 const Sax = require('sax');
 const { SVGPathData } = require('svg-pathdata');
 const svgShapesToPath = require('./svgshapes2svgpath');
-const { Matrix } = require('transformation-matrix-js');
+const { Matrix } = require('./Matrix');
 
 require('string.prototype.codepointat');
 

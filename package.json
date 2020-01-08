@@ -43,8 +43,9 @@
     "fonts"
   ],
   "engines": {
-    "node": ">=6.9.5"
+    "node": ">=12.14.0"
   },
+  "engineStrict": true,
   "dependencies": {
     "commander": "^4.0.1",
     "geometry-interfaces": "^1.1.4",

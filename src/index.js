@@ -483,6 +483,9 @@ class SVGIcons2SVGFontStream extends Transform {
           (glyph.width - (bounds.maxX - bounds.minX)) / 2 - bounds.minX
         );
       }
+      if (this._options.centerVertically) {
+        glyphPath.translate(0, (fontHeight - glyph.height)/2)
+      }
       delete glyph.paths;
       glyph.unicode.forEach((unicode, i) => {
         const unicodeStr = ucs2

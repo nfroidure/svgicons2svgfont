@@ -292,6 +292,16 @@ describe('Generating fonts to files', () => {
     );
   });
 
+  it('should work when vertically centering SVG icons', done => {
+    generateFontToFile(
+      {
+        fontName: 'toverticalcentericons',
+        centerVertically: true,
+      },
+      done
+    );
+  });
+
   it('should work with a icons with path with fill none', done => {
     generateFontToFile(
       {

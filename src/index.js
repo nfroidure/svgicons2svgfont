@@ -476,12 +476,14 @@ class SVGIcons2SVGFontStream extends Transform {
           ...path.toAbs().matrix(...glyphPathTransform.toArray()).commands
         );
       });
-      if (this._options.centerHorizontally) {
-        const bounds = glyphPath.getBounds();
-
+      const bounds = (this._options.centerHorizontally || this._options.centerVertically) && glyphPath.getBounds();
+      if (this._options.centerHorizontally) { 
         glyphPath.translate(
           (glyph.width - (bounds.maxX - bounds.minX)) / 2 - bounds.minX
         );
+      }
+      if (this._options.centerVertically) {
+        glyphPath.translate(0, (fontHeight - (bounds.maxY - bounds.minY))/2)
       }
       delete glyph.paths;
       glyph.unicode.forEach((unicode, i) => {

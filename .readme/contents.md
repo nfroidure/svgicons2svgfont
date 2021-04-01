@@ -86,6 +86,7 @@ svgicons2svgfont --help
 #    -we, --weight [value]       the font weight you want
 #    -w, --fixedWidth            creates a monospace font of the width of the largest input icon
 #    -c, --centerhorizontally    calculate the bounds of a glyph and center it horizontally
+#    -y, --centervertically      centers the glyphs vertically in the generated font.
 #    -n, --normalize             normalize icons by scaling them to the height of the highest icon
 #    -h, --height [value]        the output font height [MAX(icons.height)] (icons will be scaled so the highest has this height)
 #    -r, --round [value]         setup the SVG path rounding [10e12]
@@ -136,6 +137,12 @@ Type: `Boolean`
 Default value: `false`
 
 Calculate the bounds of a glyph and center it horizontally.
+
+#### options.centerVertically
+Type: `Boolean`
+Default value: `false`
+
+Centers the glyphs vertically in the generated font.
 
 #### options.normalize
 Type: `Boolean`

@@ -28,6 +28,10 @@ program
     'calculate the bounds of a glyph and center it horizontally'
   )
   .option(
+    '-y, --centerVertically',
+    'centers the glyphs vertically in the generated font.'
+  )
+  .option(
     '-n, --normalize',
     'normalize icons by scaling them to the height of the highest icon'
   )
@@ -78,6 +82,7 @@ new SVGIconsDirStream(files, {
       fontId: program.fontId,
       fixedWidth: program.fixedwidth,
       centerHorizontally: program.centerHorizontally,
+      centerVertically: program.centerVertically,
       normalize: program.normalize,
       fontHeight: program.height,
       round: program.round,

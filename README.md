@@ -7,7 +7,7 @@
 > Read a set of SVG icons and ouput a SVG font
 
 [![NPM version](https://badge.fury.io/js/svgicons2svgfont.svg)](https://npmjs.org/package/svgicons2svgfont)
-[![Build status](https://secure.travis-ci.org/nfroidure/svgicons2svgfont.svg)](https://travis-ci.org/nfroidure/svgicons2svgfont)
+[![Run tests](https://github.com/nfroidure/svgicons2svgfont/actions/workflows/test.yml/badge.svg)](https://github.com/nfroidure/svgicons2svgfont/actions/workflows/test.yml)
 [![Dependency Status](https://david-dm.org/nfroidure/svgicons2svgfont.svg)](https://david-dm.org/nfroidure/svgicons2svgfont)
 [![devDependency Status](https://david-dm.org/nfroidure/svgicons2svgfont/dev-status.svg)](https://david-dm.org/nfroidure/svgicons2svgfont#info=devDependencies)
 [![Coverage Status](https://coveralls.io/repos/nfroidure/svgicons2svgfont/badge.svg?branch=master)](https://coveralls.io/r/nfroidure/svgicons2svgfont?branch=master)

@@ -6,6 +6,7 @@
 const program = require('commander');
 const fs = require('fs');
 const glob = require('glob');
+const flatMap = require('array.prototype.flatmap');
 
 const SVGIcons2SVGFontStream = require('../src/index.js');
 const SVGIconsDirStream = require('../src/iconsdir.js');
@@ -69,7 +70,7 @@ if (!program.args.length) {
   process.exit(1);
 }
 
-const files = program.args.flatMap(file => glob.sync(file));
+const files = flatMap(program.args, file => glob.sync(file));
 
 new SVGIconsDirStream(files, {
   startUnicode: program.startunicode,

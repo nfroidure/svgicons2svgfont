@@ -9,13 +9,13 @@
     <missing-glyph horiz-adv-x="0" />
     <glyph glyph-name="bottomleft"
       unicode="&#xE001;"
-      horiz-adv-x="100" d="M20 20L20 40L40 40L40 20z" />
+      horiz-adv-x="100" d="M20 40L20 60L40 60L40 40z" />
     <glyph glyph-name="center"
       unicode="&#xE002;"
       horiz-adv-x="100" d="M40 40L40 60L60 60L60 40z" />
     <glyph glyph-name="topright"
       unicode="&#xE003;"
-      horiz-adv-x="100" d="M60 80L60 60L80 60L80 80z" />
+      horiz-adv-x="100" d="M60 60L60 40L80 40L80 60z" />
   </font>
 </defs>
 </svg>

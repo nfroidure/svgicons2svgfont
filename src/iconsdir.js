@@ -30,7 +30,7 @@ class SVGIconsDirStream extends Readable {
     this.fileInfos = [];
     // Ensure prefixed files come first
     files = files.slice(0).sort(fileSorter);
-    files.forEach(file => {
+    files.forEach((file) => {
       this.getMetadata(
         (this.dir ? this.dir + '/' : '') + file,
         (err, metadata) => {
@@ -55,9 +55,8 @@ class SVGIconsDirStream extends Readable {
           }
           if (files.length === filesProcessed) {
             // Reorder files
-            this.fileInfos.sort(
-              (infosA, infosB) =>
-                infosA.unicode[0] > infosB.unicode[0] ? 1 : -1
+            this.fileInfos.sort((infosA, infosB) =>
+              infosA.unicode[0] > infosB.unicode[0] ? 1 : -1
             );
             // Mark directory as processed
             this.gotFilesInfos = true;

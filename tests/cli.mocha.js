@@ -7,7 +7,7 @@ const assert = require('assert');
 const childProcess = require('child_process');
 
 describe('Testing CLI', () => {
-  it('should work for simple SVG', done => {
+  it('should work for simple SVG', (done) => {
     const command =
       `${'node' + ' '}${path.join(
         __dirname,
@@ -21,7 +21,7 @@ describe('Testing CLI', () => {
       )} -s 0xE001` +
       ` ${path.join(__dirname, 'fixtures', 'originalicons', '*.svg')}`;
 
-    childProcess.exec(command, err => {
+    childProcess.exec(command, (err) => {
       if (err) {
         throw err;
       }
@@ -39,7 +39,7 @@ describe('Testing CLI', () => {
     });
   });
 
-  it('should work for more than 32 SVG icons', done => {
+  it('should work for more than 32 SVG icons', (done) => {
     const command =
       'node' +
       ' ' +
@@ -65,7 +65,7 @@ describe('Testing CLI', () => {
       ' ' +
       path.join(__dirname, 'fixtures', 'tocentericons', '*.svg');
 
-    childProcess.exec(command, err => {
+    childProcess.exec(command, (err) => {
       if (err) {
         throw err;
       }
@@ -83,7 +83,7 @@ describe('Testing CLI', () => {
   });
 
   describe('with nested icons', () => {
-    it('should work', done => {
+    it('should work', (done) => {
       const command = `${'node' + ' '}${path.join(
         __dirname,
         '..',
@@ -95,7 +95,7 @@ describe('Testing CLI', () => {
         'nestedicons-cli.svg'
       )} ${path.join(__dirname, 'fixtures', 'nestedicons', '*.svg')}`;
 
-      childProcess.exec(command, err => {
+      childProcess.exec(command, (err) => {
         if (err) {
           throw err;
         }

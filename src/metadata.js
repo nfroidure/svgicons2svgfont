@@ -38,11 +38,11 @@ function getMetadataService(options = {}) {
     metadata.name =
       matches && matches[2] ? matches[2] : 'icon' + options.startUnicode;
     if (matches && matches[1]) {
-      metadata.unicode = matches[1].split(',').map(match => {
+      metadata.unicode = matches[1].split(',').map((match) => {
         match = match.substr(1);
         return match
           .split('u')
-          .map(code => String.fromCodePoint(parseInt(code, 16)))
+          .map((code) => String.fromCodePoint(parseInt(code, 16)))
           .join('');
       });
       if (-1 !== usedUnicodes.indexOf(metadata.unicode[0])) {
@@ -66,14 +66,11 @@ function getMetadataService(options = {}) {
         metadata.path = path.join(
           path.dirname(file),
           'u' +
-            metadata.unicode[0]
-              .codePointAt(0)
-              .toString(16)
-              .toUpperCase() +
+            metadata.unicode[0].codePointAt(0).toString(16).toUpperCase() +
             '-' +
             basename
         );
-        fs.rename(file, metadata.path, err => {
+        fs.rename(file, metadata.path, (err) => {
           if (err) {
             cb(
               new Error(

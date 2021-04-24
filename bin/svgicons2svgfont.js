@@ -69,12 +69,12 @@ if (!program.args.length) {
   process.exit(1);
 }
 
-const files = program.args.flatMap(file => glob.sync(file));
+const files = program.args.flatMap((file) => glob.sync(file));
 
 new SVGIconsDirStream(files, {
   startUnicode: program.startunicode,
   prependUnicode: program.prependUnicode,
-  log: program.v ? console.log : function() {}, // eslint-disable-line
+  log: program.v ? console.log : function () {}, // eslint-disable-line
 })
   .pipe(
     new SVGIcons2SVGFontStream({
@@ -89,7 +89,7 @@ new SVGIconsDirStream(files, {
       descent: program.descent,
       ascent: program.ascent,
       metadata: program.metadata,
-      log: program.v ? console.log : function() {}, // eslint-disable-line
+      log: program.v ? console.log : function () {}, // eslint-disable-line
     })
   )
   .pipe(program.output ? fs.createWriteStream(program.output) : process.stdout);

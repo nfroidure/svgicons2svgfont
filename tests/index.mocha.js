@@ -57,7 +57,7 @@ function generateFontToMemory(options, done, files, startUnicode) {
   options.log = () => {};
   options.round = options.round || 1e3;
 
-  options.callback = glyphs => {
+  options.callback = (glyphs) => {
     const fontName = options.fontName;
 
     neatequal(glyphs, codepoint[fontName]);
@@ -65,7 +65,7 @@ function generateFontToMemory(options, done, files, startUnicode) {
 
   const svgFontStream = new SVGIcons2SVGFontStream(options);
 
-  svgFontStream.on('data', chunk => {
+  svgFontStream.on('data', (chunk) => {
     content += decoder.write(chunk);
   });
 
@@ -90,7 +90,7 @@ function generateFontToMemory(options, done, files, startUnicode) {
 
 // Tests
 describe('Generating fonts to files', () => {
-  it('should work for simple SVG', done => {
+  it('should work for simple SVG', (done) => {
     generateFontToFile(
       {
         fontName: 'originalicons',
@@ -99,7 +99,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work for simple fixedWidth and normalize option', done => {
+  it('should work for simple fixedWidth and normalize option', (done) => {
     generateFontToFile(
       {
         fontName: 'originalicons',
@@ -111,7 +111,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work for simple SVG', done => {
+  it('should work for simple SVG', (done) => {
     generateFontToFile(
       {
         fontName: 'cleanicons',
@@ -120,7 +120,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work for simple SVG and custom ascent', done => {
+  it('should work for simple SVG and custom ascent', (done) => {
     generateFontToFile(
       {
         fontName: 'cleanicons',
@@ -131,7 +131,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work for simple SVG and custom properties', done => {
+  it('should work for simple SVG and custom properties', (done) => {
     generateFontToFile(
       {
         fontName: 'cleanicons',
@@ -143,7 +143,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work for codepoint mapped SVG icons', done => {
+  it('should work for codepoint mapped SVG icons', (done) => {
     generateFontToFile(
       {
         fontName: 'prefixedicons',
@@ -153,7 +153,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work with multipath SVG icons', done => {
+  it('should work with multipath SVG icons', (done) => {
     generateFontToFile(
       {
         fontName: 'multipathicons',
@@ -162,7 +162,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work with simple shapes SVG icons', done => {
+  it('should work with simple shapes SVG icons', (done) => {
     generateFontToFile(
       {
         fontName: 'shapeicons',
@@ -171,7 +171,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work with variable height icons', done => {
+  it('should work with variable height icons', (done) => {
     generateFontToFile(
       {
         fontName: 'variableheighticons',
@@ -180,7 +180,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work with variable height icons and the normalize option', done => {
+  it('should work with variable height icons and the normalize option', (done) => {
     generateFontToFile(
       {
         fontName: 'variableheighticons',
@@ -191,7 +191,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work with variable width icons', done => {
+  it('should work with variable width icons', (done) => {
     generateFontToFile(
       {
         fontName: 'variablewidthicons',
@@ -200,7 +200,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work with centered variable width icons and the fixed width option', done => {
+  it('should work with centered variable width icons and the fixed width option', (done) => {
     generateFontToFile(
       {
         fontName: 'variablewidthicons',
@@ -212,7 +212,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work with a font id', done => {
+  it('should work with a font id', (done) => {
     generateFontToFile(
       {
         fontName: 'variablewidthicons',
@@ -225,7 +225,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work with scaled icons', done => {
+  it('should work with scaled icons', (done) => {
     generateFontToFile(
       {
         fontName: 'scaledicons',
@@ -237,7 +237,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should not display hidden paths', done => {
+  it('should not display hidden paths', (done) => {
     generateFontToFile(
       {
         fontName: 'hiddenpathesicons',
@@ -246,7 +246,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work with real world icons', done => {
+  it('should work with real world icons', (done) => {
     generateFontToFile(
       {
         fontName: 'realicons',
@@ -255,7 +255,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work with rendering test SVG icons', done => {
+  it('should work with rendering test SVG icons', (done) => {
     generateFontToFile(
       {
         fontName: 'rendricons',
@@ -264,7 +264,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work with a single SVG icon', done => {
+  it('should work with a single SVG icon', (done) => {
     generateFontToFile(
       {
         fontName: 'singleicon',
@@ -273,7 +273,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work with transformed SVG icons', done => {
+  it('should work with transformed SVG icons', (done) => {
     generateFontToFile(
       {
         fontName: 'transformedicons',
@@ -282,7 +282,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work when horizontally centering SVG icons', done => {
+  it('should work when horizontally centering SVG icons', (done) => {
     generateFontToFile(
       {
         fontName: 'tocentericons',
@@ -292,7 +292,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work when vertically centering SVG icons', done => {
+  it('should work when vertically centering SVG icons', (done) => {
     generateFontToFile(
       {
         fontName: 'toverticalcentericons',
@@ -302,7 +302,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work with a icons with path with fill none', done => {
+  it('should work with a icons with path with fill none', (done) => {
     generateFontToFile(
       {
         fontName: 'pathfillnone',
@@ -311,7 +311,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work with shapes with rounded corners', done => {
+  it('should work with shapes with rounded corners', (done) => {
     generateFontToFile(
       {
         fontName: 'roundedcorners',
@@ -320,7 +320,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work with a lot of icons', done => {
+  it('should work with a lot of icons', (done) => {
     generateFontToFile(
       {
         fontName: 'lotoficons',
@@ -367,7 +367,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work with rotated rectangle icon', done => {
+  it('should work with rotated rectangle icon', (done) => {
     generateFontToFile(
       {
         fontName: 'rotatedrectangle',
@@ -381,7 +381,7 @@ describe('Generating fonts to files', () => {
    * icon by @paesku
    * https://github.com/nfroidure/svgicons2svgfont/issues/6#issuecomment-125545925
    */
-  it('should work with complicated nested transforms', done => {
+  it('should work with complicated nested transforms', (done) => {
     generateFontToFile(
       {
         fontName: 'paesku',
@@ -395,7 +395,7 @@ describe('Generating fonts to files', () => {
    * Issue #76
    * https://github.com/nfroidure/svgicons2svgfont/issues/76#issue-259831969
    */
-  it('should work with transform=translate(x) without y', done => {
+  it('should work with transform=translate(x) without y', (done) => {
     generateFontToFile(
       {
         fontName: 'translatex',
@@ -405,7 +405,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work when only rx is present', done => {
+  it('should work when only rx is present', (done) => {
     generateFontToFile(
       {
         fontName: 'onlywithrx',
@@ -414,7 +414,7 @@ describe('Generating fonts to files', () => {
     );
   });
 
-  it('should work when only ry is present', done => {
+  it('should work when only ry is present', (done) => {
     generateFontToFile(
       {
         fontName: 'onlywithry',
@@ -425,7 +425,7 @@ describe('Generating fonts to files', () => {
 });
 
 describe('Generating fonts to memory', () => {
-  it('should work for simple SVG', done => {
+  it('should work for simple SVG', (done) => {
     generateFontToMemory(
       {
         fontName: 'originalicons',
@@ -434,7 +434,7 @@ describe('Generating fonts to memory', () => {
     );
   });
 
-  it('should work for simple SVG', done => {
+  it('should work for simple SVG', (done) => {
     generateFontToMemory(
       {
         fontName: 'cleanicons',
@@ -443,7 +443,7 @@ describe('Generating fonts to memory', () => {
     );
   });
 
-  it('should work for codepoint mapped SVG icons', done => {
+  it('should work for codepoint mapped SVG icons', (done) => {
     generateFontToMemory(
       {
         fontName: 'prefixedicons',
@@ -452,7 +452,7 @@ describe('Generating fonts to memory', () => {
     );
   });
 
-  it('should work with multipath SVG icons', done => {
+  it('should work with multipath SVG icons', (done) => {
     generateFontToMemory(
       {
         fontName: 'multipathicons',
@@ -461,7 +461,7 @@ describe('Generating fonts to memory', () => {
     );
   });
 
-  it('should work with simple shapes SVG icons', done => {
+  it('should work with simple shapes SVG icons', (done) => {
     generateFontToMemory(
       {
         fontName: 'shapeicons',
@@ -472,7 +472,7 @@ describe('Generating fonts to memory', () => {
 });
 
 describe('Using options', () => {
-  it('should work with fixedWidth option set to true', done => {
+  it('should work with fixedWidth option set to true', (done) => {
     generateFontToFile(
       {
         fontName: 'originalicons',
@@ -483,7 +483,7 @@ describe('Using options', () => {
     );
   });
 
-  it('should work with custom fontHeight option', done => {
+  it('should work with custom fontHeight option', (done) => {
     generateFontToFile(
       {
         fontName: 'originalicons',
@@ -494,7 +494,7 @@ describe('Using options', () => {
     );
   });
 
-  it('should work with custom descent option', done => {
+  it('should work with custom descent option', (done) => {
     generateFontToFile(
       {
         fontName: 'originalicons',
@@ -505,7 +505,7 @@ describe('Using options', () => {
     );
   });
 
-  it('should work with fixedWidth set to true and with custom fontHeight option', done => {
+  it('should work with fixedWidth set to true and with custom fontHeight option', (done) => {
     generateFontToFile(
       {
         fontName: 'originalicons',
@@ -520,7 +520,7 @@ describe('Using options', () => {
   it(
     'should work with fixedWidth and centerHorizontally set to true and with' +
       ' custom fontHeight option',
-    done => {
+    (done) => {
       generateFontToFile(
         {
           fontName: 'originalicons',
@@ -538,7 +538,7 @@ describe('Using options', () => {
   it(
     'should work with fixedWidth, normalize and centerHorizontally set to' +
       ' true and with custom fontHeight option',
-    done => {
+    (done) => {
       generateFontToFile(
         {
           fontName: 'originalicons',
@@ -557,7 +557,7 @@ describe('Using options', () => {
   it(
     'should work with fixedWidth, normalize and centerHorizontally set to' +
       ' true and with a large custom fontHeight option',
-    done => {
+    (done) => {
       generateFontToFile(
         {
           fontName: 'originalicons',
@@ -573,7 +573,7 @@ describe('Using options', () => {
     }
   );
 
-  it('should work with nested icons', done => {
+  it('should work with nested icons', (done) => {
     generateFontToFile(
       {
         fontName: 'nestedicons',
@@ -586,7 +586,7 @@ describe('Using options', () => {
 });
 
 describe('Passing code points', () => {
-  it('should work with multiple unicode values for a single icon', done => {
+  it('should work with multiple unicode values for a single icon', (done) => {
     const svgIconStream = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
@@ -600,7 +600,7 @@ describe('Passing code points', () => {
       unicode: ['\uE001', '\uE002'],
     };
 
-    svgFontStream.on('data', chunk => {
+    svgFontStream.on('data', (chunk) => {
       content += decoder.write(chunk);
     });
 
@@ -618,7 +618,7 @@ describe('Passing code points', () => {
     svgFontStream.end();
   });
 
-  it('should work with ligatures', done => {
+  it('should work with ligatures', (done) => {
     const svgIconStream = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
@@ -631,7 +631,7 @@ describe('Passing code points', () => {
       unicode: ['\uE001\uE002'],
     };
 
-    svgFontStream.on('data', chunk => {
+    svgFontStream.on('data', (chunk) => {
       content += decoder.write(chunk);
     });
 
@@ -649,7 +649,7 @@ describe('Passing code points', () => {
     svgFontStream.end();
   });
 
-  it('should work with high code points', done => {
+  it('should work with high code points', (done) => {
     const svgIconStream = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
@@ -662,7 +662,7 @@ describe('Passing code points', () => {
       unicode: [ucs2.encode([0x1f63a])],
     };
 
-    svgFontStream.on('data', chunk => {
+    svgFontStream.on('data', (chunk) => {
       content += decoder.write(chunk);
     });
 
@@ -682,7 +682,7 @@ describe('Passing code points', () => {
 });
 
 describe('Providing bad glyphs', () => {
-  it('should fail when not providing glyph name', done => {
+  it('should fail when not providing glyph name', (done) => {
     const svgIconStream = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
@@ -691,7 +691,7 @@ describe('Providing bad glyphs', () => {
       unicode: '\uE001',
     };
     new SVGIcons2SVGFontStream({ round: 1e3 })
-      .on('error', err => {
+      .on('error', (err) => {
         assert.equal(err instanceof Error, true);
         assert.equal(
           err.message,
@@ -702,7 +702,7 @@ describe('Providing bad glyphs', () => {
       .write(svgIconStream);
   });
 
-  it('should fail when not providing codepoints', done => {
+  it('should fail when not providing codepoints', (done) => {
     const svgIconStream = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
@@ -711,7 +711,7 @@ describe('Providing bad glyphs', () => {
       name: 'test',
     };
     new SVGIcons2SVGFontStream({ round: 1e3 })
-      .on('error', err => {
+      .on('error', (err) => {
         assert.equal(err instanceof Error, true);
         assert.equal(
           err.message,
@@ -722,7 +722,7 @@ describe('Providing bad glyphs', () => {
       .write(svgIconStream);
   });
 
-  it('should fail when providing unicode value with duplicates', done => {
+  it('should fail when providing unicode value with duplicates', (done) => {
     const svgIconStream = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
@@ -732,7 +732,7 @@ describe('Providing bad glyphs', () => {
       unicode: ['\uE002', '\uE002'],
     };
     new SVGIcons2SVGFontStream({ round: 1e3 })
-      .on('error', err => {
+      .on('error', (err) => {
         assert.equal(err instanceof Error, true);
         assert.equal(
           err.message,
@@ -743,7 +743,7 @@ describe('Providing bad glyphs', () => {
       .write(svgIconStream);
   });
 
-  it('should fail when providing the same codepoint twice', done => {
+  it('should fail when providing the same codepoint twice', (done) => {
     const svgIconStream = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
@@ -760,7 +760,7 @@ describe('Providing bad glyphs', () => {
       name: 'test2',
       unicode: '\uE002',
     };
-    svgFontStream.on('error', err => {
+    svgFontStream.on('error', (err) => {
       assert.equal(err instanceof Error, true);
       assert.equal(
         err.message,
@@ -772,7 +772,7 @@ describe('Providing bad glyphs', () => {
     svgFontStream.write(svgIconStream2);
   });
 
-  it('should fail when providing the same name twice', done => {
+  it('should fail when providing the same name twice', (done) => {
     const svgIconStream = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'cleanicons', 'account.svg')
     );
@@ -789,7 +789,7 @@ describe('Providing bad glyphs', () => {
       name: 'test',
       unicode: '\uE002',
     };
-    svgFontStream.on('error', err => {
+    svgFontStream.on('error', (err) => {
       assert.equal(err instanceof Error, true);
       assert.equal(err.message, 'The glyph name "test" must be unique.');
       done();
@@ -798,7 +798,7 @@ describe('Providing bad glyphs', () => {
     svgFontStream.write(svgIconStream2);
   });
 
-  it('should fail when providing bad pathdata', done => {
+  it('should fail when providing bad pathdata', (done) => {
     const svgIconStream = fs.createReadStream(
       path.join(__dirname, 'fixtures', 'badicons', 'pathdata.svg')
     );
@@ -808,7 +808,7 @@ describe('Providing bad glyphs', () => {
       unicode: ['\uE002'],
     };
     new SVGIcons2SVGFontStream({ round: 1e3 })
-      .on('error', err => {
+      .on('error', (err) => {
         assert.equal(err instanceof Error, true);
         assert.equal(
           err.message,
@@ -823,7 +823,7 @@ describe('Providing bad glyphs', () => {
       .write(svgIconStream);
   });
 
-  it('should fail when providing bad XML', done => {
+  it('should fail when providing bad XML', (done) => {
     const svgIconStream = streamtest.v2.fromChunks(['bad', 'xml']);
 
     svgIconStream.metadata = {
@@ -831,14 +831,14 @@ describe('Providing bad glyphs', () => {
       unicode: ['\uE002'],
     };
 
-    let firstError = true
+    let firstError = true;
 
     new SVGIcons2SVGFontStream({ round: 1e3 })
-      .on('error', err => {
+      .on('error', (err) => {
         assert.equal(err instanceof Error, true);
 
         if (firstError) {
-          firstError = false
+          firstError = false;
           assert.equal(
             err.message,
             'Non-whitespace before first tag.\nLine: 0\nColumn: 1\nChar: b'

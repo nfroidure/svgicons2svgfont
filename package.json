@@ -46,7 +46,6 @@
     "node": ">=6.9.5"
   },
   "dependencies": {
-    "array.prototype.flatmap": "1.2.4",
     "commander": "^4.0.1",
     "geometry-interfaces": "^1.1.4",
     "glob": "^7.1.6",

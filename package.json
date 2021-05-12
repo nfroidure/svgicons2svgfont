@@ -20,15 +20,13 @@
   "scripts": {
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "cli": "env NODE_ENV=${NODE_ENV:-cli}",
-    "cover": "nyc report --reporter=html -- tests/*.mocha.js -R spec -t 5000",
-    "coveralls": "npm run cover && nyc report --reporter=text-lcov | coveralls",
     "cz": "env NODE_ENV=${NODE_ENV:-cli} git cz",
     "lint": "eslint src/*.js bin/*.js tests/*.mocha.js",
     "metapak": "metapak",
     "mocha": "mocha tests/*.mocha.js",
     "prettier": "prettier --write src/*.js bin/*.js tests/*.mocha.js",
     "preversion": "npm t && npm run lint && npm run metapak -s",
-    "test": "npm run mocha",
+    "test": "nyc --reporter=lcov mocha tests/*.mocha.js",
     "version": "npm run changelog && git add CHANGELOG.md"
   },
   "repository": {
@@ -59,7 +57,6 @@
   "devDependencies": {
     "commitizen": "^4.0.3",
     "conventional-changelog-cli": "^2.0.31",
-    "coveralls": "^3.0.9",
     "cz-conventional-changelog": "^3.0.2",
     "eslint": "^7.25.0",
     "eslint-plugin-prettier": "^3.1.2",

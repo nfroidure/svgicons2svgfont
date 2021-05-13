@@ -7,8 +7,6 @@ const initMetadataService = require('../src/metadata');
 
 const Readable = require('stream').Readable;
 
-require('string.prototype.codepointat');
-
 // Constructor
 class SVGIconsDirStream extends Readable {
   constructor(dir, options) {

@@ -4,9 +4,6 @@
 const path = require('path');
 const fs = require('fs');
 
-require('string.fromcodepoint');
-require('string.prototype.codepointat');
-
 function getMetadataService(options = {}) {
   let usedUnicodes = [];
 

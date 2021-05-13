@@ -7,8 +7,6 @@ const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
 
-require('string.fromcodepoint');
-
 describe('Metadata service', () => {
   it('should throw error when using old options', () => {
     assert.throws(

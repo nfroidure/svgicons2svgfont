@@ -10,8 +10,6 @@ const { SVGPathData } = require('svg-pathdata');
 const svgShapesToPath = require('./svgshapes2svgpath');
 const { Matrix } = require('./Matrix');
 
-require('string.prototype.codepointat');
-
 // Transform helpers (will move elsewhere later)
 function parseTransforms(value) {
   return value

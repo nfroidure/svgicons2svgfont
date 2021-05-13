@@ -50,8 +50,6 @@
     "neatequal": "^1.0.0",
     "readable-stream": "^3.4.0",
     "sax": "^1.2.4",
-    "string.fromcodepoint": "^1.0.0",
-    "string.prototype.codepointat": "^1.0.0",
     "svg-pathdata": "5.0.2"
   },
   "devDependencies": {

@@ -813,7 +813,7 @@ describe('Providing bad glyphs', () => {
         assert.equal(
           err.message,
           'Got an error parsing the glyph "test":' +
-            ' Expected a flag, got "120" at index "23".'
+            ' Expected a flag, got "20" at index "23".'
         );
         done();
       })

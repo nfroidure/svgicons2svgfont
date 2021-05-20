@@ -50,7 +50,7 @@
     "neatequal": "^1.0.0",
     "readable-stream": "^3.4.0",
     "sax": "^1.2.4",
-    "svg-pathdata": "5.0.2"
+    "svg-pathdata": "^6.0.0"
   },
   "devDependencies": {
     "commitizen": "^4.0.3",

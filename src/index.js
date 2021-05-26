@@ -475,12 +475,12 @@ class SVGIcons2SVGFontStream extends Transform {
         );
       }
       delete glyph.paths;
+      const d = glyphPath.round(this._options.round).encode();
       glyph.unicode.forEach((unicode, i) => {
         const unicodeStr = ucs2
           .decode(unicode)
           .map((point) => '&#x' + point.toString(16).toUpperCase() + ';')
           .join('');
-        const d = glyphPath.round(this._options.round).encode();
 
         this.push(
           '    <glyph glyph-name="' +

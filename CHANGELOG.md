@@ -1,3 +1,8 @@
+<a name="10.0.4"></a>
+# [10.0.4](https://github.com/nfroidure/svgicons2svgfont/compare/v10.0.4...v10.0.4) (2021-06-02)
+
+https://github.com/nfroidure/svgicons2svgfont/releases/tag/v10.0.4
+
 <a name="10.0.3"></a>
 # [10.0.3](https://github.com/nfroidure/svgicons2svgfont/compare/v10.0.2...v10.0.3) (2021-06-02)
 

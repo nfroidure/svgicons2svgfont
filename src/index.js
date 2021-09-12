@@ -471,7 +471,9 @@ class SVGIcons2SVGFontStream extends Transform {
       if (this._options.centerVertically) {
         glyphPath.translate(
           0,
-          (fontHeight - (bounds.maxY - bounds.minY)) / 2 - bounds.minY
+          (fontHeight - (bounds.maxY - bounds.minY)) / 2 -
+            bounds.minY -
+            this._options.descent
         );
       }
       delete glyph.paths;

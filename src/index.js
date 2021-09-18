@@ -433,7 +433,7 @@ class SVGIcons2SVGFontStream extends Transform {
 
     this.glyphs.forEach((glyph) => {
       const ratio = this._options.normalize
-        ? fontHeight / glyph.height
+        ? fontHeight / (glyph.width > glyph.height ? glyph.width : glyph.height)
         : fontHeight / maxGlyphHeight;
       if (!isFinite(ratio)) throw new Error('foo');
       glyph.width *= ratio;

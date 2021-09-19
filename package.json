@@ -48,6 +48,7 @@
     "geometry-interfaces": "^1.1.4",
     "glob": "^7.1.6",
     "neatequal": "^1.0.0",
+    "paper-jsdom": "^0.12.15",
     "readable-stream": "^3.4.0",
     "sax": "^1.2.4",
     "svg-pathdata": "^6.0.0"

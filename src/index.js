@@ -9,6 +9,15 @@ const Sax = require('sax');
 const { SVGPathData } = require('svg-pathdata');
 const svgShapesToPath = require('./svgshapes2svgpath');
 const { Matrix } = require('./Matrix');
+const paper = require('paper');
+
+// Transform fill-rule from evenodd to nonzero
+function reorientPath(pathData) {
+  paper.setup('font-canvas');
+  var path = new paper.CompoundPath(pathData);
+  path.reorient();
+  return path.pathData;
+}
 
 // Transform helpers (will move elsewhere later)
 function parseTransforms(value) {
@@ -307,7 +316,15 @@ class SVGIcons2SVGFontStream extends Transform {
           tag.attributes.d &&
           'none' !== tag.attributes.fill
         ) {
-          glyph.paths.push(applyTransform(tag.attributes.d));
+          //Found fill rule "evenodd" support
+          if (
+            'fill-rule' in tag.attributes &&
+            'evenodd' === tag.attributes['fill-rule']
+          ) {
+            glyph.paths.push(applyTransform(reorientPath(tag.attributes.d)));
+          } else {
+            glyph.paths.push(applyTransform(tag.attributes.d));
+          }
         }
 
         // According to http://www.w3.org/TR/SVG/painting.html#SpecifyingPaint

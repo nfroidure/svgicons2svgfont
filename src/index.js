@@ -51,6 +51,16 @@ function matrixFromTransformAttribute(transformAttributeString) {
   return result;
 }
 
+function hasParent(parentTag, parents) {
+  return parents.some((tag) => parentTag === tag.name);
+}
+
+function findDefs(defs, name) {
+  return defs
+    .filter((tag) => tag.attributes.id === name.replace('#', ''))
+    .pop();
+}
+
 // Rendering
 function tagShouldRender(curTag, parents) {
   let values;
@@ -80,7 +90,7 @@ function tagShouldRender(curTag, parents) {
         return true;
       }
     }
-    if ('clipPath' === tag.name || 'defs' === tag.name) {
+    if ('clipPath' === tag.name) {
       return true;
     }
     return false;
@@ -141,10 +151,49 @@ class SVGIcons2SVGFontStream extends Transform {
     this.log = this._options.log || console.log.bind(console); // eslint-disable-line
   }
 
+  _processElement(tag, glyph) {
+    if ('rect' === tag.name && 'none' !== tag.attributes.fill) {
+      return svgShapesToPath.rectToPath(tag.attributes);
+    } else if ('line' === tag.name && 'none' !== tag.attributes.fill) {
+      this.log(
+        `Found a line element in the icon "${glyph.name}" the result could be different than expected.`
+      );
+      return svgShapesToPath.lineToPath(tag.attributes);
+    } else if ('polyline' === tag.name && 'none' !== tag.attributes.fill) {
+      this.log(
+        `Found a polyline element in the icon "${glyph.name}" the result could be different than expected.`
+      );
+      return svgShapesToPath.polylineToPath(tag.attributes);
+    } else if ('polygon' === tag.name && 'none' !== tag.attributes.fill) {
+      return svgShapesToPath.polygonToPath(tag.attributes);
+    } else if (
+      ['circle', 'ellipse'].includes(tag.name) &&
+      'none' !== tag.attributes.fill
+    ) {
+      return svgShapesToPath.circleToPath(tag.attributes);
+    } else if (
+      'path' === tag.name &&
+      tag.attributes.d &&
+      'none' !== tag.attributes.fill
+    ) {
+      let pathData = tag.attributes.d;
+      //Found fill rule "evenodd" support
+      if (
+        'fill-rule' in tag.attributes &&
+        'evenodd' === tag.attributes['fill-rule']
+      ) {
+        pathData = reorientPath(tag.attributes.d);
+      }
+      return pathData;
+    }
+    return null;
+  }
+
   _transform(svgIconStream, _unused, svgIconStreamCallback) {
     // Parsing each icons asynchronously
     const saxStream = Sax.createStream(true);
     const parents = [];
+    const defs = [];
     const transformStack = [new Matrix()];
     function applyTransform(d) {
       return new SVGPathData(d).matrix(
@@ -240,6 +289,11 @@ class SVGIcons2SVGFontStream extends Transform {
           return;
         }
 
+        if (hasParent('defs', parents)) {
+          defs.push(tag);
+          return;
+        }
+
         // Save the view size
         if ('svg' === tag.name) {
           if ('viewBox' in tag.attributes) {
@@ -285,53 +339,22 @@ class SVGIcons2SVGFontStream extends Transform {
           this.log(
             `Found a clipPath element in the icon "${glyph.name}" the result may be different than expected.`
           );
-        } else if ('defs' === tag.name) {
-          // defs unsupported
-          this.log(
-            `Found a defs element in the icon "${glyph.name}" the result may be different than expected.`
-          );
-        } else if ('rect' === tag.name && 'none' !== tag.attributes.fill) {
-          glyph.paths.push(
-            applyTransform(svgShapesToPath.rectToPath(tag.attributes))
-          );
-        } else if ('line' === tag.name && 'none' !== tag.attributes.fill) {
-          this.log(
-            `Found a line element in the icon "${glyph.name}" the result could be different than expected.`
-          );
-          glyph.paths.push(
-            applyTransform(svgShapesToPath.lineToPath(tag.attributes))
-          );
-        } else if ('polyline' === tag.name && 'none' !== tag.attributes.fill) {
-          this.log(
-            `Found a polyline element in the icon "${glyph.name}" the result could be different than expected.`
-          );
-          glyph.paths.push(
-            applyTransform(svgShapesToPath.polylineToPath(tag.attributes))
-          );
-        } else if ('polygon' === tag.name && 'none' !== tag.attributes.fill) {
-          glyph.paths.push(
-            applyTransform(svgShapesToPath.polygonToPath(tag.attributes))
-          );
         } else if (
-          ['circle', 'ellipse'].includes(tag.name) &&
+          'use' === tag.name &&
+          tag.attributes['xlink:href'] &&
           'none' !== tag.attributes.fill
         ) {
-          glyph.paths.push(
-            applyTransform(svgShapesToPath.circleToPath(tag.attributes))
+          const pathData = this._processElement(
+            findDefs(defs, tag.attributes['xlink:href']),
+            glyph
           );
-        } else if (
-          'path' === tag.name &&
-          tag.attributes.d &&
-          'none' !== tag.attributes.fill
-        ) {
-          //Found fill rule "evenodd" support
-          if (
-            'fill-rule' in tag.attributes &&
-            'evenodd' === tag.attributes['fill-rule']
-          ) {
-            glyph.paths.push(applyTransform(reorientPath(tag.attributes.d)));
-          } else {
-            glyph.paths.push(applyTransform(tag.attributes.d));
+          if (pathData) {
+            glyph.paths.push(applyTransform(pathData));
+          }
+        } else {
+          const pathData = this._processElement(tag, glyph);
+          if (pathData) {
+            glyph.paths.push(applyTransform(pathData));
           }
         }
 

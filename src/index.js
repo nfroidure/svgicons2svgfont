@@ -80,7 +80,7 @@ function tagShouldRender(curTag, parents) {
         return true;
       }
     }
-    if ('clipPath' === tag.name) {
+    if ('clipPath' === tag.name || 'defs' === tag.name) {
       return true;
     }
     return false;
@@ -284,6 +284,11 @@ class SVGIcons2SVGFontStream extends Transform {
           // Clipping path unsupported
           this.log(
             `Found a clipPath element in the icon "${glyph.name}" the result may be different than expected.`
+          );
+        } else if ('defs' === tag.name) {
+          // defs unsupported
+          this.log(
+            `Found a defs element in the icon "${glyph.name}" the result may be different than expected.`
           );
         } else if ('rect' === tag.name && 'none' !== tag.attributes.fill) {
           glyph.paths.push(

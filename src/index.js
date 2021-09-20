@@ -80,6 +80,9 @@ function tagShouldRender(curTag, parents) {
         return true;
       }
     }
+    if ('clipPath' === tag.name) {
+      return true;
+    }
     return false;
   });
 }

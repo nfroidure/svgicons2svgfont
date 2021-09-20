@@ -56,9 +56,17 @@ function hasParent(parentTag, parents) {
 }
 
 function findDefs(defs, name) {
-  return defs
-    .filter((tag) => tag.attributes.id === name.replace('#', ''))
-    .pop();
+  return defs.find((tag) => tag.attributes.id === name.replace('#', ''));
+}
+
+function hasFillRule(tag) {
+  return (
+    'fill-rule' in tag.attributes && 'evenodd' === tag.attributes['fill-rule']
+  );
+}
+
+function parentHasFillRule(parents) {
+  return parents.some((tag) => hasFillRule(tag));
 }
 
 // Rendering
@@ -151,7 +159,7 @@ class SVGIcons2SVGFontStream extends Transform {
     this.log = this._options.log || console.log.bind(console); // eslint-disable-line
   }
 
-  _processElement(tag, glyph) {
+  _processElement(tag, glyph, parents) {
     if ('rect' === tag.name && 'none' !== tag.attributes.fill) {
       return svgShapesToPath.rectToPath(tag.attributes);
     } else if ('line' === tag.name && 'none' !== tag.attributes.fill) {
@@ -178,10 +186,7 @@ class SVGIcons2SVGFontStream extends Transform {
     ) {
       let pathData = tag.attributes.d;
       //Found fill rule "evenodd" support
-      if (
-        'fill-rule' in tag.attributes &&
-        'evenodd' === tag.attributes['fill-rule']
-      ) {
+      if (hasFillRule(tag) || parentHasFillRule(parents)) {
         pathData = reorientPath(tag.attributes.d);
       }
       return pathData;
@@ -346,13 +351,14 @@ class SVGIcons2SVGFontStream extends Transform {
         ) {
           const pathData = this._processElement(
             findDefs(defs, tag.attributes['xlink:href']),
-            glyph
+            glyph,
+            parents
           );
           if (pathData) {
             glyph.paths.push(applyTransform(pathData));
           }
         } else {
-          const pathData = this._processElement(tag, glyph);
+          const pathData = this._processElement(tag, glyph, parents);
           if (pathData) {
             glyph.paths.push(applyTransform(pathData));
           }

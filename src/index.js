@@ -5,15 +5,16 @@
 
 const { ucs2 } = require('punycode');
 const { Transform } = require('stream');
-const Sax = require('sax');
+const SaxAsync = require('sax-async');
 const { SVGPathData } = require('svg-pathdata');
 const svgShapesToPath = require('./svgshapes2svgpath');
 const { Matrix } = require('./Matrix');
 const paper = require('paper');
+const stroke2fill = require('./stroke2fill');
 
 // Transform fill-rule from evenodd to nonzero
-function reorientPath(pathData) {
-  paper.setup('font-canvas');
+function reorientPath(pathData, width, height) {
+  paper.setup(new paper.Size(width, height));
   var path = new paper.CompoundPath(pathData);
   path.reorient();
   return path.pathData;
@@ -63,6 +64,10 @@ function hasFillRule(tag) {
   return (
     'fill-rule' in tag.attributes && 'evenodd' === tag.attributes['fill-rule']
   );
+}
+
+function getStrokeWidth(tag) {
+  return 'stroke-width' in tag.attributes ? tag.attributes['stroke-width'] : '';
 }
 
 function parentHasFillRule(parents) {
@@ -159,7 +164,7 @@ class SVGIcons2SVGFontStream extends Transform {
     this.log = this._options.log || console.log.bind(console); // eslint-disable-line
   }
 
-  _processElement(tag, glyph, parents) {
+  async _processElement(tag, glyph, parents) {
     if ('rect' === tag.name && 'none' !== tag.attributes.fill) {
       return svgShapesToPath.rectToPath(tag.attributes);
     } else if ('line' === tag.name && 'none' !== tag.attributes.fill) {
@@ -185,9 +190,20 @@ class SVGIcons2SVGFontStream extends Transform {
       'none' !== tag.attributes.fill
     ) {
       let pathData = tag.attributes.d;
+      const strokeWidth = getStrokeWidth(tag);
+      if (strokeWidth) {
+        pathData = await stroke2fill(
+          pathData,
+          glyph.width,
+          glyph.height,
+          strokeWidth,
+          tag.attributes.fill != undefined
+        );
+        pathData = reorientPath(pathData, glyph.width, glyph.height);
+      }
       //Found fill rule "evenodd" support
       if (hasFillRule(tag) || parentHasFillRule(parents)) {
-        pathData = reorientPath(tag.attributes.d);
+        pathData = reorientPath(tag.attributes.d, glyph.width, glyph.height);
       }
       return pathData;
     }
@@ -196,7 +212,7 @@ class SVGIcons2SVGFontStream extends Transform {
 
   _transform(svgIconStream, _unused, svgIconStreamCallback) {
     // Parsing each icons asynchronously
-    const saxStream = Sax.createStream(true);
+    const saxStream = new SaxAsync(true);
     const parents = [];
     const defs = [];
     const transformStack = [new Matrix()];
@@ -273,7 +289,7 @@ class SVGIcons2SVGFontStream extends Transform {
       );
     }
 
-    saxStream.on('opentag', (tag) => {
+    saxStream.hookAsync('opentag', async (next, tag) => {
       let values;
       let color;
 
@@ -291,12 +307,12 @@ class SVGIcons2SVGFontStream extends Transform {
         }
         // Checking if any parent rendering is disabled and exit if so
         if (!tagShouldRender(tag, parents)) {
-          return;
+          return next();
         }
 
         if (hasParent('defs', parents)) {
           defs.push(tag);
-          return;
+          return next();
         }
 
         // Save the view size
@@ -349,7 +365,7 @@ class SVGIcons2SVGFontStream extends Transform {
           tag.attributes['xlink:href'] &&
           'none' !== tag.attributes.fill
         ) {
-          const pathData = this._processElement(
+          const pathData = await this._processElement(
             findDefs(defs, tag.attributes['xlink:href']),
             glyph,
             parents
@@ -358,7 +374,7 @@ class SVGIcons2SVGFontStream extends Transform {
             glyph.paths.push(applyTransform(pathData));
           }
         } else {
-          const pathData = this._processElement(tag, glyph, parents);
+          const pathData = await this._processElement(tag, glyph, parents);
           if (pathData) {
             glyph.paths.push(applyTransform(pathData));
           }
@@ -380,18 +396,19 @@ class SVGIcons2SVGFontStream extends Transform {
           )
         );
       }
+      next();
     });
 
-    saxStream.on('error', (err) => {
+    saxStream.hookSync('error', (err) => {
       this.emit('error', err);
     });
 
-    saxStream.on('closetag', () => {
+    saxStream.hookSync('closetag', () => {
       transformStack.pop();
       parents.pop();
     });
 
-    saxStream.on('end', () => {
+    saxStream.hookSync('end', () => {
       svgIconStreamCallback();
     });
 

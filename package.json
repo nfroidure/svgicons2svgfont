@@ -23,10 +23,10 @@
     "cz": "env NODE_ENV=${NODE_ENV:-cli} git cz",
     "lint": "eslint src/*.js bin/*.js tests/*.mocha.js",
     "metapak": "metapak",
-    "mocha": "mocha tests/*.mocha.js",
+    "mocha": "mocha tests/*.mocha.js --timeout 10000",
     "prettier": "prettier --write src/*.js bin/*.js tests/*.mocha.js",
     "preversion": "npm t && npm run lint && npm run metapak -s",
-    "test": "nyc --reporter=lcov mocha tests/*.mocha.js",
+    "test": "nyc --reporter=lcov mocha tests/*.mocha.js --timeout 10000",
     "version": "npm run changelog && git add CHANGELOG.md"
   },
   "repository": {
@@ -48,9 +48,11 @@
     "geometry-interfaces": "^1.1.4",
     "glob": "^7.1.6",
     "neatequal": "^1.0.0",
+    "oslllo-potrace": "^1.1.4",
+    "oslllo-svg2": "^0.3.1",
     "paper-jsdom": "^0.12.15",
     "readable-stream": "^3.4.0",
-    "sax": "^1.2.4",
+    "sax-async": "0.0.4",
     "svg-pathdata": "^6.0.0"
   },
   "devDependencies": {

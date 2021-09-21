@@ -192,6 +192,9 @@ class SVGIcons2SVGFontStream extends Transform {
       let pathData = tag.attributes.d;
       const strokeWidth = getStrokeWidth(tag);
       if (strokeWidth) {
+        this.log(
+          `Found a path with stroke attribute in the icon "${glyph.name}" the result could be different than expected.`
+        );
         pathData = await stroke2fill(
           pathData,
           glyph.width,

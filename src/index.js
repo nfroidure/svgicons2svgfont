@@ -12,8 +12,8 @@ const { Matrix } = require('./Matrix');
 const paper = require('paper');
 
 // Transform fill-rule from evenodd to nonzero
-function reorientPath(pathData) {
-  paper.setup('font-canvas');
+function reorientPath(pathData, width, height) {
+  paper.setup(new paper.Size(width, height));
   var path = new paper.CompoundPath(pathData);
   path.reorient();
   return path.pathData;
@@ -187,7 +187,7 @@ class SVGIcons2SVGFontStream extends Transform {
       let pathData = tag.attributes.d;
       //Found fill rule "evenodd" support
       if (hasFillRule(tag) || parentHasFillRule(parents)) {
-        pathData = reorientPath(tag.attributes.d);
+        pathData = reorientPath(tag.attributes.d, glyph.width, glyph.height);
       }
       return pathData;
     }

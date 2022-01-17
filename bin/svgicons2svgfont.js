@@ -11,6 +11,7 @@ const SVGIcons2SVGFontStream = require('../src/index.js');
 const SVGIconsDirStream = require('../src/iconsdir.js');
 
 program
+  .storeOptionsAsProperties(true)
   .version(require('../package').version)
   .usage('[options] <icons ...>')
   .option('-v, --verbose', 'tell me everything!')

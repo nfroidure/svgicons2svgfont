@@ -83,18 +83,5 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  },
-  "greenkeeper": {
-    "ignore": [
-      "commitizen",
-      "cz-conventional-changelog",
-      "conventional-changelog-cli",
-      "mocha",
-      "coveralls",
-      "istanbul",
-      "eslint",
-      "eslint-config-prettier",
-      "prettier"
-    ]
   }
 }

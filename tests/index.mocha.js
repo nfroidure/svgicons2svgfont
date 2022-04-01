@@ -212,6 +212,15 @@ describe('Generating fonts to files', () => {
     );
   });
 
+  it('should calculate bounds when not specified in the svg file', (done) => {
+    generateFontToFile(
+      {
+        fontName: 'calcbounds',
+      },
+      done
+    );
+  });
+
   it('should work with a font id', (done) => {
     generateFontToFile(
       {

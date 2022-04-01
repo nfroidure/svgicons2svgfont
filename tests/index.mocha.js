@@ -2,6 +2,7 @@
 'use strict';
 
 const assert = require('assert');
+const { textEquals } = require('./assert');
 const fs = require('fs');
 const path = require('path');
 const ucs2 = require('punycode').ucs2;
@@ -28,7 +29,7 @@ function generateFontToFile(options, done, fileSuffix, startUnicode, files) {
   const svgFontStream = new SVGIcons2SVGFontStream(options);
 
   svgFontStream.pipe(fs.createWriteStream(dest)).on('finish', () => {
-    assert.equal(
+    textEquals(
       fs.readFileSync(dest, { encoding: 'utf8' }),
       fs.readFileSync(
         path.join(
@@ -70,7 +71,7 @@ function generateFontToMemory(options, done, files, startUnicode) {
   });
 
   svgFontStream.on('finish', () => {
-    assert.equal(
+    textEquals(
       content,
       fs.readFileSync(
         path.join(__dirname, 'expected', `${options.fontName}.svg`),
@@ -605,7 +606,7 @@ describe('Passing code points', () => {
     });
 
     svgFontStream.on('finish', () => {
-      assert.equal(
+      textEquals(
         content,
         fs.readFileSync(
           path.join(__dirname, 'expected', 'cleanicons-multi.svg'),
@@ -636,7 +637,7 @@ describe('Passing code points', () => {
     });
 
     svgFontStream.on('finish', () => {
-      assert.equal(
+      textEquals(
         content,
         fs.readFileSync(
           path.join(__dirname, 'expected', 'cleanicons-lig.svg'),
@@ -667,7 +668,7 @@ describe('Passing code points', () => {
     });
 
     svgFontStream.on('finish', () => {
-      assert.equal(
+      textEquals(
         content,
         fs.readFileSync(
           path.join(__dirname, 'expected', 'cleanicons-high.svg'),

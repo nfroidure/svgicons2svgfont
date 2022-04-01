@@ -3,7 +3,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const assert = require('assert');
+const { textEquals } = require('./assert');
 const childProcess = require('child_process');
 
 describe('Testing CLI', () => {
@@ -25,7 +25,7 @@ describe('Testing CLI', () => {
       if (err) {
         throw err;
       }
-      assert.equal(
+      textEquals(
         fs.readFileSync(
           path.join(__dirname, 'results', 'originalicons-cli.svg'),
           { encoding: 'utf8' }
@@ -69,7 +69,7 @@ describe('Testing CLI', () => {
       if (err) {
         throw err;
       }
-      assert.equal(
+      textEquals(
         fs.readFileSync(path.join(__dirname, 'results', 'lotoficons-cli.svg'), {
           encoding: 'utf8',
         }),
@@ -99,7 +99,7 @@ describe('Testing CLI', () => {
         if (err) {
           throw err;
         }
-        assert.equal(
+        textEquals(
           fs.readFileSync(
             path.join(__dirname, 'results', 'nestedicons-cli.svg'),
             { encoding: 'utf8' }

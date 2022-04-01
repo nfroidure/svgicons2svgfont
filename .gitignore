@@ -45,3 +45,5 @@ jspm_packages
 
 # Dist files
 dist
+
+/tests/results/*

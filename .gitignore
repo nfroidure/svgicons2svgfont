@@ -46,4 +46,4 @@ jspm_packages
 # Dist files
 dist
 
-/tests/results/*
+/tests/results/*.svg

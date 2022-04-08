@@ -1,5 +1,5 @@
 <a name="10.0.6"></a>
-# [10.0.5](https://github.com/nfroidure/svgicons2svgfont/compare/v10.0.5...v10.0.6) (2022-03-12)
+# [10.0.6](https://github.com/nfroidure/svgicons2svgfont/compare/v10.0.5...v10.0.6) (2022-03-12)
 
 https://github.com/nfroidure/svgicons2svgfont/releases/tag/v10.0.6
 

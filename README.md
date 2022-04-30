@@ -114,6 +114,7 @@ svgicons2svgfont --help
 #    -c, --centerhorizontally    calculate the bounds of a glyph and center it horizontally
 #    -y, --centervertically      centers the glyphs vertically in the generated font.
 #    -n, --normalize             normalize icons by scaling them to the height of the highest icon
+#    -p, --preserveAspectRatio   used with normalize to scale down glyph if the SVG width is greater than the height
 #    -h, --height [value]        the output font height [MAX(icons.height)] (icons will be scaled so the highest has this height)
 #    -r, --round [value]         setup the SVG path rounding [10e12]
 #    -d, --descent [value]       the font descent [0]
@@ -183,6 +184,13 @@ Type: `Boolean`
 Default value: `false`
 
 Normalize icons by scaling them to the height of the highest icon.
+
+#### options.preserveAspectRatio
+
+Type: `Boolean`
+Default value: `false`
+
+Used with normalize to scale down glyph if the SVG width is greater than the height.
 
 #### options.fontHeight
 

@@ -37,6 +37,10 @@ program
     'normalize icons by scaling them to the height of the highest icon'
   )
   .option(
+    '-p, --preserveAspectRatio',
+    'used with normalize to scale down glyph if the SVG width is greater than the height'
+  )
+  .option(
     '-h, --height [value]',
     'the output font height [MAX(icons.height)] (icons will be scaled so the highest has this height)',
     parseInt
@@ -85,6 +89,7 @@ new SVGIconsDirStream(files, {
       centerHorizontally: program.centerHorizontally,
       centerVertically: program.centerVertically,
       normalize: program.normalize,
+      preserveAspectRatio: program.preserveAspectRatio,
       fontHeight: program.height,
       round: program.round,
       descent: program.descent,

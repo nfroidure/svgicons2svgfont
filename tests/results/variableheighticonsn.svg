@@ -9,7 +9,7 @@
     <missing-glyph horiz-adv-x="0" />
     <glyph glyph-name="arrow-down"
       unicode="&#xE001;"
-      horiz-adv-x="150" d="M75 30L120 80L30 80z" />
+      horiz-adv-x="225" d="M112.5 45L180 120L45 120z" />
     <glyph glyph-name="arrow-left"
       unicode="&#xE002;"
       horiz-adv-x="150" d="M50 75L100 120L100 30z" />
@@ -18,7 +18,7 @@
       horiz-adv-x="150" d="M100 75L50 120L50 30z" />
     <glyph glyph-name="arrow-up"
       unicode="&#xE004;"
-      horiz-adv-x="150" d="M75 80L120 30L30 30z" />
+      horiz-adv-x="225" d="M112.5 120L180 45L45 45z" />
   </font>
 </defs>
 </svg>

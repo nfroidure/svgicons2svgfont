@@ -37,6 +37,10 @@ program
     'normalize icons by scaling them to the height of the highest icon'
   )
   .option(
+    '-p, --preserveAspectRatio',
+    'used with normalize to scale down glyph if the SVG width is greater than the height'
+  )
+  .option(
     '-h, --height [value]',
     'the output font height [MAX(icons.height)] (icons will be scaled so the highest has this height)',
     parseInt
@@ -74,9 +78,9 @@ const files = program.args.flatMap((file) => glob.sync(file));
 const options = program.opts();
 
 new SVGIconsDirStream(files, {
-  startUnicode: program.startunicode,
-  prependUnicode: program.prependUnicode,
-  log: program.v ? console.log : function () {}, // eslint-disable-line
+  startUnicode: options.startunicode,
+  prependUnicode: options.prependUnicode,
+  log: options.v ? console.log : function () {}, // eslint-disable-line
 })
   .pipe(
     new SVGIcons2SVGFontStream({
@@ -86,6 +90,7 @@ new SVGIconsDirStream(files, {
       centerHorizontally: options.centerHorizontally,
       centerVertically: options.centerVertically,
       normalize: options.normalize,
+      preserveAspectRatio: options.preserveAspectRatio,
       fontHeight: options.height,
       round: options.round,
       descent: options.descent,
@@ -94,4 +99,4 @@ new SVGIconsDirStream(files, {
       log: options.v ? console.log : function () {}, // eslint-disable-line
     })
   )
-  .pipe(options.output ? fs.createWriteStream(program.output) : process.stdout);
+  .pipe(options.output ? fs.createWriteStream(options.output) : process.stdout);

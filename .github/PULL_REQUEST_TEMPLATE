@@ -20,7 +20,8 @@ Fixes #
 - [ ] I made some tests for my changes
 - [ ] I added my name in the
  [contributors](https://docs.npmjs.com/files/package.json#people-fields-author-contributors)
- field of the package.json file
+ field of the `package.json` file. Beware to use the same format than for the author field
+ for the entries so that you'll get a mention in the `README.md` with a link to your website.
 
 ### License
 To get your contribution merged, you must check the following.
@@ -34,9 +35,9 @@ If you already maintain several NPM modules / NodeJS
  project, making significant changes on one of my modules
  automatically legitimates you as a core developer.
 
-This is because i could die or even not give a shit to
- this project someday and i don't want people to get
- stuck.
+This is because I could die or even not give a shit to
+ this project someday and I don't want people to get
+ stuck in such cases.
 
 If you want to help, fill the following with to get
 GitHub/NPM r/w access.

@@ -10,14 +10,14 @@ Before doing so, there are a few checks to do in
 Beware that you also can create a pull request
  if you know how to solve the issue.
 
-Finally scroll down if you asking for a feature ;)
+Finally scroll down if you are asking for a new feature ;)
 
 -->
 
-I'm a gentledev i:
+I'm a gentledev I:
 - [ ] fully read the README recently
 - [ ] searched for existing issues
-- [ ] checked i'm up to date with the latest version of the project
+- [ ] checked I'm up to date with the latest version of the project
 
 ### Expected behavior
 
@@ -35,8 +35,8 @@ I'm a gentledev i:
 ```
 <paste here>
 ```
-If the result is lower than 6.9.5, there is
- poor chances i even have a look to it. Please,
+If the result is lower than 16.15.0, there is
+ poor chances I even have a look to it. Please,
  use the last [NodeJS LTS version](https://nodejs.org/en/).
 
 ## Feature request
@@ -44,7 +44,7 @@ If the result is lower than 6.9.5, there is
 
 If you think a feature need to be added, your suggestions
  are welcome. Beware though that:
-- I try to keep my module simple so please ensure the requested
+- I try to keep my modules simple so please ensure the requested
  feature is really related to this module. If not, you may
  instead create a module that augment/work with this one,
 - I am not your employee so keep calm and be aware that your
@@ -56,4 +56,4 @@ If you think a feature need to be added, your suggestions
 
 ### Use cases
 
-- [ ] I will/have implement the feature
+- [ ] I will/did implement the feature

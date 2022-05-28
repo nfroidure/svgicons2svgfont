@@ -347,7 +347,11 @@ class SVGIcons2SVGFontStream extends Transform {
 
   _flush(svgFontFlushCallback) {
     this.glyphs.forEach((glyph) => {
-      if (glyph.defaultHeight || glyph.defaultWidth || this._options.usePathBounds) {
+      if (
+        glyph.defaultHeight ||
+        glyph.defaultWidth ||
+        this._options.usePathBounds
+      ) {
         const glyphPath = new SVGPathData('');
         glyph.paths.forEach((path) => {
           glyphPath.commands.push(...path.commands);

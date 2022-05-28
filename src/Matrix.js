@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /*!
   2D Transformation Matrix v2.7.5
   (c) Epistemex.com 2014-2018

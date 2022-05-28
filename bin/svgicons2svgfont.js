@@ -71,6 +71,7 @@ if (!program.args.length) {
 }
 
 const files = program.args.flatMap((file) => glob.sync(file));
+const options = program.opts();
 
 new SVGIconsDirStream(files, {
   startUnicode: program.startunicode,
@@ -79,18 +80,18 @@ new SVGIconsDirStream(files, {
 })
   .pipe(
     new SVGIcons2SVGFontStream({
-      fontName: program.fontname,
-      fontId: program.fontId,
-      fixedWidth: program.fixedwidth,
-      centerHorizontally: program.centerHorizontally,
-      centerVertically: program.centerVertically,
-      normalize: program.normalize,
-      fontHeight: program.height,
-      round: program.round,
-      descent: program.descent,
-      ascent: program.ascent,
-      metadata: program.metadata,
-      log: program.v ? console.log : function () {}, // eslint-disable-line
+      fontName: options.fontname,
+      fontId: options.fontId,
+      fixedWidth: options.fixedwidth,
+      centerHorizontally: options.centerHorizontally,
+      centerVertically: options.centerVertically,
+      normalize: options.normalize,
+      fontHeight: options.height,
+      round: options.round,
+      descent: options.descent,
+      ascent: options.ascent,
+      metadata: options.metadata,
+      log: options.v ? console.log : function () {}, // eslint-disable-line
     })
   )
-  .pipe(program.output ? fs.createWriteStream(program.output) : process.stdout);
+  .pipe(options.output ? fs.createWriteStream(program.output) : process.stdout);

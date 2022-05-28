@@ -1,3 +1,7 @@
+# [12.0.0](https://github.com/nfroidure/svgicons2svgfont/compare/v11.0.0...v12.0.0) (2022-05-28)
+
+
+
 # [11.0.0](https://github.com/nfroidure/svgicons2svgfont/compare/v10.0.6...v11.0.0) (2022-05-28)
 
 

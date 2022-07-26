@@ -191,6 +191,18 @@ describe('Generating fonts to files', () => {
     );
   });
 
+  it('should work with variable height icons, the normalize option and the preserveAspectRatio option', (done) => {
+    generateFontToFile(
+      {
+        fontName: 'variableheighticons',
+        normalize: true,
+        preserveAspectRatio: true,
+      },
+      done,
+      'np'
+    );
+  });
+
   it('should work with variable width icons', (done) => {
     generateFontToFile(
       {
@@ -209,6 +221,15 @@ describe('Generating fonts to files', () => {
       },
       done,
       'n'
+    );
+  });
+
+  it('should calculate bounds when not specified in the svg file', (done) => {
+    generateFontToFile(
+      {
+        fontName: 'calcbounds',
+      },
+      done
     );
   });
 

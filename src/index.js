@@ -155,6 +155,7 @@ class SVGIcons2SVGFontStream extends Transform {
     this._options.descent = this._options.descent || 0;
     this._options.round = this._options.round || 10e12;
     this._options.metadata = this._options.metadata || '';
+    this._options.usePathBounds = this._options.usePathBounds || false;
 
     this.log = this._options.log || console.log.bind(console); // eslint-disable-line
   }
@@ -326,17 +327,17 @@ class SVGIcons2SVGFontStream extends Transform {
               glyph.width = parseFloat(tag.attributes.width);
             } else {
               this.log(
-                `Glyph "${glyph.name}" has no width attribute, defaulting to 150.`
+                `Glyph "${glyph.name}" has no width attribute, using current glyph horizontal bounds.`
               );
-              glyph.width = 150;
+              glyph.defaultWidth = true;
             }
             if ('height' in tag.attributes) {
               glyph.height = parseFloat(tag.attributes.height);
             } else {
               this.log(
-                `Glyph "${glyph.name}" has no height attribute, defaulting to 150.`
+                `Glyph "${glyph.name}" has no height attribute, using current glyph vertical bounds.`
               );
-              glyph.height = 150;
+              glyph.defaultHeight = true;
             }
           }
         } else if ('clipPath' === tag.name) {
@@ -399,6 +400,26 @@ class SVGIcons2SVGFontStream extends Transform {
   }
 
   _flush(svgFontFlushCallback) {
+    this.glyphs.forEach((glyph) => {
+      if (
+        glyph.defaultHeight ||
+        glyph.defaultWidth ||
+        this._options.usePathBounds
+      ) {
+        const glyphPath = new SVGPathData('');
+        glyph.paths.forEach((path) => {
+          glyphPath.commands.push(...path.commands);
+        });
+        const bounds = glyphPath.getBounds();
+        if (glyph.defaultHeight || this._options.usePathBounds) {
+          glyph.height = bounds.maxY - bounds.minY;
+        }
+        if (glyph.defaultWidth || this._options.usePathBounds) {
+          glyph.width = bounds.maxX - bounds.minX;
+        }
+      }
+    });
+
     const maxGlyphHeight = this.glyphs.reduce(
       (curMax, glyph) => Math.max(curMax, glyph.height),
       0
@@ -487,7 +508,10 @@ class SVGIcons2SVGFontStream extends Transform {
 
     this.glyphs.forEach((glyph) => {
       const ratio = this._options.normalize
-        ? fontHeight / (glyph.width > glyph.height ? glyph.width : glyph.height)
+        ? fontHeight /
+          (this._options.preserveAspectRatio && glyph.width > glyph.height
+            ? glyph.width
+            : glyph.height)
         : fontHeight / maxGlyphHeight;
       if (!isFinite(ratio)) throw new Error('foo');
       glyph.width *= ratio;

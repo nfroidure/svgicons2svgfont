@@ -1,3 +1,22 @@
+# [12.0.0](https://github.com/nfroidure/svgicons2svgfont/compare/v11.0.0...v12.0.0) (2022-05-28)
+
+
+
+# [11.0.0](https://github.com/nfroidure/svgicons2svgfont/compare/v10.0.6...v11.0.0) (2022-05-28)
+
+
+### Bug Fixes
+
+* **core:** fix the metapak setup ([66a6274](https://github.com/nfroidure/svgicons2svgfont/commit/66a6274d2917979298a96fc7597ceb68d1689b83))
+* **deps:** remove unused dependencies, move devDependencies where they belong to ([ecc3d87](https://github.com/nfroidure/svgicons2svgfont/commit/ecc3d8736df9d7dbb4116475c8bc1b062bd70565))
+
+
+
+<a name="10.0.6"></a>
+# [10.0.6](https://github.com/nfroidure/svgicons2svgfont/compare/v10.0.5...v10.0.6) (2022-03-12)
+
+https://github.com/nfroidure/svgicons2svgfont/releases/tag/v10.0.6
+
 <a name="10.0.5"></a>
 # [10.0.5](https://github.com/nfroidure/svgicons2svgfont/compare/v10.0.4...v10.0.5) (2021-09-10)
 

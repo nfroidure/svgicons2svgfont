@@ -58,6 +58,7 @@
   "dependencies": {
     "commander": "^9.3.0",
     "glob": "^8.0.3",
+    "paper-jsdom": "^0.12.15",
     "sax": "^1.2.4",
     "svg-pathdata": "^6.0.3"
   },

@@ -37,7 +37,7 @@ describe('Testing CLI', () => {
       );
       done();
     });
-  });
+  }).timeout(5000);
 
   it('should work for more than 32 SVG icons', (done) => {
     const command =
@@ -80,7 +80,7 @@ describe('Testing CLI', () => {
       );
       done();
     });
-  });
+  }).timeout(5000);
 
   describe('with nested icons', () => {
     it('should work', (done) => {
@@ -111,6 +111,6 @@ describe('Testing CLI', () => {
         );
         done();
       });
-    });
+    }).timeout(5000);
   });
 });

@@ -523,6 +523,25 @@ class SVGIcons2SVGFontStream extends Transform {
             '" />\n'
         );
       });
+
+      if (glyph.ligature) {
+        glyph.ligature.forEach((ligature, i) => {
+          this.push(
+            '    <glyph glyph-name="' +
+              glyph.name +
+              (0 === i ? '' : '-' + i) +
+              '"\n' +
+              '      unicode="' +
+              ligature +
+              '"\n' +
+              '      horiz-adv-x="' +
+              glyph.width +
+              '" d="' +
+              d +
+              '" />\n'
+          );
+        });
+      }
     });
     this.push('  </font>\n' + '</defs>\n' + '</svg>\n');
     this.log('Font created');

@@ -29,11 +29,22 @@ function getMetadataService(options = {}) {
       name: '',
       unicode: [],
       renamed: false,
+      ligature: [],
     };
-    const matches = basename.match(/^(?:((?:u[0-9a-f]{4,6},?)+)-)?(.+)\.svg$/i);
+
+    let matches;
+
+    if (!basename.includes('--')) {
+      matches = basename.match(/^(?:((?:u[0-9a-f]{4,6},?)+)-)?(.+)\.svg$/i);
+    } else {
+      matches = basename.match(
+        /^(?:((?:u[0-9a-f]{4,6},?)+)-)?(?:(.+)--)?(.+)\.svg$/i
+      );
+    }
 
     metadata.name =
       matches && matches[2] ? matches[2] : 'icon' + options.startUnicode;
+    metadata.ligature = matches && matches[3] ? matches[3].split(',') : [];
     if (matches && matches[1]) {
       metadata.unicode = matches[1].split(',').map((match) => {
         match = match.substr(1);

@@ -54,6 +54,15 @@ glyph3.metadata = {
 };
 fontStream.write(glyph3);
 
+// For ligatures Human-readable
+const glyph4 = fs.createReadStream('icons/icon1.svg');
+glyph4.metadata = {
+  unicode: ['\uE003'],
+  name: 'icon3'
+  ligature: ['icon'],
+};
+fontStream.write(glyph4);
+
 // Do not forget to end the stream
 fontStream.end();
 ```
@@ -66,8 +75,8 @@ svgicons2svgfont --fontname=hello -o font/destination/file.svg icons/directory/*
 ```
 Note that you won't be able to customize icon names or icons unicodes by
  passing options but by using the following convention to name your icons files:
- `${icon.unicode}-${icon.name}.svg` where `icon.unicode` is a comma separated
- list of unicode strings (ex: 'uEA01,uE001,uE001uE002', note that the last
+ `${icon.unicode}-${icon.name}--${icon.ligature}.svg` where `icon.unicode` and `icon.ligature` is a comma separated
+ list of unicode strings and string (ex: 'uEA01,uE001,uE001uE002', note that the last
  string is in fact a ligature).
 
 There is a few more options for the CLI interface, you can list all of them:
@@ -191,12 +200,13 @@ A function which determines the metadata for an icon. It takes a parameter `file
 icon metadata (asynchronously) via the callback function. You can use this function to provide custom logic for svg to
 codepoint mapping.
 
-|                    |                                                                                          |
-| ------------------ | ---------------------------------------------------------------------------------------- |
-| `metadata.path`    | The path to the icon file. (The original `file` param is the file was not moved.)        |
-| `metadata.name`    | The name of the icon                                                                     |
-| `metadata.unicode` | The unicode codepoints corresponding to this glyph. Each should be a 1-codepoint string. |
-| `metadata.renamed` | Wether the original file was moved (e.g. to prefix it with its unicode codepoint)        |
+|                    |                                                                                              |
+| ------------------ | -------------------------------------------------------------------------------------------- |
+| `metadata.path`    | The path to the icon file. (The original `file` param is the file was not moved.)            |
+| `metadata.name`    | The name of the icon                                                                         |
+| `metadata.unicode` | The unicode codepoints corresponding to this glyph. Each should be a 1-codepoint string.     |
+| `metadata.renamed` | Wether the original file was moved (e.g. to prefix it with its unicode codepoint)            |
+| `metadata.ligature`| The ligature human-readable codepoints corresponding to this glyph. Each should be a string  |
 
 #### options.log
 Type: `Function`

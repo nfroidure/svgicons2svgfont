@@ -30,6 +30,7 @@ describe('Metadata service', () => {
           name: 'hello',
           unicode: [String.fromCharCode(0xea01)],
           renamed: false,
+          ligature: [],
         });
         done();
       });
@@ -61,6 +62,7 @@ describe('Metadata service', () => {
             name: 'plop',
             unicode: [String.fromCharCode(0xea01)],
             renamed: true,
+            ligature: [],
           });
           assert(
             fs.existsSync(path.join(__dirname, 'results', 'uEA01-plop.svg'))
@@ -107,6 +109,23 @@ describe('Metadata service', () => {
           name: 'hello',
           unicode: [String.fromCharCode(0x0001)],
           renamed: false,
+          ligature: [],
+        });
+        done();
+      });
+    });
+
+    it('should work for simple codes with ligature', (done) => {
+      const metadataService = metadata();
+
+      metadataService('/var/plop/u0001-hello--liga.svg', (err, infos) => {
+        assert(!err);
+        assert.deepEqual(infos, {
+          path: '/var/plop/u0001-hello--liga.svg',
+          name: 'hello',
+          unicode: [String.fromCharCode(0x0001)],
+          renamed: false,
+          ligature: ['liga'],
         });
         done();
       });
@@ -122,9 +141,29 @@ describe('Metadata service', () => {
           name: 'hello',
           unicode: [String.fromCharCode(0x0001), String.fromCharCode(0x0002)],
           renamed: false,
+          ligature: [],
         });
         done();
       });
+    });
+
+    it('should work for several codes with ligature', (done) => {
+      const metadataService = metadata();
+
+      metadataService(
+        '/var/plop/u0001,u0002-hello--liga1,liga2.svg',
+        (err, infos) => {
+          assert(!err);
+          assert.deepEqual(infos, {
+            path: '/var/plop/u0001,u0002-hello--liga1,liga2.svg',
+            name: 'hello',
+            unicode: [String.fromCharCode(0x0001), String.fromCharCode(0x0002)],
+            renamed: false,
+            ligature: ['liga1', 'liga2'],
+          });
+          done();
+        }
+      );
     });
 
     it('should work for higher codepoint codes', (done) => {
@@ -137,6 +176,7 @@ describe('Metadata service', () => {
           name: 'hello',
           unicode: [String.fromCodePoint(0x1f63a)],
           renamed: false,
+          ligature: [],
         });
         done();
       });
@@ -152,6 +192,7 @@ describe('Metadata service', () => {
           name: 'hello',
           unicode: [String.fromCharCode(0x0001) + String.fromCharCode(0x0002)],
           renamed: false,
+          ligature: [],
         });
         done();
       });
@@ -170,6 +211,7 @@ describe('Metadata service', () => {
             String.fromCharCode(0x0001),
           ],
           renamed: false,
+          ligature: [],
         });
         done();
       });
@@ -185,6 +227,7 @@ describe('Metadata service', () => {
           name: 'hello',
           unicode: [String.fromCharCode(0xea01)],
           renamed: false,
+          ligature: [],
         });
         metadataService('/var/plop/plop.svg', (err2, infos2) => {
           assert(!err2);
@@ -193,6 +236,7 @@ describe('Metadata service', () => {
             name: 'plop',
             unicode: [String.fromCharCode(0xea02)],
             renamed: false,
+            ligature: [],
           });
           done();
         });
@@ -209,6 +253,7 @@ describe('Metadata service', () => {
           name: 'hello',
           unicode: [String.fromCharCode(0xea01)],
           renamed: false,
+          ligature: [],
         });
         metadataService('/var/plop/uEA02-hello.svg', (err2, infos2) => {
           assert(!err2);
@@ -217,6 +262,7 @@ describe('Metadata service', () => {
             name: 'hello',
             unicode: [String.fromCharCode(0xea02)],
             renamed: false,
+            ligature: [],
           });
           metadataService('/var/plop/bell-o.svg', (err3, infos3) => {
             assert(!err3);
@@ -225,6 +271,7 @@ describe('Metadata service', () => {
               name: 'bell-o',
               unicode: [String.fromCharCode(0xea03)],
               renamed: false,
+              ligature: [],
             });
             done();
           });

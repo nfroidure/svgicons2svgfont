@@ -25,7 +25,7 @@ program
     'creates a monospace font of the width of the largest input icon'
   )
   .option(
-    '-c, --centerhorizontally',
+    '-c, --centerHorizontally',
     'calculate the bounds of a glyph and center it horizontally'
   )
   .option(
@@ -92,6 +92,7 @@ new SVGIconsDirStream(files, {
       normalize: options.normalize,
       preserveAspectRatio: options.preserveAspectRatio,
       fontHeight: options.height,
+      fontWeight: options.weight,
       round: options.round,
       descent: options.descent,
       ascent: options.ascent,

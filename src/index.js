@@ -489,7 +489,7 @@ class SVGIcons2SVGFontStream extends Transform {
         glyphPath.getBounds();
       if (this._options.centerHorizontally) {
         glyphPath.translate(
-          (glyph.width - (bounds.maxX - bounds.minX)) / 2 - bounds.minX
+          (glyph.width - (bounds.maxX - bounds.minX)) / 2
         );
       }
       if (this._options.centerVertically) {

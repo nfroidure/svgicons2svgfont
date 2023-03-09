@@ -92,6 +92,7 @@ new SVGIconsDirStream(files, {
       normalize: options.normalize,
       preserveAspectRatio: options.preserveAspectRatio,
       fontHeight: options.height,
+      fontWeight: options.weight,
       round: options.round,
       descent: options.descent,
       ascent: options.ascent,

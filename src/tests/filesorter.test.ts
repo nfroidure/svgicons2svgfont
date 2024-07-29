@@ -1,5 +1,13 @@
 import { describe, test, expect } from '@jest/globals';
 import { fileSorter } from '../filesorter.js';
+import { mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
+
+try {
+  await mkdir(join('src', 'tests', 'results'));
+} catch (err) {
+  // empty
+}
 
 describe('fileSorter', () => {
   test('should sort files per filename', () => {

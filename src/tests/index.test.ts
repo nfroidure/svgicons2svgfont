@@ -2,7 +2,8 @@ import { describe, test, expect } from '@jest/globals';
 import assert from 'assert';
 import { Readable } from 'node:stream';
 import fs from 'node:fs';
-import path from 'node:path';
+import { mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
 import { ucs2 as ucs2 } from 'punycode';
 
 import SVGIcons2SVGFontStream from '../index.js';
@@ -10,13 +11,19 @@ import SVGIconsDirStream, { type SVGIconStream } from '../iconsdir.js';
 import streamtest from 'streamtest';
 import { BufferStream } from 'bufferstreams';
 
+try {
+  await mkdir(join('src', 'tests', 'results'));
+} catch (err) {
+  // empty
+}
+
 const codepoint = JSON.parse(
   fs.readFileSync('./src/tests/expected/test-codepoint.json').toString(),
 );
 
 // Helpers
 async function generateFontToFile(options, fileSuffix?, startUnicode?, files?) {
-  const dest = path.join(
+  const dest = join(
     './src/tests',
     'results',
     `${options.fontName + (fileSuffix || '')}.svg`,
@@ -37,7 +44,7 @@ async function generateFontToFile(options, fileSuffix?, startUnicode?, files?) {
     try {
       expect(fs.readFileSync(dest, { encoding: 'utf8' })).toEqual(
         fs.readFileSync(
-          path.join(
+          join(
             './src/tests',
             'expected',
             `${options.fontName + (fileSuffix || '')}.svg`,
@@ -52,7 +59,7 @@ async function generateFontToFile(options, fileSuffix?, startUnicode?, files?) {
   });
 
   new SVGIconsDirStream(
-    files || path.join('src', 'tests', 'fixtures', options.fontName),
+    files || join('src', 'tests', 'fixtures', options.fontName),
     {
       startUnicode: startUnicode || 0xe001,
     },
@@ -75,7 +82,7 @@ async function generateFontToMemory(options, files?, startUnicode?) {
   const promise = bufferStream(svgFontStream);
 
   new SVGIconsDirStream(
-    files || path.join('./src/tests', 'fixtures', options.fontName),
+    files || join('./src/tests', 'fixtures', options.fontName),
     {
       startUnicode: startUnicode || 0xe001,
     },
@@ -83,7 +90,7 @@ async function generateFontToMemory(options, files?, startUnicode?) {
 
   expect((await promise).toString()).toEqual(
     fs.readFileSync(
-      path.join('./src/tests', 'expected', `${options.fontName}.svg`),
+      join('./src/tests', 'expected', `${options.fontName}.svg`),
       { encoding: 'utf8' },
     ),
   );
@@ -514,7 +521,7 @@ describe('Passing code points', () => {
   test('should work with multiple unicode values for a single icon', async () => {
     const svgFontStream = new SVGIcons2SVGFontStream({ round: 1e3 });
     const svgIconStream = fs.createReadStream(
-      path.join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
 
     svgIconStream.metadata = {
@@ -529,17 +536,16 @@ describe('Passing code points', () => {
 
     assert.equal(
       await promise,
-      fs.readFileSync(
-        path.join('./src/tests', 'expected', 'cleanicons-multi.svg'),
-        { encoding: 'utf8' },
-      ),
+      fs.readFileSync(join('./src/tests', 'expected', 'cleanicons-multi.svg'), {
+        encoding: 'utf8',
+      }),
     );
   });
 
   test('should work with ligatures', async () => {
     const svgFontStream = new SVGIcons2SVGFontStream({ round: 1e3 });
     const svgIconStream = fs.createReadStream(
-      path.join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
 
     svgIconStream.metadata = {
@@ -553,17 +559,16 @@ describe('Passing code points', () => {
     svgFontStream.end();
     assert.equal(
       await promise,
-      fs.readFileSync(
-        path.join('./src/tests', 'expected', 'cleanicons-lig.svg'),
-        { encoding: 'utf8' },
-      ),
+      fs.readFileSync(join('./src/tests', 'expected', 'cleanicons-lig.svg'), {
+        encoding: 'utf8',
+      }),
     );
   });
 
   test('should work with high code points', async () => {
     const svgFontStream = new SVGIcons2SVGFontStream({ round: 1e3 });
     const svgIconStream = fs.createReadStream(
-      path.join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
 
     svgIconStream.metadata = {
@@ -578,10 +583,9 @@ describe('Passing code points', () => {
 
     assert.equal(
       (await promise).toString(),
-      fs.readFileSync(
-        path.join('src/tests', 'expected', 'cleanicons-high.svg'),
-        { encoding: 'utf8' },
-      ),
+      fs.readFileSync(join('src/tests', 'expected', 'cleanicons-high.svg'), {
+        encoding: 'utf8',
+      }),
     );
   });
 });
@@ -589,7 +593,7 @@ describe('Passing code points', () => {
 describe('Providing bad glyphs', () => {
   test('should fail when not providing glyph name', async () => {
     const svgIconStream = fs.createReadStream(
-      path.join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
 
     svgIconStream.metadata = {
@@ -609,7 +613,7 @@ describe('Providing bad glyphs', () => {
 
   test('should fail when not providing codepoints', async () => {
     const svgIconStream = fs.createReadStream(
-      path.join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
 
     svgIconStream.metadata = {
@@ -629,7 +633,7 @@ describe('Providing bad glyphs', () => {
 
   test('should fail when providing unicode value with duplicates', async () => {
     const svgIconStream = fs.createReadStream(
-      path.join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
 
     svgIconStream.metadata = {
@@ -649,10 +653,10 @@ describe('Providing bad glyphs', () => {
 
   test('should fail when providing the same codepoint twice', async () => {
     const svgIconStream = fs.createReadStream(
-      path.join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
     const svgIconStream2 = fs.createReadStream(
-      path.join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
     const svgFontStream = new SVGIcons2SVGFontStream({
       round: 1e3,
@@ -679,10 +683,10 @@ describe('Providing bad glyphs', () => {
 
   test('should fail when providing the same name twice', async () => {
     const svgIconStream = fs.createReadStream(
-      path.join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
     const svgIconStream2 = fs.createReadStream(
-      path.join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
     const svgFontStream = new SVGIcons2SVGFontStream({ round: 1e3 });
 
@@ -704,7 +708,7 @@ describe('Providing bad glyphs', () => {
 
   test('should fail when providing bad pathdata', async () => {
     const svgIconStream = fs.createReadStream(
-      path.join('./src/tests', 'fixtures', 'badicons', 'pathdata.svg'),
+      join('./src/tests', 'fixtures', 'badicons', 'pathdata.svg'),
     ) as unknown as SVGIconStream;
 
     svgIconStream.metadata = {

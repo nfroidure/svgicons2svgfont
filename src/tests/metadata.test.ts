@@ -1,9 +1,16 @@
 import { describe, test, expect } from '@jest/globals';
 import { writeFile, readFile, unlink } from 'node:fs/promises';
-import path from 'node:path';
 import { promisify } from 'node:util';
 import metadata from '../metadata.js';
 import { YError } from 'yerror';
+import { mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
+
+try {
+  await mkdir(join('src', 'tests', 'results'));
+} catch (err) {
+  // empty
+}
 
 describe('Metadata service', () => {
   describe('for code generation', () => {
@@ -29,28 +36,26 @@ describe('Metadata service', () => {
       });
 
       await writeFile(
-        path.join('.', 'src', 'tests', 'results', 'plop.svg'),
+        join('.', 'src', 'tests', 'results', 'plop.svg'),
         'plop',
         'utf-8',
       );
       const infos = await promisify(metadataService)(
-        path.join('.', 'src', 'tests', 'results', 'plop.svg'),
+        join('.', 'src', 'tests', 'results', 'plop.svg'),
       );
 
       expect(infos).toEqual({
-        path: path.join('.', 'src', 'tests', 'results', 'uEA01-plop.svg'),
+        path: join('.', 'src', 'tests', 'results', 'uEA01-plop.svg'),
         name: 'plop',
         unicode: [String.fromCharCode(0xea01)],
         renamed: true,
       });
       expect(
-        await readFile(
-          path.join('.', 'src', 'tests', 'results', 'uEA01-plop.svg'),
-        ),
+        await readFile(join('.', 'src', 'tests', 'results', 'uEA01-plop.svg')),
       ).toBeTruthy();
-      unlink(path.join('.', 'src', 'tests', 'results', 'uEA01-plop.svg'));
+      unlink(join('.', 'src', 'tests', 'results', 'uEA01-plop.svg'));
       try {
-        await readFile(path.join('.', 'src', 'tests', 'results', 'plop.svg'));
+        await readFile(join('.', 'src', 'tests', 'results', 'plop.svg'));
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect((err as YError).code === 'E_UNEXPECTED_SUCCESS').toBeFalsy();
@@ -69,7 +74,7 @@ describe('Metadata service', () => {
 
       try {
         await promisify(metadataService)(
-          path.join('.', 'src', 'tests', 'results', 'plop.svg'),
+          join('.', 'src', 'tests', 'results', 'plop.svg'),
         );
 
         throw new YError('E_UNEXPECTED_SUCCESS');
@@ -78,9 +83,7 @@ describe('Metadata service', () => {
         expect((err as YError).code === 'E_UNEXPECTED_SUCCESS').toBeFalsy();
       }
       try {
-        await readFile(
-          path.join('.', 'src', 'tests', 'results', 'uEA02-plop.svg'),
-        );
+        await readFile(join('.', 'src', 'tests', 'results', 'uEA02-plop.svg'));
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect((err as YError).code === 'E_UNEXPECTED_SUCCESS').toBeFalsy();

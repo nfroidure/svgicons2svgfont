@@ -1,25 +1,39 @@
-/* eslint-disable prefer-template,no-confusing-arrow */
-'use strict';
+import { Readable } from 'node:stream';
+import { createReadStream, readdir } from 'node:fs';
+import { fileSorter } from './filesorter.js';
+import initMetadataService, {
+  FileMetadata,
+  MetadataServiceOptions,
+} from './metadata.js';
 
-const fs = require('fs');
-const fileSorter = require('./filesorter');
-const initMetadataService = require('../src/metadata');
+export type SVGIconsDirStreamOptions = {
+  metadataProvider: ReturnType<typeof initMetadataService>;
+};
+export type SVGIconStream = Readable & {
+  metadata: Pick<FileMetadata, 'name' | 'unicode'>;
+}
 
-const Readable = require('stream').Readable;
-
-// Constructor
 class SVGIconsDirStream extends Readable {
-  constructor(dir, options) {
+  private _options: SVGIconsDirStreamOptions & Partial<MetadataServiceOptions>;
+  gotFilesInfos: boolean = false;
+  fileInfos: FileMetadata[] = [];
+  dir: string;
+
+  constructor(
+    dir: string[],
+    options: Partial<SVGIconsDirStreamOptions & MetadataServiceOptions>,
+  ) {
     super({ objectMode: true });
-    this.getMetadata = options.metadataProvider || initMetadataService(options);
-    this.gotFilesInfos = false;
-    this.dir = dir;
+    this._options = {
+      metadataProvider:
+        options.metadataProvider || initMetadataService(options),
+    };
 
     if (dir instanceof Array) {
-      const dirCopy = this.dir;
-
       this.dir = '';
-      this._getFilesInfos(dirCopy);
+      this._getFilesInfos(dir);
+    } else {
+      this.dir = dir;
     }
   }
   _getFilesInfos(files) {
@@ -29,24 +43,25 @@ class SVGIconsDirStream extends Readable {
     // Ensure prefixed files come first
     files = files.slice(0).sort(fileSorter);
     files.forEach((file) => {
-      this.getMetadata(
+      this._options.metadataProvider(
         (this.dir ? this.dir + '/' : '') + file,
         (err, metadata) => {
           filesProcessed++;
           if (err) {
             this.emit('error', err);
-          } else {
+          }
+          if (metadata) {
             if (metadata.renamed) {
-              this.options.log(
+              this._options?.log?.(
                 'Saved codepoint: ' +
                   'u' +
                   metadata.unicode[0]
                     .codePointAt(0)
-                    .toString(16)
+                    ?.toString(16)
                     .toUpperCase() +
                   ' for the glyph "' +
                   metadata.name +
-                  '"'
+                  '"',
               );
             }
             this.fileInfos.push(metadata);
@@ -54,25 +69,25 @@ class SVGIconsDirStream extends Readable {
           if (files.length === filesProcessed) {
             // Reorder files
             this.fileInfos.sort((infosA, infosB) =>
-              infosA.unicode[0] > infosB.unicode[0] ? 1 : -1
+              infosA.unicode[0] > infosB.unicode[0] ? 1 : -1,
             );
             // Mark directory as processed
             this.gotFilesInfos = true;
             // Start processing
             this._pushSVGIcons();
           }
-        }
+        },
       );
     });
   }
 
   _pushSVGIcons() {
-    let fileInfo;
-    let svgIconStream;
+    let fileInfo: FileMetadata;
+    let svgIconStream: SVGIconStream;
 
     while (this.fileInfos.length) {
-      fileInfo = this.fileInfos.shift();
-      svgIconStream = fs.createReadStream(fileInfo.path);
+      fileInfo = this.fileInfos.shift() as FileMetadata;
+      svgIconStream = createReadStream(fileInfo.path) as unknown as SVGIconStream;
       svgIconStream.metadata = {
         name: fileInfo.name,
         unicode: fileInfo.unicode,
@@ -84,8 +99,8 @@ class SVGIconsDirStream extends Readable {
     this.push(null);
   }
   _read() {
-    if (!this.fileInfos) {
-      fs.readdir(this.dir, (err, files) => {
+    if (this.dir) {
+      readdir(this.dir, (err, files) => {
         if (err) {
           this.emit('error', err);
         }
@@ -99,4 +114,4 @@ class SVGIconsDirStream extends Readable {
   }
 }
 
-module.exports = SVGIconsDirStream;
+export default SVGIconsDirStream;

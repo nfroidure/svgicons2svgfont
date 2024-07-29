@@ -1,6 +1,3 @@
-/* eslint-disable prefer-template,complexity */
-'use strict';
-
 const svgShapesToPath = {
   rectToPath: svgShapesToPathRectToPath,
   polylineToPath: svgShapesToPathPolylineToPath,
@@ -9,7 +6,7 @@ const svgShapesToPath = {
   polygonToPath: svgShapesToPathPolygonToPath,
 };
 
-module.exports = svgShapesToPath;
+export default svgShapesToPath;
 
 // Shapes helpers (should also move elsewhere)
 function svgShapesToPathRectToPath(attributes) {
@@ -25,8 +22,8 @@ function svgShapesToPathRectToPath(attributes) {
     'undefined' !== typeof attributes.rx
       ? parseFloat(attributes.rx)
       : 'undefined' !== typeof attributes.ry
-      ? parseFloat(attributes.ry)
-      : 0;
+        ? parseFloat(attributes.ry)
+        : 0;
   const ry =
     'undefined' !== typeof attributes.ry ? parseFloat(attributes.ry) : rx;
 

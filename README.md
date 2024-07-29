@@ -5,10 +5,9 @@
 [//]: # (be overridden.)
 [//]: # ( )
 # svgicons2svgfont
-> Read a set of SVG icons and ouput a SVG font
+> Read a set of SVG icons and output a SVG font
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nfroidure/svgicons2svgfont/blob/master/LICENSE)
-[![Coverage Status](https://coveralls.io/repos/github/git://github.com/nfroidure/svgicons2svgfont/badge.svg?branch=master)](https://coveralls.io/github/git://github.com/nfroidure/svgicons2svgfont?branch=master)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nfroidure/svgicons2svgfont/blob/main/LICENSE)
 
 
 [//]: # (::contents:start)
@@ -302,4 +301,4 @@ Feel free to push your code if you agree with publishing under the MIT license.
 - [Vinicius Teixeira](https://github.com/vinicius0026)
 
 # License
-[MIT](https://github.com/nfroidure/svgicons2svgfont/blob/master/LICENSE)
+[MIT](https://github.com/nfroidure/svgicons2svgfont/blob/main/LICENSE)

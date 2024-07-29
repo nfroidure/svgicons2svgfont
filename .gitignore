@@ -129,4 +129,5 @@ Temporary Items
 .coveralls.yml
 
 # Project custom ignored file
-tests/results
+dist
+src/tests/results

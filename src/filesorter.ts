@@ -1,9 +1,6 @@
-/* eslint-disable complexity */
-'use strict';
-
 const testExpression = /(^|\/|\\)(?:((?:u[0-9a-f]{4,6},?)+)-)(.+)\.svg$/i;
 
-function fileSorter(fileA, fileB) {
+export function fileSorter(fileA, fileB) {
   const hasUnicodeA = testExpression.test(fileA);
   const hasUnicodeB = testExpression.test(fileB);
 
@@ -17,5 +14,3 @@ function fileSorter(fileA, fileB) {
     return (hasUnicodeA ? 0 : 1) - (hasUnicodeB ? 0 : 1);
   }
 }
-
-module.exports = fileSorter;

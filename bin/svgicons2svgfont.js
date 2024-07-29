@@ -1,18 +1,19 @@
 #! /usr/bin/env node
-/* eslint-disable prefer-reflect */
 
-'use strict';
+import { program } from 'commander';
+import { createWriteStream } from 'node:fs';
+import { join } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { glob } from 'glob';
 
-const program = require('commander');
-const fs = require('fs');
-const glob = require('glob');
+import SVGIcons2SVGFontStream from '../dist/index.js';
+import SVGIconsDirStream from '../dist/iconsdir.js';
 
-const SVGIcons2SVGFontStream = require('../src/index.js');
-const SVGIconsDirStream = require('../src/iconsdir.js');
+const { version } = JSON.parse((await readFile(join(import.meta.dirname, '..', 'package.json'))).toString());
 
 program
   .storeOptionsAsProperties(true)
-  .version(require('../package').version)
+  .version(version)
   .usage('[options] <icons ...>')
   .option('-v, --verbose', 'tell me everything!')
   .option('-o, --output [/dev/stdout]', 'file to write output to')
@@ -62,7 +63,7 @@ program
     parseInt
   )
   .option(
-    '-a, --prependUnicode',
+    '-u, --prependUnicode',
     'prefix files with their automatically' + ' allocated unicode code point',
     parseInt
   )
@@ -80,7 +81,7 @@ const options = program.opts();
 new SVGIconsDirStream(files, {
   startUnicode: options.startunicode,
   prependUnicode: options.prependUnicode,
-  log: options.v ? console.log : function () {}, // eslint-disable-line
+  log: options.v ? console.log : function () { }, // eslint-disable-line
 })
   .pipe(
     new SVGIcons2SVGFontStream({
@@ -96,7 +97,7 @@ new SVGIconsDirStream(files, {
       descent: options.descent,
       ascent: options.ascent,
       metadata: options.metadata,
-      log: options.v ? console.log : function () {}, // eslint-disable-line
+      log: options.v ? console.log : function () { }, // eslint-disable-line
     })
   )
-  .pipe(options.output ? fs.createWriteStream(options.output) : process.stdout);
+  .pipe(options.output ? createWriteStream(options.output) : process.stdout);

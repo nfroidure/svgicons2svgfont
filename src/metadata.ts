@@ -4,8 +4,6 @@ import { rename } from 'node:fs';
 export type MetadataServiceOptions = {
   prependUnicode: boolean;
   startUnicode: number;
-  log: typeof console.log;
-  err: typeof console.error;
 };
 export type FileMetadata = {
   path: string;
@@ -22,8 +20,6 @@ function getMetadataService(options: Partial<MetadataServiceOptions> = {}) {
     prependUnicode: !!options.prependUnicode,
     startUnicode:
       'number' === typeof options.startUnicode ? options.startUnicode : 0xea01,
-    log: options.log || console.log,
-    err: options.err || console.error,
   };
 
   return function getMetadataFromFile(
@@ -105,4 +101,4 @@ function getMetadataService(options: Partial<MetadataServiceOptions> = {}) {
   };
 }
 
-export default getMetadataService;
+export { getMetadataService };

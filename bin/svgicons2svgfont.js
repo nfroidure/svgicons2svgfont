@@ -6,8 +6,8 @@ import { join } from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { glob } from 'glob';
 
-import SVGIcons2SVGFontStream from '../dist/index.js';
-import SVGIconsDirStream from '../dist/iconsdir.js';
+import { SVGIcons2SVGFontStream } from '../dist/index.js';
+import { SVGIconsDirStream } from '../dist/iconsdir.js';
 
 const { version } = JSON.parse((await readFile(join(import.meta.dirname, '..', 'package.json'))).toString());
 

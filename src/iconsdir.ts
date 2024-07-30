@@ -1,17 +1,18 @@
 import { Readable } from 'node:stream';
 import { createReadStream, readdir } from 'node:fs';
 import { fileSorter } from './filesorter.js';
-import initMetadataService, {
+import {
+  getMetadataService,
   FileMetadata,
   MetadataServiceOptions,
 } from './metadata.js';
 
 export type SVGIconsDirStreamOptions = {
-  metadataProvider: ReturnType<typeof initMetadataService>;
+  metadataProvider: ReturnType<typeof getMetadataService>;
 };
 export type SVGIconStream = Readable & {
   metadata: Pick<FileMetadata, 'name' | 'unicode'>;
-}
+};
 
 class SVGIconsDirStream extends Readable {
   private _options: SVGIconsDirStreamOptions & Partial<MetadataServiceOptions>;
@@ -25,8 +26,7 @@ class SVGIconsDirStream extends Readable {
   ) {
     super({ objectMode: true });
     this._options = {
-      metadataProvider:
-        options.metadataProvider || initMetadataService(options),
+      metadataProvider: options.metadataProvider || getMetadataService(options),
     };
 
     if (dir instanceof Array) {
@@ -52,8 +52,8 @@ class SVGIconsDirStream extends Readable {
           }
           if (metadata) {
             if (metadata.renamed) {
-              this._options?.log?.(
-                'Saved codepoint: ' +
+              console.log(
+                '➕ - Saved codepoint: ' +
                   'u' +
                   metadata.unicode[0]
                     .codePointAt(0)
@@ -87,7 +87,9 @@ class SVGIconsDirStream extends Readable {
 
     while (this.fileInfos.length) {
       fileInfo = this.fileInfos.shift() as FileMetadata;
-      svgIconStream = createReadStream(fileInfo.path) as unknown as SVGIconStream;
+      svgIconStream = createReadStream(
+        fileInfo.path,
+      ) as unknown as SVGIconStream;
       svgIconStream.metadata = {
         name: fileInfo.name,
         unicode: fileInfo.unicode,
@@ -114,4 +116,4 @@ class SVGIconsDirStream extends Readable {
   }
 }
 
-export default SVGIconsDirStream;
+export { SVGIconsDirStream };

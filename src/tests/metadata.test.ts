@@ -1,7 +1,7 @@
 import { describe, test, expect } from '@jest/globals';
 import { writeFile, readFile, unlink } from 'node:fs/promises';
 import { promisify } from 'node:util';
-import metadata from '../metadata.js';
+import { getMetadataService } from '../metadata.js';
 import { YError } from 'yerror';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -15,7 +15,7 @@ try {
 describe('Metadata service', () => {
   describe('for code generation', () => {
     test('should extract right unicodes from files', async () => {
-      const metadataService = metadata();
+      const metadataService = getMetadataService();
       const infos = await promisify(metadataService)('/var/plop/hello.svg');
 
       expect(infos).toEqual({
@@ -27,12 +27,8 @@ describe('Metadata service', () => {
     });
 
     test('should append unicodes to files when the option is set', async () => {
-      const metadataService = metadata({
+      const metadataService = getMetadataService({
         prependUnicode: true,
-        log: () => {},
-        err: () => {
-          throw new YError('E_NOT_SUPPOSED_TO_BE_HERE');
-        },
       });
 
       await writeFile(
@@ -63,13 +59,9 @@ describe('Metadata service', () => {
     });
 
     test('should log file rename errors', async () => {
-      const metadataService = metadata({
+      const metadataService = getMetadataService({
         prependUnicode: true,
         startUnicode: 0xea02,
-        err: () => {},
-        log: () => {
-          throw new YError('E_NOT_SUPPOSED_TO_BE_HERE');
-        },
       });
 
       try {
@@ -93,7 +85,7 @@ describe('Metadata service', () => {
 
   describe('for code extraction', () => {
     test('should work for simple codes', async () => {
-      const metadataService = metadata();
+      const metadataService = getMetadataService();
       const infos = await promisify(metadataService)(
         '/var/plop/u0001-hello.svg',
       );
@@ -107,7 +99,7 @@ describe('Metadata service', () => {
     });
 
     test('should work for several codes', async () => {
-      const metadataService = metadata();
+      const metadataService = getMetadataService();
       const infos = await promisify(metadataService)(
         '/var/plop/u0001,u0002-hello.svg',
       );
@@ -121,7 +113,7 @@ describe('Metadata service', () => {
     });
 
     test('should work for higher codepoint codes', async () => {
-      const metadataService = metadata();
+      const metadataService = getMetadataService();
       const infos = await promisify(metadataService)(
         '/var/plop/u1F63A-hello.svg',
       );
@@ -135,7 +127,7 @@ describe('Metadata service', () => {
     });
 
     test('should work for ligature codes', async () => {
-      const metadataService = metadata();
+      const metadataService = getMetadataService();
       const infos = await promisify(metadataService)(
         '/var/plop/u0001u0002-hello.svg',
       );
@@ -149,7 +141,7 @@ describe('Metadata service', () => {
     });
 
     test('should work for nested codes', async () => {
-      const metadataService = metadata();
+      const metadataService = getMetadataService();
       const infos = await promisify(metadataService)(
         '/var/plop/u0001u0002,u0001-hello.svg',
       );
@@ -166,7 +158,7 @@ describe('Metadata service', () => {
     });
 
     test('should not set the same codepoint twice', async () => {
-      const metadataService = metadata();
+      const metadataService = getMetadataService();
 
       const infos = await promisify(metadataService)(
         '/var/plop/uEA01-hello.svg',
@@ -190,7 +182,7 @@ describe('Metadata service', () => {
     });
 
     test('should not set the same codepoint twice with different cases', async () => {
-      const metadataService = metadata();
+      const metadataService = getMetadataService();
 
       const infos = await promisify(metadataService)(
         '/var/plop/UEA01-hello.svg',

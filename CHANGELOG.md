@@ -1,3 +1,7 @@
+# [14.0.0](https://github.com/nfroidure/svgicons2svgfont/compare/v13.0.0...v14.0.0) (2024-07-30)
+
+
+
 # [13.0.0](https://github.com/nfroidure/svgicons2svgfont/compare/v12.0.0...v13.0.0) (2024-07-30)
 
 

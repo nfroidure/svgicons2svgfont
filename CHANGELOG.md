@@ -1,3 +1,22 @@
+# [13.0.0](https://github.com/nfroidure/svgicons2svgfont/compare/v12.0.0...v13.0.0) (2024-07-30)
+
+
+### Bug Fixes
+
+* **tests:** fix ci tests ([9c4152f](https://github.com/nfroidure/svgicons2svgfont/commit/9c4152f42c465db06841fd46ba02c55d4c2d6cdc))
+
+
+### Code Refactoring
+
+* **core:** complete rewrite with Typescript and modern node APIs ([e84a5ce](https://github.com/nfroidure/svgicons2svgfont/commit/e84a5ceca5c3b73662d986ffbfcadabbe8b766d8)), closes [#169](https://github.com/nfroidure/svgicons2svgfont/issues/169) [#129](https://github.com/nfroidure/svgicons2svgfont/issues/129) [#91](https://github.com/nfroidure/svgicons2svgfont/issues/91)
+
+
+### BREAKING CHANGES
+
+* **core:** Requires Node 20.11+ and ESM
+
+
+
 # [12.0.0](https://github.com/nfroidure/svgicons2svgfont/compare/v11.0.0...v12.0.0) (2022-05-28)
 
 

@@ -32,26 +32,26 @@ describe('Metadata service', () => {
       });
 
       await writeFile(
-        join('.', 'src', 'tests', 'results', 'plop.svg'),
+        join('fixtures', 'results', 'plop.svg'),
         'plop',
         'utf-8',
       );
       const infos = await promisify(metadataService)(
-        join('.', 'src', 'tests', 'results', 'plop.svg'),
+        join('fixtures', 'results', 'plop.svg'),
       );
 
       expect(infos).toEqual({
-        path: join('.', 'src', 'tests', 'results', 'uEA01-plop.svg'),
+        path: join('fixtures', 'results', 'uEA01-plop.svg'),
         name: 'plop',
         unicode: [String.fromCharCode(0xea01)],
         renamed: true,
       });
       expect(
-        await readFile(join('.', 'src', 'tests', 'results', 'uEA01-plop.svg')),
+        await readFile(join('fixtures', 'results', 'uEA01-plop.svg')),
       ).toBeTruthy();
-      unlink(join('.', 'src', 'tests', 'results', 'uEA01-plop.svg'));
+      unlink(join('fixtures', 'results', 'uEA01-plop.svg'));
       try {
-        await readFile(join('.', 'src', 'tests', 'results', 'plop.svg'));
+        await readFile(join('fixtures', 'results', 'plop.svg'));
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect((err as YError).code === 'E_UNEXPECTED_SUCCESS').toBeFalsy();
@@ -66,7 +66,7 @@ describe('Metadata service', () => {
 
       try {
         await promisify(metadataService)(
-          join('.', 'src', 'tests', 'results', 'plop.svg'),
+          join('fixtures', 'results', 'plop.svg'),
         );
 
         throw new YError('E_UNEXPECTED_SUCCESS');
@@ -75,7 +75,7 @@ describe('Metadata service', () => {
         expect((err as YError).code === 'E_UNEXPECTED_SUCCESS').toBeFalsy();
       }
       try {
-        await readFile(join('.', 'src', 'tests', 'results', 'uEA02-plop.svg'));
+        await readFile(join('fixtures', 'results', 'uEA02-plop.svg'));
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect((err as YError).code === 'E_UNEXPECTED_SUCCESS').toBeFalsy();

@@ -76,6 +76,10 @@ fontStream.write(glyph3);
 fontStream.end();
 ```
 
+## Debugging
+
+To debug, simply use the following env var: `DEBUG=svgicons2svgfont`.
+
 ## CLI interface
 
 All options are available except the `log` one by using this pattern:

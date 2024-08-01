@@ -6,6 +6,9 @@ import {
   FileMetadata,
   MetadataServiceOptions,
 } from './metadata.js';
+import debug from 'debug';
+
+const warn = debug('svgicons2svgfont');
 
 export type SVGIconsDirStreamOptions = {
   metadataProvider: ReturnType<typeof getMetadataService>;
@@ -52,7 +55,7 @@ class SVGIconsDirStream extends Readable {
           }
           if (metadata) {
             if (metadata.renamed) {
-              console.log(
+              warn(
                 '➕ - Saved codepoint: ' +
                   'u' +
                   metadata.unicode[0]

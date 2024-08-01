@@ -5,7 +5,6 @@ import { createWriteStream } from 'node:fs';
 import { join } from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { glob } from 'glob';
-
 import { SVGIcons2SVGFontStream } from '../dist/index.js';
 import { SVGIconsDirStream } from '../dist/iconsdir.js';
 
@@ -71,7 +70,7 @@ program
   .parse(process.argv);
 
 if (!program.args.length) {
-  console.error('No icons specified!'); // eslint-disable-line
+  console.error('No icons specified!');
   process.exit(1);
 }
 
@@ -81,7 +80,6 @@ const options = program.opts();
 new SVGIconsDirStream(files, {
   startUnicode: options.startunicode,
   prependUnicode: options.prependUnicode,
-  log: options.v ? console.log : function () { }, // eslint-disable-line
 })
   .pipe(
     new SVGIcons2SVGFontStream({
@@ -97,7 +95,6 @@ new SVGIconsDirStream(files, {
       descent: options.descent,
       ascent: options.ascent,
       metadata: options.metadata,
-      log: options.v ? console.log : function () { }, // eslint-disable-line
     })
   )
   .pipe(options.output ? createWriteStream(options.output) : process.stdout);

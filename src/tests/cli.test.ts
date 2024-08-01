@@ -5,7 +5,7 @@ import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 
 try {
-  await mkdir(join('src', 'tests', 'results'));
+  await mkdir(join('fixtures', 'results'));
 } catch (err) {
   // empty
 }
@@ -14,24 +14,21 @@ describe('Testing CLI', () => {
   test('should work for simple SVG', async () => {
     const command =
       `${'node' + ' '}${join('bin', 'svgicons2svgfont.js')} -o ${join(
-        'src',
-        'tests',
+        'fixtures',
         'results',
         'originalicons-cli.svg',
-      )} -s 0xE001` +
-      ` ${join('src', 'tests', 'fixtures', 'originalicons', '*.svg')}`;
+      )} -s 0xE001` + ` ${join('fixtures', 'icons', 'originalicons', '*.svg')}`;
 
     await promisify(exec)(command);
 
     expect(
-      await readFile(join('src', 'tests', 'results', 'originalicons-cli.svg'), {
+      await readFile(join('fixtures', 'results', 'originalicons-cli.svg'), {
         encoding: 'utf8',
       }),
     ).toEqual(
-      await readFile(
-        join('src', 'tests', 'expected', 'originalicons-cli.svg'),
-        { encoding: 'utf8' },
-      ),
+      await readFile(join('fixtures', 'expected', 'originalicons-cli.svg'), {
+        encoding: 'utf8',
+      }),
     );
   });
 
@@ -41,34 +38,34 @@ describe('Testing CLI', () => {
       ' ' +
       join('bin', 'svgicons2svgfont.js') +
       ' -o ' +
-      join('src', 'tests', 'results', 'lotoficons-cli.svg') +
+      join('fixtures', 'results', 'lotoficons-cli.svg') +
       ' -s 0xE001' +
       ' -r 1e4' +
       ' ' +
-      join('src', 'tests', 'fixtures', 'cleanicons', '*.svg') +
+      join('fixtures', 'icons', 'cleanicons', '*.svg') +
       ' ' +
-      join('src', 'tests', 'fixtures', 'hiddenpathesicons', '*.svg') +
+      join('fixtures', 'icons', 'hiddenpathesicons', '*.svg') +
       ' ' +
-      join('src', 'tests', 'fixtures', 'multipathicons', 'kikoolol.svg') +
+      join('fixtures', 'icons', 'multipathicons', 'kikoolol.svg') +
       ' ' +
-      join('src', 'tests', 'fixtures', 'originalicons', '*.svg') +
+      join('fixtures', 'icons', 'originalicons', '*.svg') +
       ' ' +
-      join('src', 'tests', 'fixtures', 'realicons', '*.svg') +
+      join('fixtures', 'icons', 'realicons', '*.svg') +
       ' ' +
-      join('src', 'tests', 'fixtures', 'roundedcorners', '*.svg') +
+      join('fixtures', 'icons', 'roundedcorners', '*.svg') +
       ' ' +
-      join('src', 'tests', 'fixtures', 'shapeicons', '*.svg') +
+      join('fixtures', 'icons', 'shapeicons', '*.svg') +
       ' ' +
-      join('src', 'tests', 'fixtures', 'tocentericons', '*.svg');
+      join('fixtures', 'icons', 'tocentericons', '*.svg');
 
     await promisify(exec)(command);
 
     expect(
-      await readFile(join('src', 'tests', 'results', 'lotoficons-cli.svg'), {
+      await readFile(join('fixtures', 'results', 'lotoficons-cli.svg'), {
         encoding: 'utf8',
       }),
     ).toEqual(
-      await readFile(join('src', 'tests', 'expected', 'lotoficons-cli.svg'), {
+      await readFile(join('fixtures', 'expected', 'lotoficons-cli.svg'), {
         encoding: 'utf8',
       }),
     );
@@ -80,23 +77,21 @@ describe('Testing CLI', () => {
         'bin',
         'svgicons2svgfont.js',
       )} -o ${join(
-        'src',
-        'tests',
+        'fixtures',
         'results',
         'nestedicons-cli.svg',
-      )} ${join('src', 'tests', 'fixtures', 'nestedicons', '*.svg')}`;
+      )} ${join('fixtures', 'icons', 'nestedicons', '*.svg')}`;
 
       await promisify(exec)(command);
 
       expect(
-        await readFile(join('src', 'tests', 'results', 'nestedicons-cli.svg'), {
+        await readFile(join('fixtures', 'results', 'nestedicons-cli.svg'), {
           encoding: 'utf8',
         }),
       ).toEqual(
-        await readFile(
-          join('src', 'tests', 'expected', 'nestedicons-cli.svg'),
-          { encoding: 'utf8' },
-        ),
+        await readFile(join('fixtures', 'expected', 'nestedicons-cli.svg'), {
+          encoding: 'utf8',
+        }),
       );
     });
   });

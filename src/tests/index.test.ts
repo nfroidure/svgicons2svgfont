@@ -12,19 +12,19 @@ import streamtest from 'streamtest';
 import { BufferStream } from 'bufferstreams';
 
 try {
-  await mkdir(join('src', 'tests', 'results'));
+  await mkdir(join('fixtures', 'results'));
 } catch (err) {
   // empty
 }
 
 const codepoint = JSON.parse(
-  fs.readFileSync('./src/tests/expected/test-codepoint.json').toString(),
+  fs.readFileSync('./fixtures/expected/test-codepoint.json').toString(),
 );
 
 // Helpers
 async function generateFontToFile(options, fileSuffix?, startUnicode?, files?) {
   const dest = join(
-    './src/tests',
+    'fixtures',
     'results',
     `${options.fontName + (fileSuffix || '')}.svg`,
   );
@@ -45,7 +45,7 @@ async function generateFontToFile(options, fileSuffix?, startUnicode?, files?) {
       expect(fs.readFileSync(dest, { encoding: 'utf8' })).toEqual(
         fs.readFileSync(
           join(
-            './src/tests',
+            'fixtures',
             'expected',
             `${options.fontName + (fileSuffix || '')}.svg`,
           ),
@@ -58,12 +58,9 @@ async function generateFontToFile(options, fileSuffix?, startUnicode?, files?) {
     }
   });
 
-  new SVGIconsDirStream(
-    files || join('src', 'tests', 'fixtures', options.fontName),
-    {
-      startUnicode: startUnicode || 0xe001,
-    },
-  ).pipe(svgFontStream);
+  new SVGIconsDirStream(files || join('fixtures', 'icons', options.fontName), {
+    startUnicode: startUnicode || 0xe001,
+  }).pipe(svgFontStream);
 
   return await promise;
 }
@@ -81,18 +78,14 @@ async function generateFontToMemory(options, files?, startUnicode?) {
   const svgFontStream = new SVGIcons2SVGFontStream(options);
   const promise = bufferStream(svgFontStream);
 
-  new SVGIconsDirStream(
-    files || join('./src/tests', 'fixtures', options.fontName),
-    {
-      startUnicode: startUnicode || 0xe001,
-    },
-  ).pipe(svgFontStream);
+  new SVGIconsDirStream(files || join('fixtures', 'icons', options.fontName), {
+    startUnicode: startUnicode || 0xe001,
+  }).pipe(svgFontStream);
 
   expect((await promise).toString()).toEqual(
-    fs.readFileSync(
-      join('./src/tests', 'expected', `${options.fontName}.svg`),
-      { encoding: 'utf8' },
-    ),
+    fs.readFileSync(join('fixtures', 'expected', `${options.fontName}.svg`), {
+      encoding: 'utf8',
+    }),
   );
 }
 
@@ -296,40 +289,40 @@ describe('Generating fonts to files', () => {
       '',
       0,
       [
-        'src/tests/fixtures/cleanicons/account.svg',
-        'src/tests/fixtures/cleanicons/arrow-down.svg',
-        'src/tests/fixtures/cleanicons/arrow-left.svg',
-        'src/tests/fixtures/cleanicons/arrow-right.svg',
-        'src/tests/fixtures/cleanicons/arrow-up.svg',
-        'src/tests/fixtures/cleanicons/basket.svg',
-        'src/tests/fixtures/cleanicons/close.svg',
-        'src/tests/fixtures/cleanicons/minus.svg',
-        'src/tests/fixtures/cleanicons/plus.svg',
-        'src/tests/fixtures/cleanicons/search.svg',
-        'src/tests/fixtures/hiddenpathesicons/sound--off.svg',
-        'src/tests/fixtures/hiddenpathesicons/sound--on.svg',
-        'src/tests/fixtures/multipathicons/kikoolol.svg',
-        'src/tests/fixtures/originalicons/mute.svg',
-        'src/tests/fixtures/originalicons/sound.svg',
-        'src/tests/fixtures/originalicons/speaker.svg',
-        'src/tests/fixtures/realicons/diegoliv.svg',
-        'src/tests/fixtures/realicons/hannesjohansson.svg',
-        'src/tests/fixtures/realicons/roelvanhitum.svg',
-        'src/tests/fixtures/realicons/safety-icon.svg',
-        'src/tests/fixtures/realicons/sb-icon.svg',
-        'src/tests/fixtures/realicons/settings-icon.svg',
-        'src/tests/fixtures/realicons/track-icon.svg',
-        'src/tests/fixtures/realicons/web-icon.svg',
-        'src/tests/fixtures/roundedcorners/roundedrect.svg',
-        'src/tests/fixtures/shapeicons/circle.svg',
-        'src/tests/fixtures/shapeicons/ellipse.svg',
-        'src/tests/fixtures/shapeicons/lines.svg',
-        'src/tests/fixtures/shapeicons/polygon.svg',
-        'src/tests/fixtures/shapeicons/polyline.svg',
-        'src/tests/fixtures/shapeicons/rect.svg',
-        'src/tests/fixtures/tocentericons/bottomleft.svg',
-        'src/tests/fixtures/tocentericons/center.svg',
-        'src/tests/fixtures/tocentericons/topright.svg',
+        'fixtures/icons/cleanicons/account.svg',
+        'fixtures/icons/cleanicons/arrow-down.svg',
+        'fixtures/icons/cleanicons/arrow-left.svg',
+        'fixtures/icons/cleanicons/arrow-right.svg',
+        'fixtures/icons/cleanicons/arrow-up.svg',
+        'fixtures/icons/cleanicons/basket.svg',
+        'fixtures/icons/cleanicons/close.svg',
+        'fixtures/icons/cleanicons/minus.svg',
+        'fixtures/icons/cleanicons/plus.svg',
+        'fixtures/icons/cleanicons/search.svg',
+        'fixtures/icons/hiddenpathesicons/sound--off.svg',
+        'fixtures/icons/hiddenpathesicons/sound--on.svg',
+        'fixtures/icons/multipathicons/kikoolol.svg',
+        'fixtures/icons/originalicons/mute.svg',
+        'fixtures/icons/originalicons/sound.svg',
+        'fixtures/icons/originalicons/speaker.svg',
+        'fixtures/icons/realicons/diegoliv.svg',
+        'fixtures/icons/realicons/hannesjohansson.svg',
+        'fixtures/icons/realicons/roelvanhitum.svg',
+        'fixtures/icons/realicons/safety-icon.svg',
+        'fixtures/icons/realicons/sb-icon.svg',
+        'fixtures/icons/realicons/settings-icon.svg',
+        'fixtures/icons/realicons/track-icon.svg',
+        'fixtures/icons/realicons/web-icon.svg',
+        'fixtures/icons/roundedcorners/roundedrect.svg',
+        'fixtures/icons/shapeicons/circle.svg',
+        'fixtures/icons/shapeicons/ellipse.svg',
+        'fixtures/icons/shapeicons/lines.svg',
+        'fixtures/icons/shapeicons/polygon.svg',
+        'fixtures/icons/shapeicons/polyline.svg',
+        'fixtures/icons/shapeicons/rect.svg',
+        'fixtures/icons/tocentericons/bottomleft.svg',
+        'fixtures/icons/tocentericons/center.svg',
+        'fixtures/icons/tocentericons/topright.svg',
       ],
     );
   });
@@ -521,7 +514,7 @@ describe('Passing code points', () => {
   test('should work with multiple unicode values for a single icon', async () => {
     const svgFontStream = new SVGIcons2SVGFontStream({ round: 1e3 });
     const svgIconStream = fs.createReadStream(
-      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('fixtures', 'icons', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
 
     svgIconStream.metadata = {
@@ -536,7 +529,7 @@ describe('Passing code points', () => {
 
     assert.equal(
       await promise,
-      fs.readFileSync(join('./src/tests', 'expected', 'cleanicons-multi.svg'), {
+      fs.readFileSync(join('fixtures', 'expected', 'cleanicons-multi.svg'), {
         encoding: 'utf8',
       }),
     );
@@ -545,7 +538,7 @@ describe('Passing code points', () => {
   test('should work with ligatures', async () => {
     const svgFontStream = new SVGIcons2SVGFontStream({ round: 1e3 });
     const svgIconStream = fs.createReadStream(
-      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('fixtures', 'icons', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
 
     svgIconStream.metadata = {
@@ -559,7 +552,7 @@ describe('Passing code points', () => {
     svgFontStream.end();
     assert.equal(
       await promise,
-      fs.readFileSync(join('./src/tests', 'expected', 'cleanicons-lig.svg'), {
+      fs.readFileSync(join('fixtures', 'expected', 'cleanicons-lig.svg'), {
         encoding: 'utf8',
       }),
     );
@@ -568,7 +561,7 @@ describe('Passing code points', () => {
   test('should work with high code points', async () => {
     const svgFontStream = new SVGIcons2SVGFontStream({ round: 1e3 });
     const svgIconStream = fs.createReadStream(
-      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('fixtures', 'icons', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
 
     svgIconStream.metadata = {
@@ -583,7 +576,7 @@ describe('Passing code points', () => {
 
     assert.equal(
       (await promise).toString(),
-      fs.readFileSync(join('src/tests', 'expected', 'cleanicons-high.svg'), {
+      fs.readFileSync(join('fixtures', 'expected', 'cleanicons-high.svg'), {
         encoding: 'utf8',
       }),
     );
@@ -593,7 +586,7 @@ describe('Passing code points', () => {
 describe('Providing bad glyphs', () => {
   test('should fail when not providing glyph name', async () => {
     const svgIconStream = fs.createReadStream(
-      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('fixtures', 'icons', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
 
     svgIconStream.metadata = {
@@ -613,7 +606,7 @@ describe('Providing bad glyphs', () => {
 
   test('should fail when not providing codepoints', async () => {
     const svgIconStream = fs.createReadStream(
-      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('fixtures', 'icons', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
 
     svgIconStream.metadata = {
@@ -633,7 +626,7 @@ describe('Providing bad glyphs', () => {
 
   test('should fail when providing unicode value with duplicates', async () => {
     const svgIconStream = fs.createReadStream(
-      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('fixtures', 'icons', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
 
     svgIconStream.metadata = {
@@ -653,10 +646,10 @@ describe('Providing bad glyphs', () => {
 
   test('should fail when providing the same codepoint twice', async () => {
     const svgIconStream = fs.createReadStream(
-      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('fixtures', 'icons', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
     const svgIconStream2 = fs.createReadStream(
-      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('fixtures', 'icons', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
     const svgFontStream = new SVGIcons2SVGFontStream({
       round: 1e3,
@@ -683,10 +676,10 @@ describe('Providing bad glyphs', () => {
 
   test('should fail when providing the same name twice', async () => {
     const svgIconStream = fs.createReadStream(
-      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('fixtures', 'icons', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
     const svgIconStream2 = fs.createReadStream(
-      join('./src/tests', 'fixtures', 'cleanicons', 'account.svg'),
+      join('fixtures', 'icons', 'cleanicons', 'account.svg'),
     ) as unknown as SVGIconStream;
     const svgFontStream = new SVGIcons2SVGFontStream({ round: 1e3 });
 
@@ -708,7 +701,7 @@ describe('Providing bad glyphs', () => {
 
   test('should fail when providing bad pathdata', async () => {
     const svgIconStream = fs.createReadStream(
-      join('./src/tests', 'fixtures', 'badicons', 'pathdata.svg'),
+      join('fixtures', 'icons', 'badicons', 'pathdata.svg'),
     ) as unknown as SVGIconStream;
 
     svgIconStream.metadata = {

@@ -15,11 +15,12 @@
       "distFiles": "'dist/**/*.js'",
       "ignore": [
         "dist",
-        "src/tests/results"
+        "fixtures/results"
       ],
       "bundleFiles": [
         "dist",
-        "src"
+        "src",
+        "bin"
       ]
     }
   },
@@ -65,10 +66,10 @@
   "dependencies": {
     "@types/sax": "^1.2.7",
     "commander": "^12.1.0",
+    "debug": "^4.3.6",
     "glob": "^11.0.0",
     "sax": "^1.4.1",
     "svg-pathdata": "^7.0.0",
-    "transformation-matrix": "^2.16.1",
     "transformation-matrix-js": "^2.7.6",
     "yerror": "^8.0.0"
   },
@@ -122,6 +123,7 @@
   "files": [
     "dist",
     "src",
+    "bin",
     "LICENSE",
     "README.md",
     "CHANGELOG.md"

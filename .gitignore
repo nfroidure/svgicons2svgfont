@@ -130,4 +130,4 @@ Temporary Items
 
 # Project custom ignored file
 dist
-src/tests/results
+fixtures/results

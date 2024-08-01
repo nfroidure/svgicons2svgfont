@@ -5,6 +5,9 @@ import { SVGPathData } from 'svg-pathdata';
 import svgShapesToPath from './svgshapes2svgpath.js';
 import { Matrix } from 'transformation-matrix-js';
 import { YError } from 'yerror';
+import debug from 'debug';
+
+const warn = debug('svgicons2svgfont');
 
 export { fileSorter } from './filesorter.js';
 export * from './iconsdir.js';
@@ -295,39 +298,39 @@ export class SVGIcons2SVGFontStream extends Transform {
             if ('width' in tag.attributes) {
               glyph.width = parseFloat(tag.attributes.width as string);
             } else {
-              console.log(
-                `Glyph "${glyph.name}" has no width attribute, using current glyph horizontal bounds.`,
+              warn(
+                `⚠️ - Glyph "${glyph.name}" has no width attribute, using current glyph horizontal bounds.`,
               );
               glyph.defaultWidth = true;
             }
             if ('height' in tag.attributes) {
               glyph.height = parseFloat(tag.attributes.height as string);
             } else {
-              console.log(
-                `Glyph "${glyph.name}" has no height attribute, using current glyph vertical bounds.`,
+              warn(
+                `⚠️ - Glyph "${glyph.name}" has no height attribute, using current glyph vertical bounds.`,
               );
               glyph.defaultHeight = true;
             }
           }
         } else if ('clipPath' === tag.name) {
           // Clipping path unsupported
-          console.log(
-            `Found a clipPath element in the icon "${glyph.name}" the result may be different than expected.`,
+          warn(
+            `🤷 - Found a clipPath element in the icon "${glyph.name}" the result may be different than expected.`,
           );
         } else if ('rect' === tag.name && 'none' !== tag.attributes.fill) {
           glyph.paths.push(
             applyTransform(svgShapesToPath.rectToPath(tag.attributes)),
           );
         } else if ('line' === tag.name && 'none' !== tag.attributes.fill) {
-          console.log(
-            `Found a line element in the icon "${glyph.name}" the result could be different than expected.`,
+          warn(
+            `🤷 - Found a line element in the icon "${glyph.name}" the result could be different than expected.`,
           );
           glyph.paths.push(
             applyTransform(svgShapesToPath.lineToPath(tag.attributes)),
           );
         } else if ('polyline' === tag.name && 'none' !== tag.attributes.fill) {
-          console.log(
-            `Found a polyline element in the icon "${glyph.name}" the result could be different than expected.`,
+          warn(
+            `🤷 - Found a polyline element in the icon "${glyph.name}" the result could be different than expected.`,
           );
           glyph.paths.push(
             applyTransform(svgShapesToPath.polylineToPath(tag.attributes)),
@@ -444,14 +447,14 @@ export class SVGIcons2SVGFontStream extends Transform {
             )
           : this.glyphs[0].height)
     ) {
-      console.log(
-        'The provided icons do not have the same heights. This could lead' +
+      warn(
+        '🤷 - The provided icons do not have the same heights. This could lead' +
           ' to unexpected results. Using the normalize option may help.',
       );
     }
     if (1000 > fontHeight) {
-      console.log(
-        'A fontHeight of at least than 1000 is recommended, otherwise ' +
+      warn(
+        '🤷 - A fontHeight of at least than 1000 is recommended, otherwise ' +
           'further steps (rounding in svg2ttf) could lead to ugly results.' +
           ' Use the fontHeight option to scale icons.',
       );
@@ -581,7 +584,7 @@ export class SVGIcons2SVGFontStream extends Transform {
       });
     });
     this.push('  </font>\n' + '</defs>\n' + '</svg>\n');
-    console.log('Font created');
+    warn('✅ - Font created');
     if ('function' === typeof this._options.callback) {
       this._options.callback(this.glyphs);
     }

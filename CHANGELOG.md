@@ -1,3 +1,12 @@
+## [14.0.1](https://github.com/nfroidure/svgicons2svgfont/compare/v14.0.0...v14.0.1) (2024-08-01)
+
+
+### Bug Fixes
+
+* **bin:** fix script mod eoutput to avoid logging unecessary data ([2ef67d3](https://github.com/nfroidure/svgicons2svgfont/commit/2ef67d320ef31e01d4ad4eab996adf9eb1386358))
+
+
+
 # [14.0.0](https://github.com/nfroidure/svgicons2svgfont/compare/v13.0.0...v14.0.0) (2024-07-30)
 
 

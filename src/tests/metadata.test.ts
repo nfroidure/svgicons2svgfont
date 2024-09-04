@@ -31,11 +31,7 @@ describe('Metadata service', () => {
         prependUnicode: true,
       });
 
-      await writeFile(
-        join('fixtures', 'results', 'plop.svg'),
-        'plop',
-        'utf-8',
-      );
+      await writeFile(join('fixtures', 'results', 'plop.svg'), 'plop', 'utf-8');
       const infos = await promisify(metadataService)(
         join('fixtures', 'results', 'plop.svg'),
       );

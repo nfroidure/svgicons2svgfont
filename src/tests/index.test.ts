@@ -4,7 +4,7 @@ import { Readable } from 'node:stream';
 import fs from 'node:fs';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { ucs2 as ucs2 } from 'punycode';
+import { ucs2 as ucs2 } from 'punycode/';
 
 import { SVGIcons2SVGFontStream } from '../index.js';
 import { SVGIconsDirStream, type SVGIconStream } from '../iconsdir.js';

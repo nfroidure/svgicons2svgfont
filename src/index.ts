@@ -1,4 +1,4 @@
-import { ucs2 } from 'punycode';
+import { ucs2 } from 'punycode/';
 import { Transform } from 'stream';
 import Sax from 'sax';
 import { SVGPathData } from 'svg-pathdata';

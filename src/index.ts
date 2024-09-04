@@ -1,4 +1,4 @@
-import { ucs2 } from 'punycode/';
+import punycode from 'punycode/punycode.js';
 import { Transform } from 'stream';
 import Sax from 'sax';
 import { SVGPathData } from 'svg-pathdata';
@@ -562,7 +562,7 @@ export class SVGIcons2SVGFontStream extends Transform {
       delete glyph.paths;
       const d = glyphPath.round(this._options.round).encode();
       glyph.unicode.forEach((unicode, i) => {
-        const unicodeStr = ucs2
+        const unicodeStr = punycode.ucs2
           .decode(unicode)
           .map((point) => '&#x' + point.toString(16).toUpperCase() + ';')
           .join('');

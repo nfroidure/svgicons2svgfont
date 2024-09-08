@@ -90,8 +90,8 @@ function svgShapesToPathLineToPath(attributes) {
 }
 
 function svgShapesToPathCircleToPath(attributes) {
-  const cx = parseFloat(attributes.cx);
-  const cy = parseFloat(attributes.cy);
+  const cx = parseFloat(attributes.cx || 0);
+  const cy = parseFloat(attributes.cy || 0);
   const rx =
     'undefined' !== typeof attributes.rx
       ? parseFloat(attributes.rx)

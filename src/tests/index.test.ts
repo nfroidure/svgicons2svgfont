@@ -281,6 +281,12 @@ describe('Generating fonts to files', () => {
     });
   });
 
+  test('should work with realworld icons', async () => {
+    await generateFontToFile({
+      fontName: 'realworld',
+    });
+  });
+
   test('should work with a lot of icons', async () => {
     await generateFontToFile(
       {

@@ -1,0 +1,15 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <font id="realworld" horiz-adv-x="1">
+    <font-face font-family="realworld"
+      units-per-em="1" ascent="1"
+      descent="0" />
+    <missing-glyph horiz-adv-x="0" />
+    <glyph glyph-name="omridevk"
+      unicode="&#xE001;"
+      horiz-adv-x="1" d="M0.5 0.167A0.25 0.25 0 0 0 0.5 0.667A0.25 0.25 0 0 0 0.5 0.167M0.411 0.673A0.021 0.021 0 1 0 0.381 0.702L0.411 0.673zM0.5 0.792L0.485 0.806L0.5 0.821L0.515 0.806L0.5 0.792zM0.619 0.702A0.021 0.021 0 0 0 0.589 0.673L0.619 0.702zM0.521 0.375A0.021 0.021 0 0 0 0.479 0.375H0.521zM0.381 0.702L0.485 0.806L0.515 0.777L0.411 0.673L0.381 0.702zM0.515 0.806L0.619 0.702L0.589 0.673L0.485 0.777L0.515 0.806zM0.521 0.792V0.375H0.479V0.792H0.521z" />
+  </font>
+</defs>
+</svg>

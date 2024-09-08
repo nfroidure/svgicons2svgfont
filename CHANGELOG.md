@@ -1,3 +1,12 @@
+## [14.0.2](https://github.com/nfroidure/svgicons2svgfont/compare/v14.0.1...v14.0.2) (2024-09-08)
+
+
+### Bug Fixes
+
+* fix circles convertion when no cx/cy ([13d9caf](https://github.com/nfroidure/svgicons2svgfont/commit/13d9caf999242490289c2ef0c22780120cdc030b)), closes [#162](https://github.com/nfroidure/svgicons2svgfont/issues/162)
+
+
+
 ## [14.0.1](https://github.com/nfroidure/svgicons2svgfont/compare/v14.0.0...v14.0.1) (2024-08-01)
 
 

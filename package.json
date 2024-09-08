@@ -25,7 +25,7 @@
     }
   },
   "name": "svgicons2svgfont",
-  "version": "14.0.1",
+  "version": "14.0.2",
   "description": "Read a set of SVG icons and output a SVG font",
   "homepage": "https://github.com/nfroidure/svgicons2svgfont",
   "main": "dist/index.js",

@@ -1,3 +1,22 @@
+# [15.0.0](https://github.com/nfroidure/svgicons2svgfont/compare/v14.0.2...v15.0.0) (2024-11-07)
+
+
+### Bug Fixes
+
+* **tests:** fix results folder creation ([6fcbc1e](https://github.com/nfroidure/svgicons2svgfont/commit/6fcbc1e9c7cf157e783527a1861c762733b3cfbb))
+
+
+### Code Refactoring
+
+* **cli:** uniformize CLI args style ([04e54a8](https://github.com/nfroidure/svgicons2svgfont/commit/04e54a8824d83575c7d4d17537e31c7c7425f83f)), closes [#167](https://github.com/nfroidure/svgicons2svgfont/issues/167)
+
+
+### BREAKING CHANGES
+
+* **cli:** CLI usages will need an update
+
+
+
 ## [14.0.2](https://github.com/nfroidure/svgicons2svgfont/compare/v14.0.1...v14.0.2) (2024-09-08)
 
 

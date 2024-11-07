@@ -3,6 +3,8 @@
 import { program } from 'commander';
 import { createWriteStream } from 'node:fs';
 import { join } from 'node:path';
+import { argv, exit, stdout } from 'node:process';
+import { error } from 'node:console';
 import { readFile } from 'node:fs/promises';
 import { glob } from 'glob';
 import { SVGIcons2SVGFontStream } from '../dist/index.js';
@@ -16,8 +18,8 @@ program
   .usage('[options] <icons ...>')
   .option('-v, --verbose', 'tell me everything!')
   .option('-o, --output [/dev/stdout]', 'file to write output to')
-  .option('-f, --fontname [value]', 'the font family name you want [iconfont]')
-  .option('-i, --fontId [value]', 'the font id you want [fontname]')
+  .option('-f, --fontName [value]', 'the font family name you want [iconfont]')
+  .option('-i, --fontId [value]', 'the font id you want [fontName]')
   .option('-st, --style [value]', 'the font style you want')
   .option('-we, --weight [value]', 'the font weight you want')
   .option(
@@ -25,7 +27,7 @@ program
     'creates a monospace font of the width of the largest input icon'
   )
   .option(
-    '-c, --centerhorizontally',
+    '-c, --centerHorizontally',
     'calculate the bounds of a glyph and center it horizontally'
   )
   .option(
@@ -57,8 +59,8 @@ program
     parseInt
   )
   .option(
-    '-s, --startunicode [value]',
-    'the start unicode codepoint for' + ' unprefixed files [0xEA01]',
+    '-s, --startUnicode [value]',
+    'the start unicode code point for' + ' unprefixed files [0xEA01]',
     parseInt
   )
   .option(
@@ -67,23 +69,23 @@ program
     parseInt
   )
   .option('-m, --metadata', 'content of the metadata tag')
-  .parse(process.argv);
+  .parse(argv);
 
 if (!program.args.length) {
-  console.error('No icons specified!');
-  process.exit(1);
+  error('No icons specified!');
+  exit(1);
 }
 
 const files = program.args.flatMap((file) => glob.sync(file));
 const options = program.opts();
 
 new SVGIconsDirStream(files, {
-  startUnicode: options.startunicode,
+  startUnicode: options.startUnicode,
   prependUnicode: options.prependUnicode,
 })
   .pipe(
     new SVGIcons2SVGFontStream({
-      fontName: options.fontname,
+      fontName: options.fontName,
       fontId: options.fontId,
       fixedWidth: options.fixedwidth,
       centerHorizontally: options.centerHorizontally,
@@ -97,4 +99,4 @@ new SVGIconsDirStream(files, {
       metadata: options.metadata,
     })
   )
-  .pipe(options.output ? createWriteStream(options.output) : process.stdout);
+  .pipe(options.output ? createWriteStream(options.output) : stdout);

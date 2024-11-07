@@ -4,7 +4,6 @@ import { Readable } from 'node:stream';
 import fs from 'node:fs';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import punycode from 'punycode/punycode.js';
 
 import { SVGIcons2SVGFontStream } from '../index.js';
 import { SVGIconsDirStream, type SVGIconStream } from '../iconsdir.js';
@@ -572,7 +571,7 @@ describe('Passing code points', () => {
 
     svgIconStream.metadata = {
       name: 'account',
-      unicode: [punycode.ucs2.encode([0x1f63a])],
+      unicode: ['\u{1f63a}'],
     };
 
     const promise = bufferStream(svgFontStream);

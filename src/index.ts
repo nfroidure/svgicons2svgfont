@@ -150,7 +150,7 @@ export class SVGIcons2SVGFontStream extends Transform {
 
     function applyTransform(d) {
       const last = transformStack[transformStack.length - 1];
-      if (!last) return new SVGPathData(d)
+      if (!last) return new SVGPathData(d);
       return new SVGPathData(d).matrix(
         last.a,
         last.b,
@@ -242,7 +242,9 @@ export class SVGIcons2SVGFontStream extends Transform {
           const transform = matrixFromTransformAttribute(
             tag.attributes.transform,
           );
-          transformStack.push(compose(currentTransform, transform));
+          transformStack.push(
+            compose([currentTransform, transform].filter(Boolean)),
+          );
         } else {
           transformStack.push(currentTransform);
         }
@@ -272,11 +274,13 @@ export class SVGIcons2SVGFontStream extends Transform {
                 ? parseFloat(tag.attributes.height as string)
                 : height;
 
-            transformStack[transformStack.length - 1] = compose([
-              transformStack[transformStack.length - 1],
-              translate(-dX, -dY),
-              scale(glyph.width / width, glyph.height / height),
-            ].filter(Boolean));
+            transformStack[transformStack.length - 1] = compose(
+              [
+                transformStack[transformStack.length - 1],
+                translate(-dX, -dY),
+                scale(glyph.width / width, glyph.height / height),
+              ].filter(Boolean),
+            );
           } else {
             if ('width' in tag.attributes) {
               glyph.width = parseFloat(tag.attributes.width as string);

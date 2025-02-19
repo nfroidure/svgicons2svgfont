@@ -70,7 +70,7 @@
     "glob": "^11.0.0",
     "sax": "^1.4.1",
     "svg-pathdata": "^7.0.0",
-    "transformation-matrix-js": "^2.7.6",
+    "transformation-matrix": "^3.0.0",
     "yerror": "^8.0.0"
   },
   "devDependencies": {

@@ -361,6 +361,12 @@ describe('Generating fonts to files', () => {
     });
   });
 
+  test('should work with skew', async () => {
+    await generateFontToFile({
+      fontName: 'skew',
+    });
+  });
+
   test('should work when only rx is present', async () => {
     await generateFontToFile({
       fontName: 'onlywithrx',

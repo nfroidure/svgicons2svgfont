@@ -1,0 +1,18 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <font id="skew" horiz-adv-x="34">
+    <font-face font-family="skew"
+      units-per-em="34" ascent="34"
+      descent="0" />
+    <missing-glyph horiz-adv-x="0" />
+    <glyph glyph-name="skew-x"
+      unicode="&#xE001;"
+      horiz-adv-x="34" d="M13 24H28.774L47.547 14H24.547zM10 24H14.226L18.453 14H-1.547z" />
+    <glyph glyph-name="skew-y"
+      unicode="&#xE002;"
+      horiz-adv-x="30" d="M8.824 18.529L17.647 3.314V0.716L8.824 -7.309zM8.824 21.176L17.647 18.485V21.343L8.824 13.538z" />
+  </font>
+</defs>
+</svg>

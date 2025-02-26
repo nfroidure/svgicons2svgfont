@@ -1,0 +1,12 @@
+<svg
+  viewBox="0 0 34 34"
+  width="30"
+  height="30"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+>
+  <g transform="translate(10 10)">
+    <path d="M0,0H10V10H0Z" transform="skewY(30) translate(0 3)" />
+    <path d="M0,0H10V10H0Z" transform="skewY(-30)" />
+  </g>
+</svg>

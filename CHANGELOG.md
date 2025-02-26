@@ -1,3 +1,12 @@
+## [15.0.1](https://github.com/nfroidure/svgicons2svgfont/compare/v15.0.0...v15.0.1) (2025-02-26)
+
+
+### Bug Fixes
+
+* replace deprecated transformation-matrix-js ([118572c](https://github.com/nfroidure/svgicons2svgfont/commit/118572c009f3e3e06da5eea0dac48e3cc296913b))
+
+
+
 # [15.0.0](https://github.com/nfroidure/svgicons2svgfont/compare/v14.0.2...v15.0.0) (2024-11-07)
 
 

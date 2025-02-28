@@ -45,7 +45,8 @@
     "prettier": "prettier --write 'src/**/*.ts'",
     "preversion": "npm run build && npm t && npm run lint && npm run metapak -- -s",
     "rebuild": "swc ./src -s -d dist -C jsc.target=es2022",
-    "test": "npm run jest",
+    "test": "npm run jest && npm run test:native",
+    "test:native": "node --experimental-strip-types --test ./src/transformers/*/*.test.ts",
     "type-check": "tsc --pretty --noEmit",
     "version": "npm run changelog"
   },

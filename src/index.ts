@@ -16,10 +16,6 @@ import debug from 'debug';
 
 const warn = debug('svgicons2svgfont');
 
-export { fileSorter } from './filesorter.js';
-export * from './iconsdir.js';
-export * from './metadata.js';
-
 function matrixFromTransformAttribute(transformAttributeString): Matrix {
   return compose(
     fromDefinition(fromTransformAttribute(transformAttributeString)),

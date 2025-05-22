@@ -28,9 +28,25 @@
   "version": "15.0.1",
   "description": "Read a set of SVG icons and output a SVG font",
   "homepage": "https://github.com/nfroidure/svgicons2svgfont",
-  "main": "dist/index.js",
   "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./iconsdir": "./dist/iconsdir.js",
+    "./filesorter": "./dist/filesorter.js",
+    "./metadata": "./dist/metadata.js",
+    "./svgshapes2svgpath": "./dist/svgshapes2svgpath.js"
+  },
+  "typesVersions": {
+    "*": {
+      "iconsdir": ["dist/iconsdir.d.ts"],
+      "filesorter": ["dist/iconsdir.d.ts"],
+      "metadata": ["dist/metadata.d.ts"],
+      "svgshapes2svgpath": ["dist/svgshapes2svgpath.d.ts"]
+    }
+  },
   "scripts": {
     "build": "rimraf 'dist' && tsc --outDir dist",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md",

@@ -131,3 +131,6 @@ Temporary Items
 # Project custom ignored file
 dist
 fixtures/results
+
+# JetBrains IDEs
+.idea/

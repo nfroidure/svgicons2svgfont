@@ -1,0 +1,30 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <font id="neverrenderedicons" horiz-adv-x="24">
+    <font-face font-family="neverrenderedicons"
+      units-per-em="24" ascent="24"
+      descent="0" />
+    <missing-glyph horiz-adv-x="0" />
+    <glyph glyph-name="clippath"
+      unicode="&#xE001;"
+      horiz-adv-x="24" d="M4 20H10V14H4z" />
+    <glyph glyph-name="defs"
+      unicode="&#xE002;"
+      horiz-adv-x="24" d="M4 20H10V14H4z" />
+    <glyph glyph-name="marker"
+      unicode="&#xE003;"
+      horiz-adv-x="24" d="M4 20H10V14H4z" />
+    <glyph glyph-name="mask"
+      unicode="&#xE004;"
+      horiz-adv-x="24" d="M4 20H10V14H4z" />
+    <glyph glyph-name="pattern"
+      unicode="&#xE005;"
+      horiz-adv-x="24" d="M4 20H10V14H4z" />
+    <glyph glyph-name="symbol"
+      unicode="&#xE006;"
+      horiz-adv-x="24" d="M4 20H10V14H4z" />
+  </font>
+</defs>
+</svg>

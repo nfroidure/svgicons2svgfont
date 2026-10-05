@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <defs>
+    <marker id="corner" markerWidth="24" markerHeight="24" refX="0" refY="0">
+      <path d="M16 16H22V22H16Z" />
+    </marker>
+  </defs>
+  <path d="M4 4H10V10H4Z" marker-end="url(#corner)" />
+</svg>

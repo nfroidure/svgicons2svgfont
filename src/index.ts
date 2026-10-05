@@ -29,10 +29,30 @@ function matrixFromTransformAttribute(
 }
 
 // Rendering
+// SVG 2's never-rendered elements except defs and symbol, whose content drawn in
+// place is the only way a sprite icon draws, since <use> is never resolved here
+// https://www.w3.org/TR/SVG2/render.html#TermNeverRenderedElement
+const NEVER_RENDERED_ELEMENTS = [
+  'clipPath',
+  'desc',
+  'linearGradient',
+  'marker',
+  'mask',
+  'metadata',
+  'pattern',
+  'radialGradient',
+  'script',
+  'style',
+  'title',
+];
+
 function tagShouldRender(curTag: Tag, parents: Tag[]) {
   let values;
 
   return !parents.some((tag) => {
+    if (NEVER_RENDERED_ELEMENTS.includes(tag.name)) {
+      return true;
+    }
     if (
       'undefined' !== typeof tag.attributes.display &&
       'none' === tag.attributes.display.toLowerCase()
@@ -254,6 +274,12 @@ export class SVGIcons2SVGFontStream extends Transform {
         } else {
           transformStack.push(currentTransform);
         }
+        // Clipping and masking unsupported, however an element references them
+        if ('clipPath' === tag.name || 'mask' === tag.name) {
+          warn(
+            `🤷 - Found a ${tag.name} element in the icon "${glyph.name}" the result may be different than expected.`,
+          );
+        }
         // Checking if any parent rendering is disabled and exit if so
         if (!tagShouldRender(tag as Tag, parents as Tag[])) {
           return;
@@ -305,11 +331,6 @@ export class SVGIcons2SVGFontStream extends Transform {
               glyph.defaultHeight = true;
             }
           }
-        } else if ('clipPath' === tag.name) {
-          // Clipping path unsupported
-          warn(
-            `🤷 - Found a clipPath element in the icon "${glyph.name}" the result may be different than expected.`,
-          );
         } else if ('rect' === tag.name && 'none' !== tag.attributes.fill) {
           glyph.paths?.push(
             applyTransform(

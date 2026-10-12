@@ -11,6 +11,7 @@ import {
 import { SVGIconsDirStream, type SVGIconStream } from '../iconsdir.js';
 import streamtest from 'streamtest';
 import { BufferStream } from 'bufferstreams';
+import { SVGPathData } from 'svg-pathdata';
 
 try {
   await mkdir(join('fixtures', 'results'));
@@ -393,6 +394,12 @@ describe('Generating fonts to files', () => {
       fontName: 'onlywithry',
     });
   });
+
+  test('should keep the holes of evenodd paths', async () => {
+    await generateFontToFile({
+      fontName: 'evenoddicons',
+    });
+  });
 });
 
 describe('Generating fonts to memory', () => {
@@ -606,6 +613,255 @@ describe('Passing code points', () => {
   });
 });
 
+describe('Respecting the fill-rule', () => {
+  /**
+   * Issue #62 (search) and issue #121 (frames)
+   * https://github.com/nfroidure/svgicons2svgfont/issues/62
+   * https://github.com/nfroidure/svgicons2svgfont/issues/121
+   */
+  test.each([
+    [
+      'attribute',
+      24,
+      [
+        [12, 12, false],
+        [4, 12, true],
+      ],
+    ],
+    [
+      'inherited',
+      24,
+      [
+        [12, 12, false],
+        [4, 12, true],
+      ],
+    ],
+    [
+      'style',
+      24,
+      [
+        [12, 12, false],
+        [4, 12, true],
+      ],
+    ],
+    [
+      'island',
+      24,
+      [
+        [12, 12, true],
+        [8, 12, false],
+        [4, 12, true],
+      ],
+    ],
+    [
+      'nested',
+      24,
+      [
+        [12, 12, false],
+        [9.5, 12, true],
+        [6.5, 12, false],
+        [3.5, 12, true],
+      ],
+    ],
+    [
+      'overlapping',
+      24,
+      [
+        [16, 16, false],
+        [13, 10, true],
+        [6, 6, false],
+        [3, 3, true],
+      ],
+    ],
+    [
+      'separate',
+      24,
+      [
+        [6, 6, true],
+        [18, 18, true],
+      ],
+    ],
+    [
+      'duplicated',
+      24,
+      [
+        [6, 6, true],
+        [18, 6, false],
+        [6, 18, false],
+        [18, 18, true],
+      ],
+    ],
+    [
+      'notched',
+      24,
+      [
+        [12, 4.5, false],
+        [19.5, 12, false],
+        [12, 19.5, false],
+        [4.5, 12, false],
+        [12, 12, true],
+        [4, 4, true],
+      ],
+    ],
+    [
+      'adjacent',
+      24,
+      [
+        [9, 12, false],
+        [16, 12, false],
+        [4, 12, true],
+        [12, 4, true],
+      ],
+    ],
+    [
+      'nonzero',
+      24,
+      [
+        [12, 12, true],
+        [4, 12, true],
+      ],
+    ],
+    [
+      'overridden',
+      24,
+      [
+        [12, 12, true],
+        [4, 12, true],
+      ],
+    ],
+    [
+      'alternating',
+      24,
+      [
+        [12, 12, false],
+        [4, 12, true],
+      ],
+    ],
+    [
+      'search',
+      16,
+      [
+        [6.5, 6.5, false],
+        [6.5, 1, true],
+      ],
+    ],
+    [
+      'frames',
+      23,
+      [
+        [5, 5, false],
+        [18, 5, false],
+        [5, 18, false],
+        [18, 18, false],
+        [0.7, 5, true],
+        [22.3, 18, true],
+      ],
+    ],
+  ] as [string, number, [number, number, boolean][]][])(
+    'should fill the %s icon where SVG paints it',
+    async (name, height, probes) => {
+      const d = await generateGlyphPath(
+        fs.readFileSync(
+          join('fixtures', 'icons', 'evenoddicons', `${name}.svg`),
+          'utf8',
+        ),
+      );
+
+      expect(
+        probes.map(([x, y]) => 0 !== windingNumberAt(d, x, height - y)),
+      ).toEqual(probes.map(([, , ink]) => ink));
+    },
+  );
+
+  test('should leave a path whose holes already wind backwards untouched', async () => {
+    const source = fs.readFileSync(
+      join('fixtures', 'icons', 'evenoddicons', 'alternating.svg'),
+      'utf8',
+    );
+
+    expect(await generateGlyphPath(source)).toEqual(
+      await generateGlyphPath(source.replace(' fill-rule="evenodd"', '')),
+    );
+  });
+
+  test.each([
+    ['a quadratic curve', 'M2 2H22V22H2Z M7 7Q7 17 17 17L17 7Z'],
+    [
+      'smooth cubic curves',
+      'M2 12C2 6 6 2 12 2S22 6 22 12S18 22 12 22S2 18 2 12Z',
+    ],
+    ['smooth quadratic curves', 'M2 12Q2 2 12 2T22 12T12 22T2 12Z'],
+  ])(
+    'should leave a path drawn with %s untouched when no contour is reversed',
+    async (_name, d) => {
+      const icon = (fillRule: string) =>
+        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path${fillRule} d="${d}"/></svg>`;
+
+      expect(await generateGlyphPath(icon(' fill-rule="evenodd"'))).toEqual(
+        await generateGlyphPath(icon('')),
+      );
+    },
+  );
+
+  test.each([
+    ['style="fill-rule: evenodd; fill-rule: nonzero"', 'nonzero'],
+    ['style="fill-rule: evenodd !important; fill-rule: nonzero"', 'evenodd'],
+    [
+      'style="fill-rule: nonzero !important; fill-rule: evenodd !important"',
+      'evenodd',
+    ],
+    ['style="fill-rule: bogus; fill-rule: evenodd"', 'evenodd'],
+    ['style="FILL-RULE: EVENODD"', 'evenodd'],
+    ['style="fill-rule: /* a comment */ evenodd"', 'evenodd'],
+    ['style="fill-rule: evenodd /* ; fill-rule: nonzero */"', 'evenodd'],
+    ['style="fill-rule: inherit" fill-rule="evenodd"', 'nonzero'],
+    ['style="fill-rule: initial" fill-rule="evenodd"', 'nonzero'],
+    ['style="FILL-RULE: INITIAL" fill-rule="evenodd"', 'nonzero'],
+    ['style="fill-rule: unset" fill-rule="evenodd"', 'nonzero'],
+    ['style="fill-rule: revert" fill-rule="evenodd"', 'nonzero'],
+    ['style="fill-rule: revert-layer" fill-rule="evenodd"', 'evenodd'],
+  ])('should fill a path with %s by the %s rule', async (attributes, rule) => {
+    const icon = (declarations: string) =>
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path ${declarations} d="M2 2H22V22H2Z M7 7H17V17H7Z"/></svg>`;
+
+    expect(await generateGlyphPath(icon(attributes))).toEqual(
+      await generateGlyphPath(icon(`fill-rule="${rule}"`)),
+    );
+  });
+
+  test.each([
+    ['style="fill-rule: initial"', 'nonzero'],
+    ['fill-rule="initial"', 'nonzero'],
+    ['fill-rule="nonzero" style="fill-rule: unset"', 'evenodd'],
+    ['fill-rule="nonzero" style="fill-rule: revert"', 'evenodd'],
+    ['fill-rule="nonzero" style="fill-rule: revert-layer"', 'nonzero'],
+    ['style="fill-rule: revert-layer"', 'evenodd'],
+    ['fill-rule="unset"', 'evenodd'],
+    ['fill-rule="revert-layer"', 'evenodd'],
+  ])(
+    'should fill a path with %s under an evenodd group by the %s rule',
+    async (attributes, rule) => {
+      const icon = (group: string, declarations: string) =>
+        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g ${group}><path ${declarations} d="M2 2H22V22H2Z M7 7H17V17H7Z"/></g></svg>`;
+
+      expect(
+        await generateGlyphPath(icon('fill-rule="evenodd"', attributes)),
+      ).toEqual(await generateGlyphPath(icon('', `fill-rule="${rule}"`)));
+    },
+  );
+
+  test('should produce the same glyph every time', async () => {
+    const source = fs.readFileSync(
+      join('fixtures', 'icons', 'evenoddicons', 'island.svg'),
+      'utf8',
+    );
+
+    expect(await generateGlyphPath(source)).toEqual(
+      await generateGlyphPath(source),
+    );
+  });
+});
+
 describe('Providing bad glyphs', () => {
   test('should fail when not providing glyph name', async () => {
     const svgIconStream = fs.createReadStream(
@@ -766,6 +1022,89 @@ describe('Providing bad glyphs', () => {
       .write(svgIconStream);
   });
 });
+
+async function generateGlyphPath(source: string) {
+  const svgFontStream = new SVGIcons2SVGFontStream({ round: 1e3 });
+  const svgIconStream = streamtest.fromChunks([
+    Buffer.from(source),
+  ]) as unknown as SVGIconStream;
+
+  svgIconStream.metadata = {
+    name: 'glyph',
+    unicode: [''],
+  };
+
+  const promise = bufferStream(svgFontStream);
+
+  svgFontStream.write(svgIconStream);
+  svgFontStream.end();
+
+  const font = (await promise).toString();
+  const glyph = /<glyph[^>]* d="([^"]*)"/.exec(font);
+
+  if (!glyph) {
+    throw new Error(`No glyph path in the font: ${font}`);
+  }
+  return glyph[1];
+}
+
+// A font is filled by the nonzero rule: a point is ink when the outline winds around it.
+function windingNumberAt(d: string, x: number, y: number) {
+  let winding = 0;
+  let start = { x: 0, y: 0 };
+  let current = start;
+  const lineTo = (point: { x: number; y: number }) => {
+    const side =
+      (point.x - current.x) * (y - current.y) -
+      (x - current.x) * (point.y - current.y);
+
+    if (current.y <= y && point.y > y && 0 < side) {
+      winding += 1;
+    } else if (current.y > y && point.y <= y && 0 > side) {
+      winding -= 1;
+    }
+    current = point;
+  };
+
+  for (const command of new SVGPathData(d).toAbs().normalizeST().qtToC().aToC()
+    .commands) {
+    if (SVGPathData.MOVE_TO === command.type) {
+      lineTo(start);
+      start = { x: command.x, y: command.y };
+      current = start;
+    } else if (SVGPathData.LINE_TO === command.type) {
+      lineTo({ x: command.x, y: command.y });
+    } else if (SVGPathData.HORIZ_LINE_TO === command.type) {
+      lineTo({ x: command.x, y: current.y });
+    } else if (SVGPathData.VERT_LINE_TO === command.type) {
+      lineTo({ x: current.x, y: command.y });
+    } else if (SVGPathData.CURVE_TO === command.type) {
+      const from = current;
+
+      for (let step = 1; step <= 32; step++) {
+        const t = step / 32;
+        const u = 1 - t;
+
+        lineTo({
+          x:
+            u * u * u * from.x +
+            3 * u * u * t * command.x1 +
+            3 * u * t * t * command.x2 +
+            t * t * t * command.x,
+          y:
+            u * u * u * from.y +
+            3 * u * u * t * command.y1 +
+            3 * u * t * t * command.y2 +
+            t * t * t * command.y,
+        });
+      }
+    } else if (SVGPathData.CLOSE_PATH === command.type) {
+      lineTo(start);
+    }
+  }
+  lineTo(start);
+  return winding;
+}
 
 async function bufferStream(readableStream: Readable) {
   return await new Promise<Buffer>((resolve, reject) => {

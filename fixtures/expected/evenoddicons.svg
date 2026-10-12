@@ -1,0 +1,57 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <font id="evenoddicons" horiz-adv-x="24">
+    <font-face font-family="evenoddicons"
+      units-per-em="24" ascent="24"
+      descent="0" />
+    <missing-glyph horiz-adv-x="0" />
+    <glyph glyph-name="adjacent"
+      unicode="&#xE001;"
+      horiz-adv-x="24" d="M2 22H22V2H2zM12 6H20V18H12zM6 12L12 8V16z" />
+    <glyph glyph-name="alternating"
+      unicode="&#xE002;"
+      horiz-adv-x="24" d="M2 22H22V2H2zM7 17V7H17V17z" />
+    <glyph glyph-name="attribute"
+      unicode="&#xE003;"
+      horiz-adv-x="24" d="M2 22H22V2H2zM7 7H17V17H7z" />
+    <glyph glyph-name="duplicated"
+      unicode="&#xE004;"
+      horiz-adv-x="24" d="M2 22H10V14H2zM14 22H22V14H14zM14 14H22V22H14zM2 10H10V2H2zM2 10V2H10V10zM14 10H22V2H14zM14 2H22V10H14zM14 10H22V2H14z" />
+    <glyph glyph-name="frames"
+      unicode="&#xE005;"
+      horiz-adv-x="23" d="M2 21.6C1.669 21.6 1.4 21.331 1.4 21V15C1.4 14.669 1.669 14.4 2 14.4H8C8.331 14.4 8.6 14.669 8.6 15V21C8.6 21.331 8.331 21.6 8 21.6H2zM0 21C0 22.105 0.895 23 2 23H8C9.105 23 10 22.105 10 21V15C10 13.895 9.105 13 8 13H2C0.895 13 0 13.895 0 15V21zM15 21.6C14.669 21.6 14.4 21.331 14.4 21V15C14.4 14.669 14.669 14.4 15 14.4H21C21.331 14.4 21.6 14.669 21.6 15V21C21.6 21.331 21.331 21.6 21 21.6H15zM13 21C13 22.105 13.895 23 15 23H21C22.105 23 23 22.105 23 21V15C23 13.895 22.105 13 21 13H15C13.895 13 13 13.895 13 15V21zM8 8.6C8.331 8.6 8.6 8.331 8.6 8V2C8.6 1.669 8.331 1.4 8 1.4H2C1.669 1.4 1.4 1.669 1.4 2V8C1.4 8.331 1.669 8.6 2 8.6H8zM2 10C0.895 10 0 9.105 0 8V2C0 0.895 0.895 0 2 0H8C9.105 0 10 0.895 10 2V8C10 9.105 9.105 10 8 10H2zM15 8.6C14.669 8.6 14.4 8.331 14.4 8V2C14.4 1.669 14.669 1.4 15 1.4H21C21.331 1.4 21.6 1.669 21.6 2V8C21.6 8.331 21.331 8.6 21 8.6H15zM13 8C13 9.105 13.895 10 15 10H21C22.105 10 23 9.105 23 8V2C23 0.895 22.105 0 21 0H15C13.895 0 13 0.895 13 2V8z" />
+    <glyph glyph-name="inherited"
+      unicode="&#xE006;"
+      horiz-adv-x="24" d="M2 22H22V2H2zM7 7H17V17H7z" />
+    <glyph glyph-name="island"
+      unicode="&#xE007;"
+      horiz-adv-x="24" d="M2 22H22V2H2zM6 6H18V18H6zM10 14H14V10H10z" />
+    <glyph glyph-name="nested"
+      unicode="&#xE008;"
+      horiz-adv-x="24" d="M2 22H22V2H2zM5 5H19V19H5zM8 16H16V8H8zM11 11H13V13H11z" />
+    <glyph glyph-name="nonzero"
+      unicode="&#xE009;"
+      horiz-adv-x="24" d="M2 22H22V2H2zM7 17H17V7H7z" />
+    <glyph glyph-name="notched"
+      unicode="&#xE00A;"
+      horiz-adv-x="24" d="M2 22H22V2H2zM10 17H14V22H10zM17 10H22V14H17zM10 2H14V7H10zM2 10H7V14H2z" />
+    <glyph glyph-name="overlapping"
+      unicode="&#xE00B;"
+      horiz-adv-x="24" d="M2 22H22V2H2zM4 10H14V20H4zM12 6H18V16H12z" />
+    <glyph glyph-name="overridden"
+      unicode="&#xE00C;"
+      horiz-adv-x="24" d="M2 22H22V2H2zM7 17H17V7H7z" />
+    <glyph glyph-name="search"
+      unicode="&#xE00D;"
+      horiz-adv-x="16" d="M6.5 16C10.09 16 13 13.09 13 9.5C13 8.137 12.582 6.873 11.865 5.829L15.594 2.03C16.028 1.545 16.196 0.877 15.673 0.354C15.149 -0.171 14.48 -0.141 13.956 0.384L10.203 4.157C9.151 3.427 7.876 3 6.5 3C2.91 3 0 5.91 0 9.5C0 13.09 2.91 16 6.5 16zM6.5 14.001C4.015 14.001 2.001 11.986 2.001 9.501C2.001 7.016 4.015 5.001 6.5 5.001C8.985 5.001 11 7.016 11 9.501C11 11.986 8.985 14.001 6.5 14.001z" />
+    <glyph glyph-name="separate"
+      unicode="&#xE00E;"
+      horiz-adv-x="24" d="M2 22H10V14H2zM14 10V2H22V10z" />
+    <glyph glyph-name="style"
+      unicode="&#xE00F;"
+      horiz-adv-x="24" d="M2 22H22V2H2zM7 7H17V17H7z" />
+  </font>
+</defs>
+</svg>

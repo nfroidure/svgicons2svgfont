@@ -821,6 +821,11 @@ describe('Respecting the fill-rule', () => {
     ['style="fill-rule: /* a comment */ evenodd"', 'evenodd'],
     ['style="fill-rule: evenodd /* ; fill-rule: nonzero */"', 'evenodd'],
     ['style="fill-rule: inherit" fill-rule="evenodd"', 'nonzero'],
+    ['style="fill-rule: initial" fill-rule="evenodd"', 'nonzero'],
+    ['style="FILL-RULE: INITIAL" fill-rule="evenodd"', 'nonzero'],
+    ['style="fill-rule: unset" fill-rule="evenodd"', 'nonzero'],
+    ['style="fill-rule: revert" fill-rule="evenodd"', 'nonzero'],
+    ['style="fill-rule: revert-layer" fill-rule="evenodd"', 'evenodd'],
   ])('should fill a path with %s by the %s rule', async (attributes, rule) => {
     const icon = (declarations: string) =>
       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path ${declarations} d="M2 2H22V22H2Z M7 7H17V17H7Z"/></svg>`;
@@ -829,6 +834,27 @@ describe('Respecting the fill-rule', () => {
       await generateGlyphPath(icon(`fill-rule="${rule}"`)),
     );
   });
+
+  test.each([
+    ['style="fill-rule: initial"', 'nonzero'],
+    ['fill-rule="initial"', 'nonzero'],
+    ['fill-rule="nonzero" style="fill-rule: unset"', 'evenodd'],
+    ['fill-rule="nonzero" style="fill-rule: revert"', 'evenodd'],
+    ['fill-rule="nonzero" style="fill-rule: revert-layer"', 'nonzero'],
+    ['style="fill-rule: revert-layer"', 'evenodd'],
+    ['fill-rule="unset"', 'evenodd'],
+    ['fill-rule="revert-layer"', 'evenodd'],
+  ])(
+    'should fill a path with %s under an evenodd group by the %s rule',
+    async (attributes, rule) => {
+      const icon = (group: string, declarations: string) =>
+        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g ${group}><path ${declarations} d="M2 2H22V22H2Z M7 7H17V17H7Z"/></g></svg>`;
+
+      expect(
+        await generateGlyphPath(icon('fill-rule="evenodd"', attributes)),
+      ).toEqual(await generateGlyphPath(icon('', `fill-rule="${rule}"`)));
+    },
+  );
 
   test('should produce the same glyph every time', async () => {
     const source = fs.readFileSync(

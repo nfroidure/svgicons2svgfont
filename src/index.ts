@@ -169,13 +169,17 @@ function getTagFillRule(parents: readonly Tag[]): FillRule {
   return 'nonzero';
 }
 
-// fill is inherited, so the nearest declaration decides
+// fill is inherited, so the nearest declaration decides, and every CSS-wide
+// keyword but initial, which is black, takes the parent's fill
 // https://www.w3.org/TR/SVG2/painting.html#FillProperty
 function getTagFill(parents: readonly Tag[]): string | undefined {
   for (let index = parents.length - 1; 0 <= index; index--) {
     const fill = getTagDeclaration(parents[index], 'fill', parseDeclaredValue);
 
-    if (fill && 'inherit' !== fill.toLowerCase()) {
+    if ('initial' === fill) {
+      return 'black';
+    }
+    if (undefined !== fill && undefined === parseCSSWideKeyword(fill)) {
       return fill;
     }
   }

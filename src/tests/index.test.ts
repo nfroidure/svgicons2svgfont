@@ -915,6 +915,22 @@ describe('Resolving fill and display as SVG does', () => {
       'a path whose style fill is NONE',
       '<path style="fill: NONE" d="M14 14H20V20H14Z" />',
     ],
+    [
+      'a path whose style fill is unset under a group whose fill is none',
+      '<g fill="none"><path style="fill: unset" d="M14 14H20V20H14Z" /></g>',
+    ],
+    [
+      'a path whose style fill is revert under a group whose fill is none',
+      '<g fill="none"><path fill="#000" style="fill: revert" d="M14 14H20V20H14Z" /></g>',
+    ],
+    [
+      'a path whose style fill is revert-layer over fill="none"',
+      '<path fill="none" style="fill: revert-layer" d="M14 14H20V20H14Z" />',
+    ],
+    [
+      'a path whose style display is revert-layer over display="none"',
+      '<path display="none" style="display: revert-layer" d="M14 14H20V20H14Z" />',
+    ],
   ])(
     'should not draw %s, which SVG leaves unpainted',
     async (_name, content) => {
@@ -932,6 +948,10 @@ describe('Resolving fill and display as SVG does', () => {
     [
       'its own fill under a group whose fill is none',
       '<g fill="none"><path fill="#000" d="M14 14H20V20H14Z" /></g>',
+    ],
+    [
+      'a style fill of initial under a group whose fill is none',
+      '<g fill="none"><path style="fill: initial" d="M14 14H20V20H14Z" /></g>',
     ],
   ])('should draw a path painted by %s', async (_name, content) => {
     expect(await generateGlyphPath(icon(content))).toEqual(
@@ -975,6 +995,26 @@ describe('Resolving fill and display as SVG does', () => {
       'the last tag declaring a fill',
       '<g fill="#F00"><path fill="#00F" d="M14 14H20V20H14Z" />' +
         '<path d="M14 4H20V10H14Z" /></g>',
+      '#00F',
+    ],
+    [
+      'a style fill of initial',
+      '<path style="fill: initial" d="M14 14H20V20H14Z" />',
+      'black',
+    ],
+    [
+      'fill="initial"',
+      '<g fill="#F00"><path fill="initial" d="M14 14H20V20H14Z" /></g>',
+      'black',
+    ],
+    [
+      'a style fill of unset',
+      '<g fill="#F00"><path fill="#00F" style="fill: unset" d="M14 14H20V20H14Z" /></g>',
+      '#F00',
+    ],
+    [
+      'a style fill of revert-layer',
+      '<g fill="#F00"><path fill="#00F" style="fill: revert-layer" d="M14 14H20V20H14Z" /></g>',
       '#00F',
     ],
   ])('should take the glyph color from %s', async (_name, content, color) => {

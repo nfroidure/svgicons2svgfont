@@ -126,40 +126,70 @@ function getStyleDeclaration<T>(
   return declared;
 }
 
-// A style declaration wins over the presentation attribute
+// https://www.w3.org/TR/css-cascade-5/#defaulting-keywords
+type CSSWideKeyword =
+  | 'initial'
+  | 'inherit'
+  | 'unset'
+  | 'revert'
+  | 'revert-layer';
+
+const CSS_WIDE_KEYWORDS: readonly CSSWideKeyword[] = [
+  'initial',
+  'inherit',
+  'unset',
+  'revert',
+  'revert-layer',
+];
+
+function parseCSSWideKeyword(value: string): CSSWideKeyword | undefined {
+  const keyword = value.trim().toLowerCase();
+
+  return CSS_WIDE_KEYWORDS.find((candidate) => candidate === keyword);
+}
+
+// A style declaration wins over the presentation attribute, except that
+// revert-layer rolls back to it
 // https://www.w3.org/TR/SVG2/styling.html#PresentationAttributes
+// https://www.w3.org/TR/css-cascade-5/#revert-layer
 function getTagDeclaration<T>(
   tag: Tag,
   property: string,
   parseValue: (value: string) => T | undefined,
-): T | undefined {
+): T | CSSWideKeyword | undefined {
   const { style, [property]: attribute } = tag.attributes;
+  const parse = (value: string) =>
+    parseCSSWideKeyword(value) ?? parseValue(value);
+  const declared =
+    'string' === typeof style
+      ? getStyleDeclaration(style, property, parse)
+      : undefined;
 
-  return (
-    ('string' === typeof style
-      ? getStyleDeclaration(style, property, parseValue)
-      : undefined) ??
-    ('string' === typeof attribute ? parseValue(attribute) : undefined)
-  );
+  if (undefined !== declared && 'revert-layer' !== declared) {
+    return declared;
+  }
+  return 'string' === typeof attribute ? parse(attribute) : undefined;
 }
 
+// fill-rule is inherited, so every CSS-wide keyword but initial takes the
+// parent's rule
 // https://www.w3.org/TR/SVG2/painting.html#FillRuleProperty
 type FillRule = 'nonzero' | 'evenodd';
-type DeclaredFillRule = FillRule | 'inherit';
 
-function parseFillRule(value: string): DeclaredFillRule | undefined {
+function parseFillRule(value: string): FillRule | undefined {
   const rule = value.trim().toLowerCase();
 
-  return 'nonzero' === rule || 'evenodd' === rule || 'inherit' === rule
-    ? rule
-    : undefined;
+  return 'nonzero' === rule || 'evenodd' === rule ? rule : undefined;
 }
 
 function getTagFillRule(parents: readonly Tag[]): FillRule {
   for (let index = parents.length - 1; 0 <= index; index--) {
     const rule = getTagDeclaration(parents[index], 'fill-rule', parseFillRule);
 
-    if (rule && 'inherit' !== rule) {
+    if ('initial' === rule) {
+      return 'nonzero';
+    }
+    if ('nonzero' === rule || 'evenodd' === rule) {
       return rule;
     }
   }

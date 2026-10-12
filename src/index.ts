@@ -1,6 +1,11 @@
 import { Transform } from 'stream';
 import Sax, { type Tag } from 'sax';
-import { SVGPathData, SVGShapes } from 'svg-pathdata';
+import {
+  SVGPathData,
+  SVGPathDataTransformer,
+  SVGShapes,
+  type SVGCommand,
+} from 'svg-pathdata';
 import {
   type Matrix,
   scale,
@@ -33,10 +38,7 @@ function tagShouldRender(curTag: Tag, parents: Tag[]) {
   let values;
 
   return !parents.some((tag) => {
-    if (
-      'undefined' !== typeof tag.attributes.display &&
-      'none' === tag.attributes.display.toLowerCase()
-    ) {
+    if ('none' === getTagDeclaration(tag, 'display', parseKeyword)) {
       return true;
     }
     if (
@@ -61,36 +63,403 @@ function tagShouldRender(curTag: Tag, parents: Tag[]) {
   });
 }
 
-// According to the document (http://www.w3.org/TR/SVG/painting.html#FillProperties)
-// fill <paint> none|currentColor|inherit|<color>
-//     [<icccolor>]|<funciri> (not support yet)
-function getTagColor(currTag: Tag, parents: Tag[]) {
-  const defaultColor = 'black';
-  const fillVal = currTag.attributes.fill;
-  const parentsLength = parents.length;
+// https://www.w3.org/TR/css-style-attr/
+const STYLE_COMMENT = /\/\*.*?\*\//gs;
+const STYLE_DECLARATION = /^\s*([a-z-]+)\s*:\s*(.*?)\s*(!\s*important\s*)?$/is;
 
-  if ('none' === fillVal) {
-    return 'none';
-  }
-  if ('currentColor' === fillVal) {
-    return defaultColor;
-  }
-  if ('inherit' === fillVal) {
-    if (0 === parentsLength) {
-      return defaultColor;
+// The last valid declaration wins, an important one over any other
+// https://www.w3.org/TR/css-cascade/#cascade-sort
+function getStyleDeclaration<T>(
+  style: string,
+  property: string,
+  parseValue: (value: string) => T | undefined,
+): T | undefined {
+  let declared: T | undefined;
+  let important = false;
+
+  for (const declaration of style.replace(STYLE_COMMENT, '').split(';')) {
+    const [, name = '', value = '', priority] =
+      STYLE_DECLARATION.exec(declaration) ?? [];
+    const parsed =
+      property === name.toLowerCase() ? parseValue(value) : undefined;
+
+    if (undefined !== parsed && (priority || !important)) {
+      declared = parsed;
+      important = Boolean(priority);
     }
-    return getTagColor(
-      parents[parentsLength - 1],
-      parents.slice(0, parentsLength - 1),
-    );
-    // this might be null.
-    // For example: <svg ><path fill="inherit" /> </svg>
-    // in this case getTagColor should return null
-    // recursive call, the bottom element should be svg,
-    // and svg didn't fill color, so just return null
+  }
+  return declared;
+}
+
+// https://www.w3.org/TR/css-cascade-5/#defaulting-keywords
+type CSSWideKeyword =
+  | 'initial'
+  | 'inherit'
+  | 'unset'
+  | 'revert'
+  | 'revert-layer';
+
+const CSS_WIDE_KEYWORDS: readonly CSSWideKeyword[] = [
+  'initial',
+  'inherit',
+  'unset',
+  'revert',
+  'revert-layer',
+];
+
+function parseCSSWideKeyword(value: string): CSSWideKeyword | undefined {
+  const keyword = value.trim().toLowerCase();
+
+  return CSS_WIDE_KEYWORDS.find((candidate) => candidate === keyword);
+}
+
+// A style declaration wins over the presentation attribute, except that
+// revert-layer rolls back to it
+// https://www.w3.org/TR/SVG2/styling.html#PresentationAttributes
+// https://www.w3.org/TR/css-cascade-5/#revert-layer
+function getTagDeclaration<T>(
+  tag: Tag,
+  property: string,
+  parseValue: (value: string) => T | undefined,
+): T | CSSWideKeyword | undefined {
+  const { style, [property]: attribute } = tag.attributes;
+  const parse = (value: string) =>
+    parseCSSWideKeyword(value) ?? parseValue(value);
+  const declared =
+    'string' === typeof style
+      ? getStyleDeclaration(style, property, parse)
+      : undefined;
+
+  if (undefined !== declared && 'revert-layer' !== declared) {
+    return declared;
+  }
+  return 'string' === typeof attribute ? parse(attribute) : undefined;
+}
+
+function parseDeclaredValue(value: string): string | undefined {
+  return value.trim() || undefined;
+}
+
+function parseKeyword(value: string): string | undefined {
+  return value.trim().toLowerCase() || undefined;
+}
+
+// fill-rule is inherited, so every CSS-wide keyword but initial takes the
+// parent's rule
+// https://www.w3.org/TR/SVG2/painting.html#FillRuleProperty
+type FillRule = 'nonzero' | 'evenodd';
+
+function parseFillRule(value: string): FillRule | undefined {
+  const rule = value.trim().toLowerCase();
+
+  return 'nonzero' === rule || 'evenodd' === rule ? rule : undefined;
+}
+
+function getTagFillRule(parents: readonly Tag[]): FillRule {
+  for (let index = parents.length - 1; 0 <= index; index--) {
+    const rule = getTagDeclaration(parents[index], 'fill-rule', parseFillRule);
+
+    if ('initial' === rule) {
+      return 'nonzero';
+    }
+    if ('nonzero' === rule || 'evenodd' === rule) {
+      return rule;
+    }
+  }
+  return 'nonzero';
+}
+
+// fill is inherited, so the nearest declaration decides, and every CSS-wide
+// keyword but initial, which is black, takes the parent's fill
+// https://www.w3.org/TR/SVG2/painting.html#FillProperty
+function getTagFill(parents: readonly Tag[]): string | undefined {
+  for (let index = parents.length - 1; 0 <= index; index--) {
+    const fill = getTagDeclaration(parents[index], 'fill', parseDeclaredValue);
+
+    if ('initial' === fill) {
+      return 'black';
+    }
+    if (undefined !== fill && undefined === parseCSSWideKeyword(fill)) {
+      return fill;
+    }
+  }
+  return undefined;
+}
+
+// A tag declaring a fill gives the glyph its color, currentColor being black
+// fill <paint> none|currentColor|inherit|<color> [<icccolor>]|<funciri> (not supported yet)
+// http://www.w3.org/TR/SVG/painting.html#SpecifyingPaint
+function getTagColor(parents: readonly Tag[]): string | undefined {
+  const tag = parents[parents.length - 1];
+
+  if (undefined === getTagDeclaration(tag, 'fill', parseDeclaredValue)) {
+    return undefined;
   }
 
-  return fillVal;
+  const fill = getTagFill(parents);
+
+  return 'currentcolor' === fill?.toLowerCase() ? 'black' : fill;
+}
+
+const CURVE_STEPS = 8;
+const CONTAINMENT_PROBES = 16;
+
+interface Point {
+  readonly x: number;
+  readonly y: number;
+}
+
+interface Bounds {
+  readonly minX: number;
+  readonly minY: number;
+  readonly maxX: number;
+  readonly maxY: number;
+}
+
+type PointLocation = 'inside' | 'outside' | 'outline';
+
+function splitContours(commands: readonly SVGCommand[]): SVGCommand[][] {
+  const contours: SVGCommand[][] = [];
+  let contour: SVGCommand[] = [];
+  let start: Point = { x: 0, y: 0 };
+  let closed = false;
+
+  for (const command of commands) {
+    if (SVGPathData.MOVE_TO === command.type) {
+      if (contour.length) {
+        contours.push(contour);
+      }
+      contour = [command];
+      start = { x: command.x, y: command.y };
+      closed = false;
+      continue;
+    }
+    if (closed) {
+      contours.push(contour);
+      contour = [
+        { type: SVGPathData.MOVE_TO, relative: false, x: start.x, y: start.y },
+      ];
+    }
+    contour.push(command);
+    closed = SVGPathData.CLOSE_PATH === command.type;
+  }
+  if (contour.length) {
+    contours.push(contour);
+  }
+  return contours;
+}
+
+function flattenContour(contour: readonly SVGCommand[]): Point[] {
+  const points: Point[] = [];
+  let x = 0;
+  let y = 0;
+
+  for (const command of contour) {
+    if (
+      SVGPathData.MOVE_TO === command.type ||
+      SVGPathData.LINE_TO === command.type
+    ) {
+      x = command.x;
+      y = command.y;
+      points.push({ x, y });
+    } else if (SVGPathData.HORIZ_LINE_TO === command.type) {
+      x = command.x;
+      points.push({ x, y });
+    } else if (SVGPathData.VERT_LINE_TO === command.type) {
+      y = command.y;
+      points.push({ x, y });
+    } else if (SVGPathData.CURVE_TO === command.type) {
+      for (let step = 1; step <= CURVE_STEPS; step++) {
+        const t = step / CURVE_STEPS;
+        const u = 1 - t;
+
+        points.push({
+          x:
+            u * u * u * x +
+            3 * u * u * t * command.x1 +
+            3 * u * t * t * command.x2 +
+            t * t * t * command.x,
+          y:
+            u * u * u * y +
+            3 * u * u * t * command.y1 +
+            3 * u * t * t * command.y2 +
+            t * t * t * command.y,
+        });
+      }
+      x = command.x;
+      y = command.y;
+    }
+  }
+  return points;
+}
+
+function signedArea(points: readonly Point[]): number {
+  let area = 0;
+
+  for (let index = 0; index < points.length; index++) {
+    const point = points[index];
+    const next = points[(index + 1) % points.length];
+
+    area += point.x * next.y - next.x * point.y;
+  }
+  return area / 2;
+}
+
+function getBounds(points: readonly Point[]): Bounds {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+
+  for (const { x, y } of points) {
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
+    maxX = Math.max(maxX, x);
+    maxY = Math.max(maxY, y);
+  }
+  return { minX, minY, maxX, maxY };
+}
+
+function boundsOverlap(first: Bounds, second: Bounds): boolean {
+  return (
+    first.minX <= second.maxX &&
+    second.minX <= first.maxX &&
+    first.minY <= second.maxY &&
+    second.minY <= first.maxY
+  );
+}
+
+function locatePoint(outline: readonly Point[], probe: Point): PointLocation {
+  let inside = false;
+
+  for (
+    let index = 0, previous = outline.length - 1;
+    index < outline.length;
+    previous = index++
+  ) {
+    const current = outline[index];
+    const prior = outline[previous];
+
+    if (
+      (current.x - prior.x) * (probe.y - prior.y) ===
+        (current.y - prior.y) * (probe.x - prior.x) &&
+      Math.min(prior.x, current.x) <= probe.x &&
+      probe.x <= Math.max(prior.x, current.x) &&
+      Math.min(prior.y, current.y) <= probe.y &&
+      probe.y <= Math.max(prior.y, current.y)
+    ) {
+      return 'outline';
+    }
+    if (
+      current.y > probe.y !== prior.y > probe.y &&
+      probe.x <
+        ((prior.x - current.x) * (probe.y - current.y)) /
+          (prior.y - current.y) +
+          current.x
+    ) {
+      inside = !inside;
+    }
+  }
+  return inside ? 'inside' : 'outside';
+}
+
+// Contours of equal area nest in drawing order, so a contour repeated point for point cancels out
+function canEnclose(
+  areas: readonly number[],
+  candidate: number,
+  index: number,
+): boolean {
+  const candidateArea = Math.abs(areas[candidate]);
+  const ownArea = Math.abs(areas[index]);
+
+  return (
+    candidateArea > ownArea || (candidateArea === ownArea && candidate < index)
+  );
+}
+
+function findEnclosingContour(
+  outlines: readonly (readonly Point[])[],
+  bounds: readonly Bounds[],
+  areas: readonly number[],
+  index: number,
+): number {
+  const outline = outlines[index];
+  const stride = Math.max(1, Math.floor(outline.length / CONTAINMENT_PROBES));
+  const probes = outline.filter(
+    (_point, pointIndex) => 0 === pointIndex % stride,
+  );
+  const probeBounds = getBounds(probes);
+  let enclosing = -1;
+
+  for (let candidate = 0; candidate < outlines.length; candidate++) {
+    if (
+      !canEnclose(areas, candidate, index) ||
+      (-1 !== enclosing && canEnclose(areas, candidate, enclosing)) ||
+      !boundsOverlap(bounds[candidate], probeBounds)
+    ) {
+      continue;
+    }
+
+    const locations = probes.map((probe) =>
+      locatePoint(outlines[candidate], probe),
+    );
+    const inside = locations.filter((location) => 'inside' === location);
+    const outside = locations.filter((location) => 'outside' === location);
+
+    // A point on the candidate's outline tells neither way
+    if (inside.length > outside.length || 0 === outside.length) {
+      enclosing = candidate;
+    }
+  }
+  return enclosing;
+}
+
+// Fonts fill by the nonzero rule: an evenodd hole must wind against its outline
+function windEvenOddAsNonZero(pathData: SVGPathData): SVGPathData {
+  const contours = splitContours(
+    new SVGPathData(pathData.commands.map(SVGPathDataTransformer.CLONE()))
+      .toAbs()
+      .normalizeST()
+      .qtToC()
+      .aToC().commands,
+  );
+
+  if (2 > contours.length) {
+    return pathData;
+  }
+
+  const outlines = contours.map(flattenContour);
+  const bounds = outlines.map(getBounds);
+  const areas = outlines.map(signedArea);
+  const enclosures = outlines.map((_outline, index) =>
+    0 === areas[index]
+      ? -1
+      : findEnclosingContour(outlines, bounds, areas, index),
+  );
+  const windings: number[] = [];
+  const resolveWinding = (index: number): number => {
+    if ('undefined' === typeof windings[index]) {
+      windings[index] =
+        -1 === enclosures[index]
+          ? Math.sign(areas[index])
+          : -resolveWinding(enclosures[index]);
+    }
+    return windings[index];
+  };
+  const reversed = contours.map(
+    (_contour, index) =>
+      0 !== areas[index] && Math.sign(areas[index]) !== resolveWinding(index),
+  );
+
+  if (!reversed.includes(true)) {
+    return pathData;
+  }
+
+  return new SVGPathData(
+    contours.flatMap((contour, index) =>
+      reversed[index] ? new SVGPathData(contour).reverse().commands : contour,
+    ),
+  );
 }
 
 export interface SVGIcons2SVGFontStreamOptions {
@@ -259,6 +628,8 @@ export class SVGIcons2SVGFontStream extends Transform {
           return;
         }
 
+        const painted = 'none' !== getTagFill(parents as Tag[])?.toLowerCase();
+
         // Save the view size
         if ('svg' === tag.name) {
           if ('viewBox' in tag.attributes) {
@@ -310,7 +681,7 @@ export class SVGIcons2SVGFontStream extends Transform {
           warn(
             `🤷 - Found a clipPath element in the icon "${glyph.name}" the result may be different than expected.`,
           );
-        } else if ('rect' === tag.name && 'none' !== tag.attributes.fill) {
+        } else if ('rect' === tag.name && painted) {
           glyph.paths?.push(
             applyTransform(
               SVGShapes.createRect(
@@ -335,7 +706,7 @@ export class SVGIcons2SVGFontStream extends Transform {
               ).encode(),
             ),
           );
-        } else if ('line' === tag.name && 'none' !== tag.attributes.fill) {
+        } else if ('line' === tag.name && painted) {
           warn(
             `🤷 - Found a line element in the icon "${glyph.name}" the result could be different than expected.`,
           );
@@ -349,7 +720,7 @@ export class SVGIcons2SVGFontStream extends Transform {
               ]).encode(),
             ),
           );
-        } else if ('polyline' === tag.name && 'none' !== tag.attributes.fill) {
+        } else if ('polyline' === tag.name && painted) {
           warn(
             `🤷 - Found a polyline element in the icon "${glyph.name}" the result could be different than expected.`,
           );
@@ -363,7 +734,7 @@ export class SVGIcons2SVGFontStream extends Transform {
               ).encode(),
             ),
           );
-        } else if ('polygon' === tag.name && 'none' !== tag.attributes.fill) {
+        } else if ('polygon' === tag.name && painted) {
           glyph.paths?.push(
             applyTransform(
               SVGShapes.createPolygon(
@@ -374,10 +745,7 @@ export class SVGIcons2SVGFontStream extends Transform {
               ).encode(),
             ),
           );
-        } else if (
-          ['circle', 'ellipse'].includes(tag.name) &&
-          'none' !== tag.attributes.fill
-        ) {
+        } else if (['circle', 'ellipse'].includes(tag.name) && painted) {
           glyph.paths?.push(
             applyTransform(
               SVGShapes.createEllipse(
@@ -396,18 +764,18 @@ export class SVGIcons2SVGFontStream extends Transform {
               ).encode(),
             ),
           );
-        } else if (
-          'path' === tag.name &&
-          tag.attributes.d &&
-          'none' !== tag.attributes.fill
-        ) {
-          glyph.paths?.push(applyTransform(tag.attributes.d as string));
+        } else if ('path' === tag.name && tag.attributes.d && painted) {
+          const pathData = applyTransform(tag.attributes.d as string);
+
+          glyph.paths?.push(
+            'evenodd' === getTagFillRule(parents as Tag[])
+              ? windEvenOddAsNonZero(pathData)
+              : pathData,
+          );
         }
 
-        // According to http://www.w3.org/TR/SVG/painting.html#SpecifyingPaint
-        // Map attribute fill to color property
-        if ('none' !== tag.attributes.fill) {
-          color = getTagColor(tag as Tag, parents as Tag[]);
+        if (painted) {
+          color = getTagColor(parents as Tag[]);
           if ('undefined' !== typeof color) {
             glyph.color = color;
           }

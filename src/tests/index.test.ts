@@ -11,6 +11,7 @@ import {
 import { SVGIconsDirStream, type SVGIconStream } from '../iconsdir.js';
 import streamtest from 'streamtest';
 import { BufferStream } from 'bufferstreams';
+import { SVGPathData } from 'svg-pathdata';
 
 try {
   await mkdir(join('fixtures', 'results'));
@@ -393,6 +394,18 @@ describe('Generating fonts to files', () => {
       fontName: 'onlywithry',
     });
   });
+
+  test('should keep the holes of evenodd paths', async () => {
+    await generateFontToFile({
+      fontName: 'evenoddicons',
+    });
+  });
+
+  test('should read fill and display from style', async () => {
+    await generateFontToFile({
+      fontName: 'styledicons',
+    });
+  });
 });
 
 describe('Generating fonts to memory', () => {
@@ -606,6 +619,409 @@ describe('Passing code points', () => {
   });
 });
 
+describe('Respecting the fill-rule', () => {
+  /**
+   * Issue #62 (search) and issue #121 (frames)
+   * https://github.com/nfroidure/svgicons2svgfont/issues/62
+   * https://github.com/nfroidure/svgicons2svgfont/issues/121
+   */
+  test.each([
+    [
+      'attribute',
+      24,
+      [
+        [12, 12, false],
+        [4, 12, true],
+      ],
+    ],
+    [
+      'inherited',
+      24,
+      [
+        [12, 12, false],
+        [4, 12, true],
+      ],
+    ],
+    [
+      'style',
+      24,
+      [
+        [12, 12, false],
+        [4, 12, true],
+      ],
+    ],
+    [
+      'island',
+      24,
+      [
+        [12, 12, true],
+        [8, 12, false],
+        [4, 12, true],
+      ],
+    ],
+    [
+      'nested',
+      24,
+      [
+        [12, 12, false],
+        [9.5, 12, true],
+        [6.5, 12, false],
+        [3.5, 12, true],
+      ],
+    ],
+    [
+      'overlapping',
+      24,
+      [
+        [16, 16, false],
+        [13, 10, true],
+        [6, 6, false],
+        [3, 3, true],
+      ],
+    ],
+    [
+      'separate',
+      24,
+      [
+        [6, 6, true],
+        [18, 18, true],
+      ],
+    ],
+    [
+      'duplicated',
+      24,
+      [
+        [6, 6, true],
+        [18, 6, false],
+        [6, 18, false],
+        [18, 18, true],
+      ],
+    ],
+    [
+      'notched',
+      24,
+      [
+        [12, 4.5, false],
+        [19.5, 12, false],
+        [12, 19.5, false],
+        [4.5, 12, false],
+        [12, 12, true],
+        [4, 4, true],
+      ],
+    ],
+    [
+      'adjacent',
+      24,
+      [
+        [9, 12, false],
+        [16, 12, false],
+        [4, 12, true],
+        [12, 4, true],
+      ],
+    ],
+    [
+      'nonzero',
+      24,
+      [
+        [12, 12, true],
+        [4, 12, true],
+      ],
+    ],
+    [
+      'overridden',
+      24,
+      [
+        [12, 12, true],
+        [4, 12, true],
+      ],
+    ],
+    [
+      'alternating',
+      24,
+      [
+        [12, 12, false],
+        [4, 12, true],
+      ],
+    ],
+    [
+      'search',
+      16,
+      [
+        [6.5, 6.5, false],
+        [6.5, 1, true],
+      ],
+    ],
+    [
+      'frames',
+      23,
+      [
+        [5, 5, false],
+        [18, 5, false],
+        [5, 18, false],
+        [18, 18, false],
+        [0.7, 5, true],
+        [22.3, 18, true],
+      ],
+    ],
+  ] as [string, number, [number, number, boolean][]][])(
+    'should fill the %s icon where SVG paints it',
+    async (name, height, probes) => {
+      const d = await generateGlyphPath(
+        fs.readFileSync(
+          join('fixtures', 'icons', 'evenoddicons', `${name}.svg`),
+          'utf8',
+        ),
+      );
+
+      expect(
+        probes.map(([x, y]) => 0 !== windingNumberAt(d, x, height - y)),
+      ).toEqual(probes.map(([, , ink]) => ink));
+    },
+  );
+
+  test('should leave a path whose holes already wind backwards untouched', async () => {
+    const source = fs.readFileSync(
+      join('fixtures', 'icons', 'evenoddicons', 'alternating.svg'),
+      'utf8',
+    );
+
+    expect(await generateGlyphPath(source)).toEqual(
+      await generateGlyphPath(source.replace(' fill-rule="evenodd"', '')),
+    );
+  });
+
+  test.each([
+    ['a quadratic curve', 'M2 2H22V22H2Z M7 7Q7 17 17 17L17 7Z'],
+    [
+      'smooth cubic curves',
+      'M2 12C2 6 6 2 12 2S22 6 22 12S18 22 12 22S2 18 2 12Z',
+    ],
+    ['smooth quadratic curves', 'M2 12Q2 2 12 2T22 12T12 22T2 12Z'],
+  ])(
+    'should leave a path drawn with %s untouched when no contour is reversed',
+    async (_name, d) => {
+      const icon = (fillRule: string) =>
+        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path${fillRule} d="${d}"/></svg>`;
+
+      expect(await generateGlyphPath(icon(' fill-rule="evenodd"'))).toEqual(
+        await generateGlyphPath(icon('')),
+      );
+    },
+  );
+
+  test.each([
+    ['style="fill-rule: evenodd; fill-rule: nonzero"', 'nonzero'],
+    ['style="fill-rule: evenodd !important; fill-rule: nonzero"', 'evenodd'],
+    [
+      'style="fill-rule: nonzero !important; fill-rule: evenodd !important"',
+      'evenodd',
+    ],
+    ['style="fill-rule: bogus; fill-rule: evenodd"', 'evenodd'],
+    ['style="FILL-RULE: EVENODD"', 'evenodd'],
+    ['style="fill-rule: /* a comment */ evenodd"', 'evenodd'],
+    ['style="fill-rule: evenodd /* ; fill-rule: nonzero */"', 'evenodd'],
+    ['style="fill-rule: inherit" fill-rule="evenodd"', 'nonzero'],
+    ['style="fill-rule: initial" fill-rule="evenodd"', 'nonzero'],
+    ['style="FILL-RULE: INITIAL" fill-rule="evenodd"', 'nonzero'],
+    ['style="fill-rule: unset" fill-rule="evenodd"', 'nonzero'],
+    ['style="fill-rule: revert" fill-rule="evenodd"', 'nonzero'],
+    ['style="fill-rule: revert-layer" fill-rule="evenodd"', 'evenodd'],
+  ])('should fill a path with %s by the %s rule', async (attributes, rule) => {
+    const icon = (declarations: string) =>
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path ${declarations} d="M2 2H22V22H2Z M7 7H17V17H7Z"/></svg>`;
+
+    expect(await generateGlyphPath(icon(attributes))).toEqual(
+      await generateGlyphPath(icon(`fill-rule="${rule}"`)),
+    );
+  });
+
+  test.each([
+    ['style="fill-rule: initial"', 'nonzero'],
+    ['fill-rule="initial"', 'nonzero'],
+    ['fill-rule="nonzero" style="fill-rule: unset"', 'evenodd'],
+    ['fill-rule="nonzero" style="fill-rule: revert"', 'evenodd'],
+    ['fill-rule="nonzero" style="fill-rule: revert-layer"', 'nonzero'],
+    ['style="fill-rule: revert-layer"', 'evenodd'],
+    ['fill-rule="unset"', 'evenodd'],
+    ['fill-rule="revert-layer"', 'evenodd'],
+  ])(
+    'should fill a path with %s under an evenodd group by the %s rule',
+    async (attributes, rule) => {
+      const icon = (group: string, declarations: string) =>
+        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g ${group}><path ${declarations} d="M2 2H22V22H2Z M7 7H17V17H7Z"/></g></svg>`;
+
+      expect(
+        await generateGlyphPath(icon('fill-rule="evenodd"', attributes)),
+      ).toEqual(await generateGlyphPath(icon('', `fill-rule="${rule}"`)));
+    },
+  );
+
+  test('should produce the same glyph every time', async () => {
+    const source = fs.readFileSync(
+      join('fixtures', 'icons', 'evenoddicons', 'island.svg'),
+      'utf8',
+    );
+
+    expect(await generateGlyphPath(source)).toEqual(
+      await generateGlyphPath(source),
+    );
+  });
+});
+
+describe('Resolving fill and display as SVG does', () => {
+  const icon = (content: string) =>
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 4H10V10H4Z" />${content}</svg>`;
+
+  test.each([
+    ['a path', '<path style="fill: none" d="M14 14H20V20H14Z" />'],
+    [
+      'a rect',
+      '<rect style="fill: none" x="14" y="14" width="6" height="6" />',
+    ],
+    ['a circle', '<circle style="fill: none" cx="17" cy="17" r="3" />'],
+    [
+      'an ellipse',
+      '<ellipse style="fill: none" cx="17" cy="17" rx="3" ry="2" />',
+    ],
+    ['a polygon', '<polygon style="fill: none" points="14,14 20,14 20,20" />'],
+    [
+      'a polyline',
+      '<polyline style="fill: none" points="14,14 20,14 20,20" />',
+    ],
+    ['a line', '<line style="fill: none" x1="14" y1="14" x2="20" y2="20" />'],
+    ['a hidden path', '<path style="display: none" d="M14 14H20V20H14Z" />'],
+    [
+      'a path hidden in capitals',
+      '<path style="DISPLAY: NONE" d="M14 14H20V20H14Z" />',
+    ],
+    [
+      'a path in a hidden group',
+      '<g style="display: none"><path d="M14 14H20V20H14Z" /></g>',
+    ],
+    [
+      'a path under a group whose fill is none',
+      '<g fill="none"><path d="M14 14H20V20H14Z" /></g>',
+    ],
+    [
+      'a path under a group whose style fill is none',
+      '<g style="fill: none"><path d="M14 14H20V20H14Z" /></g>',
+    ],
+    [
+      'a path that inherits a fill of none',
+      '<g fill="none"><path fill="inherit" d="M14 14H20V20H14Z" /></g>',
+    ],
+    ['a path whose fill is NONE', '<path fill="NONE" d="M14 14H20V20H14Z" />'],
+    [
+      'a path whose style fill is NONE',
+      '<path style="fill: NONE" d="M14 14H20V20H14Z" />',
+    ],
+    [
+      'a path whose style fill is unset under a group whose fill is none',
+      '<g fill="none"><path style="fill: unset" d="M14 14H20V20H14Z" /></g>',
+    ],
+    [
+      'a path whose style fill is revert under a group whose fill is none',
+      '<g fill="none"><path fill="#000" style="fill: revert" d="M14 14H20V20H14Z" /></g>',
+    ],
+    [
+      'a path whose style fill is revert-layer over fill="none"',
+      '<path fill="none" style="fill: revert-layer" d="M14 14H20V20H14Z" />',
+    ],
+    [
+      'a path whose style display is revert-layer over display="none"',
+      '<path display="none" style="display: revert-layer" d="M14 14H20V20H14Z" />',
+    ],
+  ])(
+    'should not draw %s, which SVG leaves unpainted',
+    async (_name, content) => {
+      expect(await generateGlyphPath(icon(content))).toEqual(
+        await generateGlyphPath(icon('')),
+      );
+    },
+  );
+
+  test.each([
+    [
+      'a style fill over a fill="none" attribute',
+      '<path fill="none" style="fill: #000" d="M14 14H20V20H14Z" />',
+    ],
+    [
+      'its own fill under a group whose fill is none',
+      '<g fill="none"><path fill="#000" d="M14 14H20V20H14Z" /></g>',
+    ],
+    [
+      'a style fill of initial under a group whose fill is none',
+      '<g fill="none"><path style="fill: initial" d="M14 14H20V20H14Z" /></g>',
+    ],
+  ])('should draw a path painted by %s', async (_name, content) => {
+    expect(await generateGlyphPath(icon(content))).toEqual(
+      await generateGlyphPath(icon('<path d="M14 14H20V20H14Z" />')),
+    );
+  });
+
+  test.each([
+    [
+      'a style fill',
+      '<path style="fill: #9F9FA9" d="M14 14H20V20H14Z" />',
+      '#9F9FA9',
+    ],
+    [
+      'fill="INHERIT"',
+      '<g fill="#F00"><path fill="INHERIT" d="M14 14H20V20H14Z" /></g>',
+      '#F00',
+    ],
+    [
+      'an inherit through a group with no fill',
+      '<g fill="#F00"><path fill="#00F" d="M14 14H20V20H14Z" />' +
+        '<g><path fill="inherit" d="M14 4H20V10H14Z" /></g></g>',
+      '#F00',
+    ],
+    [
+      'fill="currentcolor"',
+      '<path fill="currentcolor" d="M14 14H20V20H14Z" />',
+      'black',
+    ],
+    [
+      'fill="currentColor"',
+      '<path fill="currentColor" d="M14 14H20V20H14Z" />',
+      'black',
+    ],
+    [
+      'an inherit with nothing to inherit',
+      '<path fill="inherit" d="M14 14H20V20H14Z" />',
+      undefined,
+    ],
+    [
+      'the last tag declaring a fill',
+      '<g fill="#F00"><path fill="#00F" d="M14 14H20V20H14Z" />' +
+        '<path d="M14 4H20V10H14Z" /></g>',
+      '#00F',
+    ],
+    [
+      'a style fill of initial',
+      '<path style="fill: initial" d="M14 14H20V20H14Z" />',
+      'black',
+    ],
+    [
+      'fill="initial"',
+      '<g fill="#F00"><path fill="initial" d="M14 14H20V20H14Z" /></g>',
+      'black',
+    ],
+    [
+      'a style fill of unset',
+      '<g fill="#F00"><path fill="#00F" style="fill: unset" d="M14 14H20V20H14Z" /></g>',
+      '#F00',
+    ],
+    [
+      'a style fill of revert-layer',
+      '<g fill="#F00"><path fill="#00F" style="fill: revert-layer" d="M14 14H20V20H14Z" /></g>',
+      '#00F',
+    ],
+  ])('should take the glyph color from %s', async (_name, content, color) => {
+    expect(await generateGlyphColor(icon(content))).toEqual(color);
+  });
+});
+
 describe('Providing bad glyphs', () => {
   test('should fail when not providing glyph name', async () => {
     const svgIconStream = fs.createReadStream(
@@ -766,6 +1182,115 @@ describe('Providing bad glyphs', () => {
       .write(svgIconStream);
   });
 });
+
+async function generateGlyphPath(source: string) {
+  const svgFontStream = new SVGIcons2SVGFontStream({ round: 1e3 });
+  const svgIconStream = streamtest.fromChunks([
+    Buffer.from(source),
+  ]) as unknown as SVGIconStream;
+
+  svgIconStream.metadata = {
+    name: 'glyph',
+    unicode: [''],
+  };
+
+  const promise = bufferStream(svgFontStream);
+
+  svgFontStream.write(svgIconStream);
+  svgFontStream.end();
+
+  const font = (await promise).toString();
+  const glyph = /<glyph[^>]* d="([^"]*)"/.exec(font);
+
+  if (!glyph) {
+    throw new Error(`No glyph path in the font: ${font}`);
+  }
+  return glyph[1];
+}
+
+async function generateGlyphColor(source: string) {
+  let color: string | undefined;
+  const svgFontStream = new SVGIcons2SVGFontStream({
+    round: 1e3,
+    callback: ([glyph]) => {
+      color = glyph.color;
+    },
+  });
+  const svgIconStream = streamtest.fromChunks([
+    Buffer.from(source),
+  ]) as unknown as SVGIconStream;
+
+  svgIconStream.metadata = {
+    name: 'glyph',
+    unicode: [''],
+  };
+
+  const promise = bufferStream(svgFontStream);
+
+  svgFontStream.write(svgIconStream);
+  svgFontStream.end();
+  await promise;
+
+  return color;
+}
+
+// A font is filled by the nonzero rule: a point is ink when the outline winds around it.
+function windingNumberAt(d: string, x: number, y: number) {
+  let winding = 0;
+  let start = { x: 0, y: 0 };
+  let current = start;
+  const lineTo = (point: { x: number; y: number }) => {
+    const side =
+      (point.x - current.x) * (y - current.y) -
+      (x - current.x) * (point.y - current.y);
+
+    if (current.y <= y && point.y > y && 0 < side) {
+      winding += 1;
+    } else if (current.y > y && point.y <= y && 0 > side) {
+      winding -= 1;
+    }
+    current = point;
+  };
+
+  for (const command of new SVGPathData(d).toAbs().normalizeST().qtToC().aToC()
+    .commands) {
+    if (SVGPathData.MOVE_TO === command.type) {
+      lineTo(start);
+      start = { x: command.x, y: command.y };
+      current = start;
+    } else if (SVGPathData.LINE_TO === command.type) {
+      lineTo({ x: command.x, y: command.y });
+    } else if (SVGPathData.HORIZ_LINE_TO === command.type) {
+      lineTo({ x: command.x, y: current.y });
+    } else if (SVGPathData.VERT_LINE_TO === command.type) {
+      lineTo({ x: current.x, y: command.y });
+    } else if (SVGPathData.CURVE_TO === command.type) {
+      const from = current;
+
+      for (let step = 1; step <= 32; step++) {
+        const t = step / 32;
+        const u = 1 - t;
+
+        lineTo({
+          x:
+            u * u * u * from.x +
+            3 * u * u * t * command.x1 +
+            3 * u * t * t * command.x2 +
+            t * t * t * command.x,
+          y:
+            u * u * u * from.y +
+            3 * u * u * t * command.y1 +
+            3 * u * t * t * command.y2 +
+            t * t * t * command.y,
+        });
+      }
+    } else if (SVGPathData.CLOSE_PATH === command.type) {
+      lineTo(start);
+    }
+  }
+  lineTo(start);
+  return winding;
+}
 
 async function bufferStream(readableStream: Readable) {
   return await new Promise<Buffer>((resolve, reject) => {

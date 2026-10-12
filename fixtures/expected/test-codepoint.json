@@ -146,6 +146,7 @@
         "name": "rect",
         "unicode": ["\uE006"],
         "width": 150,
-        "height": 150
+        "height": 150,
+        "color": "#000000"
     }]
 }
